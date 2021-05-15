@@ -1,0 +1,4 @@
+enum LineupSubmenu {
+  HomeTeam,
+  GuestTeam,
+}

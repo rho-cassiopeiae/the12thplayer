@@ -1,0 +1,4 @@
+enum AuthPageMode {
+  SignUp,
+  SignIn,
+}
