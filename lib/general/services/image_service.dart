@@ -74,11 +74,11 @@ class ImageService implements IImageService {
   Future<List<int>> resizeImage(File imageFile, {int dimension = 100}) async {
     // @@TODO: Background isolate ?
     var image = decodeImage(await imageFile.readAsBytes());
-    image = copyResize(
-      image,
-      width: image.height > image.width ? null : dimension,
-      height: image.width > image.height ? null : dimension,
-    );
+    // image = copyResize(
+    //   image,
+    //   width: image.height > image.width ? null : dimension,
+    //   height: image.width > image.height ? null : dimension,
+    // );
 
     return encodePng(image);
   }

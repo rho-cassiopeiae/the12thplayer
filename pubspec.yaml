@@ -44,6 +44,8 @@ dependencies:
   auto_size_text: ^2.1.0
   tuple: ^1.0.3
   flutter_config: ^2.0.0
+  sliding_up_panel: ^2.0.0+1
+  pin_code_fields: ^7.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -69,6 +71,7 @@ flutter:
     - assets/images/pitch.png
     - assets/images/tshirt.png
     - assets/images/dummy_profile_image.png
+    - assets/images/dummy_profile_image_white.png
 
   fonts:
     - family: Football
