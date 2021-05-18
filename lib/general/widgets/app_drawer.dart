@@ -40,7 +40,10 @@ class AppDrawer extends StatelessWidgetInjected<AccountBloc> {
           ),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Squad'),
+            title: Text(
+              'Squad',
+              style: GoogleFonts.patuaOne(fontSize: 20),
+            ),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(
                 TeamSquadPage.routeName,
@@ -49,7 +52,10 @@ class AppDrawer extends StatelessWidgetInjected<AccountBloc> {
           ),
           ListTile(
             leading: Icon(Icons.all_inclusive_rounded),
-            title: Text('Fixtures'),
+            title: Text(
+              'Fixtures',
+              style: GoogleFonts.patuaOne(fontSize: 20),
+            ),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(
                 FixtureCalendarPage.routeName,
@@ -78,6 +84,7 @@ class AppDrawer extends StatelessWidgetInjected<AccountBloc> {
                       : account.type == AccountType.UnconfirmedAccount
                           ? 'Confirm email'
                           : 'Profile',
+                  style: GoogleFonts.patuaOne(fontSize: 20),
                 ),
                 onTap: () {
                   if (account.type == AccountType.GuestAccount) {

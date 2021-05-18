@@ -7,7 +7,7 @@ class MatchStats {
   final FixtureFullVm fixture;
   final ThemeData theme;
 
-  final Color _backgroundColor = const Color.fromRGBO(238, 241, 246, 1.0);
+  final Color _color = const Color.fromRGBO(238, 241, 246, 1.0);
 
   MatchStats({
     @required this.fixture,
@@ -36,14 +36,14 @@ class MatchStats {
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color: _backgroundColor,
+            color: _color,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
             boxShadow: [
               BoxShadow(
-                color: _backgroundColor,
+                color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
                 offset: Offset(0, 2),
@@ -70,10 +70,10 @@ class MatchStats {
             var stat = stats[index];
             return Container(
               decoration: BoxDecoration(
-                color: _backgroundColor,
+                color: _color,
                 boxShadow: [
                   BoxShadow(
-                    color: _backgroundColor,
+                    color: _color,
                     blurRadius: 0.0,
                     spreadRadius: 0.0,
                     offset: Offset(0, 2),
@@ -174,10 +174,10 @@ class MatchStats {
         child: Container(
           height: 24,
           decoration: BoxDecoration(
-            color: _backgroundColor,
+            color: _color,
             boxShadow: [
               BoxShadow(
-                color: _backgroundColor,
+                color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
                 offset: Offset(0, 2),
@@ -189,7 +189,7 @@ class MatchStats {
       SliverFillRemaining(
         hasScrollBody: false,
         child: Container(
-          color: _backgroundColor,
+          color: _color,
           alignment: Alignment.center,
           child: stats.isEmpty ? Text('No stats yet') : null,
         ),

@@ -71,7 +71,9 @@ flutter:
     - assets/images/pitch.png
     - assets/images/tshirt.png
     - assets/images/dummy_profile_image.png
-    - assets/images/dummy_profile_image_white.png
+    - assets/images/pre-match.png
+    - assets/images/match.png
+    - assets/images/post-match.png
 
   fonts:
     - family: Football

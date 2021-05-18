@@ -114,6 +114,7 @@ class _LiveCommentaryFeedPageState extends State<LiveCommentaryFeedPage> {
             ),
           ),
         ),
+        brightness: Brightness.dark,
         centerTitle: true,
         elevation: 0,
       ),

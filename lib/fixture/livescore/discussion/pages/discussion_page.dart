@@ -76,15 +76,9 @@ class _DiscussionPageState extends State<DiscussionPage> {
     super.dispose();
   }
 
-  Color _computeFontColor(Color color) {
-    var luminance =
-        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
-
-    return luminance > 0.5 ? Colors.black : Colors.white;
-  }
-
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width * 0.25 - 27.0;
     return Scaffold(
       backgroundColor: const Color.fromRGBO(238, 241, 246, 1.0),
       appBar: AppBar(
@@ -98,6 +92,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
             ),
           ),
         ),
+        brightness: Brightness.dark,
         centerTitle: true,
         elevation: 0,
       ),
@@ -176,84 +171,115 @@ class _DiscussionPageState extends State<DiscussionPage> {
                             );
                             _imageBloc.dispatchAction(action);
 
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 8,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        width: 60,
-                                        child: Text(
-                                          entry.username,
-                                          style: GoogleFonts.righteous(),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
+                            return Table(
+                              columnWidths: const <int, TableColumnWidth>{
+                                0: IntrinsicColumnWidth(),
+                                1: FlexColumnWidth(),
+                              },
+                              children: [
+                                TableRow(
+                                  children: [
+                                    Container(height: 40),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Card(
+                                        color: entry.color,
+                                        elevation: 5.0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(12),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0,
+                                            vertical: 8.0,
+                                          ),
+                                          child: Text(
+                                            entry.username,
+                                            style: GoogleFonts.patuaOne(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      SizedBox(height: 12),
-                                      FutureBuilder<ImageState>(
+                                    ),
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          15.0, 4.0, 12.0, 4.0),
+                                      width: width,
+                                      height: width * 16.0 / 9.0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(8.0),
+                                        ),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: FutureBuilder<ImageState>(
                                         initialData: ImageLoading(),
                                         future: action.state,
                                         builder: (context, snapshot) {
                                           var state = snapshot.data;
                                           if (state is ImageLoading) {
-                                            return CircleAvatar(
-                                              radius: 30,
-                                              child: Text(
-                                                entry.username
-                                                    .substring(0, 2)
-                                                    .toUpperCase(),
-                                              ),
+                                            return Image.asset(
+                                              'assets/images/dummy_profile_image.png',
+                                              fit: BoxFit.cover,
                                             );
                                           }
 
                                           var imageFile =
                                               (state as ImageReady).imageFile;
-                                          return CircleAvatar(
-                                            radius: 30,
-                                            backgroundImage:
-                                                FileImage(imageFile),
+
+                                          return Image.file(
+                                            imageFile,
+                                            fit: BoxFit.cover,
                                           );
                                         },
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(width: 12),
-                                  Flexible(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: entry.color,
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(12),
-                                          topRight: Radius.circular(12),
-                                        ),
-                                      ),
+                                    ),
+                                    Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 8,
+                                        vertical: 4.0,
                                       ),
-                                      child: Text(
-                                        entry.body,
-                                        style: GoogleFonts.exo2(
-                                          textStyle: TextStyle(
-                                            color: _computeFontColor(
-                                              entry.color,
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: width * 16.0 / 9.0,
+                                        ),
+                                        child: Card(
+                                          elevation: 5.0,
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                              color: entry.color,
+                                              width: 2.0,
                                             ),
-                                            fontSize: 18,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(12),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 14.0,
+                                              vertical: 12.0,
+                                            ),
+                                            child: Text(
+                                              entry.body,
+                                              style:
+                                                  GoogleFonts.signikaNegative(
+                                                fontSize: 20,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                              ],
                             );
                           },
                           childCount: entries.length,
@@ -325,7 +351,10 @@ class _DiscussionPageState extends State<DiscussionPage> {
                   child: TextField(
                     controller: _bodyController,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(10.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10.0,
+                        vertical: 16.0,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
@@ -341,8 +370,14 @@ class _DiscussionPageState extends State<DiscussionPage> {
                   ),
                 ),
                 Expanded(
-                  child: IconButton(
-                    icon: Icon(Icons.upload_rounded),
+                  child: FloatingActionButton(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Icon(
+                      Icons.upload_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    mini: true,
                     onPressed: () async {
                       var action = PostDiscussionEntry(
                         fixtureId: widget.fixtureId,

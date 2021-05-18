@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../general/bloc/image_bloc.dart';
 import '../widgets/discussions.dart';
 import '../widgets/live_commentary_feeds.dart';
 import '../widgets/match_stats.dart';
@@ -34,8 +35,8 @@ import '../../../account/enums/account_type.dart';
 
 class FixtureLivescorePage extends StatefulWidget
     with
-        DependencyResolver3<FixtureLivescoreBloc, LiveCommentaryFeedBloc,
-            AccountBloc> {
+        DependencyResolver4<FixtureLivescoreBloc, LiveCommentaryFeedBloc,
+            AccountBloc, ImageBloc> {
   static const String routeName = '/fixture/livescore';
 
   final FixtureSummaryVm fixture;
@@ -46,14 +47,19 @@ class FixtureLivescorePage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _FixtureLivescorePageState createState() =>
-      _FixtureLivescorePageState(resolve1(), resolve2(), resolve3());
+  _FixtureLivescorePageState createState() => _FixtureLivescorePageState(
+        resolve1(),
+        resolve2(),
+        resolve3(),
+        resolve4(),
+      );
 }
 
 class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   final FixtureLivescoreBloc _fixtureLivescoreBloc;
   final LiveCommentaryFeedBloc _liveCommentaryFeedBloc;
   final AccountBloc _accountBloc;
+  final ImageBloc _imageBloc;
 
   final SweetSheet _sweetSheet = SweetSheet();
 
@@ -78,6 +84,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     this._fixtureLivescoreBloc,
     this._liveCommentaryFeedBloc,
     this._accountBloc,
+    this._imageBloc,
   );
 
   @override
@@ -381,6 +388,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
           ),
         ),
       ),
+      brightness: Brightness.dark,
       centerTitle: true,
       pinned: true,
       elevation: 0,
@@ -550,6 +558,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
           theme: theme,
           selectedLiveCommentaryFilter: _selectedLiveCommentaryFilter,
           liveCommentaryFeedBloc: _liveCommentaryFeedBloc,
+          imageBloc: _imageBloc,
         ).build(
           context: context,
           onChangeLiveCommentaryFilter: (filter) {

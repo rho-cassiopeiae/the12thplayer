@@ -64,6 +64,37 @@ mixin DependencyResolver3<TDependency1, TDependency2, TDependency3> {
             );
 }
 
+mixin DependencyResolver4<TDependency1, TDependency2, TDependency3,
+    TDependency4> {
+  TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
+      dependencyInstanceIdentifier == null
+          ? KiwiContainer().resolve<TDependency1>()
+          : KiwiContainer().resolveInstance<TDependency1>(
+              dependencyInstanceIdentifier,
+            );
+
+  TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
+      dependencyInstanceIdentifier == null
+          ? KiwiContainer().resolve<TDependency2>()
+          : KiwiContainer().resolveInstance<TDependency2>(
+              dependencyInstanceIdentifier,
+            );
+
+  TDependency3 resolve3([String dependencyInstanceIdentifier]) =>
+      dependencyInstanceIdentifier == null
+          ? KiwiContainer().resolve<TDependency3>()
+          : KiwiContainer().resolveInstance<TDependency3>(
+              dependencyInstanceIdentifier,
+            );
+
+  TDependency4 resolve4([String dependencyInstanceIdentifier]) =>
+      dependencyInstanceIdentifier == null
+          ? KiwiContainer().resolve<TDependency4>()
+          : KiwiContainer().resolveInstance<TDependency4>(
+              dependencyInstanceIdentifier,
+            );
+}
+
 abstract class StatelessWidgetInjected<TDependency> extends StatelessWidget
     with DependencyResolver<TDependency> {
   final String _dependencyInstanceIdentifier;
@@ -133,5 +164,42 @@ abstract class StatelessWidgetInjected3<TDependency1, TDependency2,
     TDependency1 service1,
     TDependency2 service2,
     TDependency3 service3,
+  );
+}
+
+abstract class StatelessWidgetInjected4<TDependency1, TDependency2,
+        TDependency3, TDependency4> extends StatelessWidget
+    with
+        DependencyResolver4<TDependency1, TDependency2, TDependency3,
+            TDependency4> {
+  final String _dependencyInstanceIdentifier1;
+  final String _dependencyInstanceIdentifier2;
+  final String _dependencyInstanceIdentifier3;
+  final String _dependencyInstanceIdentifier4;
+
+  StatelessWidgetInjected4([
+    this._dependencyInstanceIdentifier1,
+    this._dependencyInstanceIdentifier2,
+    this._dependencyInstanceIdentifier3,
+    this._dependencyInstanceIdentifier4,
+  ]);
+
+  @override
+  Widget build(BuildContext context) {
+    return buildInjected(
+      context,
+      resolve1(_dependencyInstanceIdentifier1),
+      resolve2(_dependencyInstanceIdentifier2),
+      resolve3(_dependencyInstanceIdentifier3),
+      resolve4(_dependencyInstanceIdentifier4),
+    );
+  }
+
+  Widget buildInjected(
+    BuildContext context,
+    TDependency1 service1,
+    TDependency2 service2,
+    TDependency3 service3,
+    TDependency4 service4,
   );
 }

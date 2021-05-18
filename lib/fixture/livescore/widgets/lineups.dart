@@ -14,8 +14,8 @@ class Lineups {
   final LineupSubmenu selectedLineupSubmenu;
   final ScrollController benchPlayersScrollController;
 
-  final Color _backgroundColor = const Color.fromRGBO(238, 241, 246, 1.0);
-  Color _color;
+  final Color _color = const Color.fromRGBO(238, 241, 246, 1.0);
+  Color _teamColor;
   Color _fontColor;
   LineupVm _lineup;
 
@@ -26,22 +26,22 @@ class Lineups {
     @required this.benchPlayersScrollController,
   }) {
     if (selectedLineupSubmenu == LineupSubmenu.HomeTeam) {
-      _color = fixture.colors.homeTeam;
-      if (_color == null) {
-        _color = fixture.homeTeam.id == fixture.teamId
+      _teamColor = fixture.colors.homeTeam;
+      if (_teamColor == null) {
+        _teamColor = fixture.homeTeam.id == fixture.teamId
             ? theme.primaryColorDark
             : theme.accentColor;
       }
     } else {
-      _color = fixture.colors.awayTeam;
-      if (_color == null) {
-        _color = fixture.awayTeam.id == fixture.teamId
+      _teamColor = fixture.colors.awayTeam;
+      if (_teamColor == null) {
+        _teamColor = fixture.awayTeam.id == fixture.teamId
             ? theme.primaryColorDark
             : theme.accentColor;
       }
     }
 
-    _fontColor = _computeFontColor(_color);
+    _fontColor = _computeFontColor(_teamColor);
 
     _lineup = selectedLineupSubmenu == LineupSubmenu.HomeTeam
         ? fixture.lineups.homeTeam
@@ -58,10 +58,10 @@ class Lineups {
   Widget _buildPlayerCard(PlayerVm player) {
     return Container(
       decoration: BoxDecoration(
-        color: _backgroundColor,
+        color: _color,
         boxShadow: [
           BoxShadow(
-            color: _backgroundColor,
+            color: _color,
             blurRadius: 0.0,
             spreadRadius: 0.0,
             offset: Offset(0, 2),
@@ -73,7 +73,7 @@ class Lineups {
         vertical: 8,
       ),
       child: Card(
-        color: _backgroundColor,
+        color: _color,
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -89,7 +89,7 @@ class Lineups {
             children: [
               CircleAvatar(
                 radius: 34,
-                backgroundColor: _color,
+                backgroundColor: _teamColor,
                 child: Text(
                   player.number?.toString() ?? '',
                   style: TextStyle(color: _fontColor),
@@ -129,10 +129,10 @@ class Lineups {
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-              color: _backgroundColor,
+              color: _color,
               boxShadow: [
                 BoxShadow(
-                  color: _backgroundColor,
+                  color: _color,
                   blurRadius: 0.0,
                   spreadRadius: 0.0,
                   offset: Offset(0, 2),
@@ -162,7 +162,7 @@ class Lineups {
       SliverFillRemaining(
         hasScrollBody: false,
         child: Container(
-          color: _backgroundColor,
+          color: _color,
         ),
       ),
     ];
@@ -186,14 +186,14 @@ class Lineups {
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color: _backgroundColor,
+            color: _color,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
             boxShadow: [
               BoxShadow(
-                color: _backgroundColor,
+                color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
                 offset: Offset(0, 2),
@@ -273,7 +273,7 @@ class Lineups {
             alignment: Alignment.center,
             children: [
               Container(
-                color: _backgroundColor,
+                color: _color,
                 height: height,
                 child: Image.asset(
                   'assets/images/pitch.png',
@@ -293,7 +293,7 @@ class Lineups {
                   height: player.formationPosition.radius * 2 + 18,
                   child: PlayerDummy(
                     player: player,
-                    color: _color,
+                    color: _teamColor,
                     fontColor: _fontColor,
                     radius: player.formationPosition.radius,
                   ),
@@ -338,7 +338,7 @@ class Lineups {
         SliverFillRemaining(
           hasScrollBody: false,
           child: Container(
-            color: _backgroundColor,
+            color: _color,
             child: Center(child: Text('No lineups yet')),
           ),
         ),

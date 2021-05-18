@@ -15,7 +15,7 @@ class PerformanceRatings {
   final ThemeData theme;
   final FixtureLivescoreBloc fixtureLivescoreBloc;
 
-  final Color _backgroundColor = const Color.fromRGBO(238, 241, 246, 1.0);
+  final Color _color = const Color.fromRGBO(238, 241, 246, 1.0);
 
   PerformanceRatings({
     @required this.fixture,
@@ -34,14 +34,14 @@ class PerformanceRatings {
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color: _backgroundColor,
+            color: _color,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
             boxShadow: [
               BoxShadow(
-                color: _backgroundColor,
+                color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
                 offset: Offset(0, 2),
@@ -68,10 +68,10 @@ class PerformanceRatings {
             var performanceRating = performanceRatings[index];
             return Container(
               decoration: BoxDecoration(
-                color: _backgroundColor,
+                color: _color,
                 boxShadow: [
                   BoxShadow(
-                    color: _backgroundColor,
+                    color: _color,
                     blurRadius: 0.0,
                     spreadRadius: 0.0,
                     offset: Offset(0, 2),
@@ -91,7 +91,7 @@ class PerformanceRatings {
                     right: 25,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: HexColor.fromHex('554059ad'),
+                        color: HexColor.fromHex('553066be'),
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
                     ),
@@ -103,7 +103,7 @@ class PerformanceRatings {
                     right: 15,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: HexColor.fromHex('774059ad'), // 3066be
+                        color: HexColor.fromHex('773066be'), // 4059ad
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
                     ),
@@ -115,7 +115,7 @@ class PerformanceRatings {
                     right: 0,
                     child: Card(
                       elevation: 5,
-                      color: HexColor.fromHex('4059ad'),
+                      color: HexColor.fromHex('3066be'),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
                           color: Colors.black26,
@@ -233,12 +233,12 @@ class PerformanceRatings {
                                         customColors: CustomSliderColors(
                                           trackColor: Colors.white70,
                                           progressBarColors: [
-                                            HexColor.fromHex('9bb1ff'),
-                                            HexColor.fromHex('788bff'),
-                                            HexColor.fromHex('5465ff'),
-                                            // HexColor.fromHex('7209b7'),
-                                            // HexColor.fromHex('4361ee'),
-                                            // HexColor.fromHex('caf0f8'),
+                                            // HexColor.fromHex('9bb1ff'),
+                                            // HexColor.fromHex('788bff'),
+                                            // HexColor.fromHex('5465ff'),
+                                            HexColor.fromHex('7209b7'),
+                                            HexColor.fromHex('4361ee'),
+                                            HexColor.fromHex('caf0f8'),
                                           ],
                                         ),
                                       ),
@@ -331,7 +331,7 @@ class PerformanceRatings {
       SliverFillRemaining(
         hasScrollBody: false,
         child: Container(
-          color: _backgroundColor,
+          color: _color,
           alignment: Alignment.center,
           child: performanceRatings.isEmpty ? Text('No ratings yet') : null,
         ),

@@ -35,7 +35,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green,
+      color: const Color(0xFF398AE5),
     );
   }
 }

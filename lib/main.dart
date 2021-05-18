@@ -21,9 +21,12 @@ import 'general/utils/injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await FlutterConfig.loadEnvVariables();
   await DefaultCacheManager().emptyCache();
+
   setup();
+
   runApp(Application());
 }
 

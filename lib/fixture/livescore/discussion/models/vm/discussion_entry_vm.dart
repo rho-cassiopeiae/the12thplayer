@@ -7,16 +7,13 @@ import '../../../../../general/extensions/color_extension.dart';
 
 class DiscussionEntryVm {
   static final List<String> _colors = [
-    'D9ED92',
-    'B5E48C',
-    '99D98C',
-    '76C893',
-    '52B69A',
-    '34A0A4',
-    '168AAD',
-    '1A759F',
-    '1E6091',
-    '184E77',
+    '3b28cc',
+    '2667ff',
+    'ef476f',
+    '6411ad',
+    '358f80',
+    '773344',
+    'ef7b45',
   ];
 
   final String id;

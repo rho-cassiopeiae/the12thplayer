@@ -133,6 +133,7 @@ class _LiveCommentaryRecordingPageState
             ),
           ),
         ),
+        brightness: Brightness.dark,
         centerTitle: true,
         elevation: 0,
       ),
@@ -691,35 +692,44 @@ class _LiveCommentaryRecordingPageState
                       ),
                       Expanded(
                         flex: 1,
-                        child: IconButton(
-                          padding:
-                              const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                          icon: Icon(Icons.upload_rounded),
-                          onPressed: () async {
-                            var action = PostLiveCommentaryRecordingEntry(
-                              fixtureId: widget.fixtureId,
-                              time: _min,
-                              icon: _selectedEvent,
-                              title: _title,
-                              body: _body,
-                              imageBytes: _imageBytes,
-                            );
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: FloatingActionButton(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: Icon(
+                              Icons.upload_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            heroTag: null,
+                            mini: true,
+                            onPressed: () async {
+                              var action = PostLiveCommentaryRecordingEntry(
+                                fixtureId: widget.fixtureId,
+                                time: _min,
+                                icon: _selectedEvent,
+                                title: _title,
+                                body: _body,
+                                imageBytes: _imageBytes,
+                              );
 
-                            _liveCommentaryRecordingBloc.dispatchAction(action);
-                            await action.state; // @@TODO: Handle error.
+                              _liveCommentaryRecordingBloc
+                                  .dispatchAction(action);
+                              await action.state; // @@TODO: Handle error.
 
-                            _minController.clear();
-                            _titleController.clear();
-                            _commentController.clear();
+                              _minController.clear();
+                              _titleController.clear();
+                              _commentController.clear();
 
-                            setState(() {
-                              _min = null;
-                              _selectedEvent = 'Goal';
-                              _title = null;
-                              _body = null;
-                              _imageBytes = null;
-                            });
-                          },
+                              setState(() {
+                                _min = null;
+                                _selectedEvent = 'Goal';
+                                _title = null;
+                                _body = null;
+                                _imageBytes = null;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ],

@@ -43,6 +43,7 @@ class TeamMemberPage extends StatelessWidgetInjected<TeamBloc> {
             ),
           ),
         ),
+        brightness: Brightness.dark,
         centerTitle: true,
         elevation: 0,
       ),

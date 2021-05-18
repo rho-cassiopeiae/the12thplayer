@@ -93,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     var croppedFile = await ImageCropper.cropImage(
       sourcePath: pickedFile.path,
-      aspectRatio: CropAspectRatio(ratioX: _width, ratioY: _height * 0.7),
+      aspectRatio: CropAspectRatio(ratioX: _width, ratioY: _width * 16.0 / 9.0),
       compressQuality: 100,
       androidUiSettings: AndroidUiSettings(
         toolbarTitle: 'Crop the image',
