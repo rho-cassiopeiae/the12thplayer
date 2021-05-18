@@ -12,7 +12,6 @@ import '../bloc/live_commentary_recording_bloc.dart';
 import '../bloc/live_commentary_recording_states.dart';
 import '../enums/live_commentary_recording_entry_status.dart';
 import '../enums/live_commentary_recording_status.dart';
-import '../../../../general/extensions/color_extension.dart';
 import '../../../../general/extensions/kiwi_extension.dart';
 
 class LiveCommentaryRecordingPage extends StatefulWidget
@@ -123,7 +122,7 @@ class _LiveCommentaryRecordingPageState
     return Scaffold(
       backgroundColor: _color,
       appBar: AppBar(
-        backgroundColor: HexColor.fromHex('023e8a'),
+        backgroundColor: const Color(0xff023e8a),
         title: Text(
           'The 12th Player',
           style: GoogleFonts.teko(

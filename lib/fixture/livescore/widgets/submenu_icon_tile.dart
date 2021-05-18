@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../general/extensions/color_extension.dart';
-
 class SubmenuIconTile extends StatelessWidget {
   final double width;
   final double height;
@@ -28,9 +26,7 @@ class SubmenuIconTile extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: selected
-              ? HexColor.fromHex('ddffffff')
-              : HexColor.fromHex('44ffffff'),
+          color: selected ? const Color(0xddffffff) : const Color(0x44ffffff),
           borderRadius: BorderRadius.all(
             Radius.circular(15),
           ),

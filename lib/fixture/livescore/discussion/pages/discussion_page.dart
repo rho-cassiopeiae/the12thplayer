@@ -9,7 +9,6 @@ import '../bloc/discussion_states.dart';
 import '../../../../general/bloc/image_actions.dart';
 import '../../../../general/bloc/image_bloc.dart';
 import '../../../../general/bloc/image_states.dart';
-import '../../../../general/extensions/color_extension.dart';
 import '../../../../general/extensions/kiwi_extension.dart';
 
 class DiscussionPage extends StatefulWidget
@@ -82,7 +81,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(238, 241, 246, 1.0),
       appBar: AppBar(
-        backgroundColor: HexColor.fromHex('023e8a'),
+        backgroundColor: const Color(0xff023e8a),
         title: Text(
           'The 12th Player',
           style: GoogleFonts.teko(

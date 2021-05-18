@@ -3,17 +3,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../dto/discussion_entry_dto.dart';
-import '../../../../../general/extensions/color_extension.dart';
 
 class DiscussionEntryVm {
-  static final List<String> _colors = [
-    '3b28cc',
-    '2667ff',
-    'ef476f',
-    '6411ad',
-    '358f80',
-    '773344',
-    'ef7b45',
+  static final List<Color> _colors = [
+    const Color(0xff3b28cc),
+    const Color(0xff2667ff),
+    const Color(0xffef476f),
+    const Color(0xff6411ad),
+    const Color(0xff358f80),
+    const Color(0xff773344),
+    const Color(0xffef7b45),
   ];
 
   final String id;
@@ -41,7 +40,7 @@ class DiscussionEntryVm {
 
       int index = (_colors.length * sum).floor();
 
-      _color = HexColor.fromHex(_colors[index]);
+      _color = _colors[index];
       usernameToColor[username] = _color;
     } else {
       _color = usernameToColor[username];

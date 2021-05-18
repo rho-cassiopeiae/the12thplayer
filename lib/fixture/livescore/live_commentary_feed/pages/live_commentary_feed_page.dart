@@ -6,7 +6,6 @@ import '../../icons/football.dart';
 import '../bloc/live_commentary_feed_actions.dart';
 import '../bloc/live_commentary_feed_bloc.dart';
 import '../bloc/live_commentary_feed_states.dart';
-import '../../../../general/extensions/color_extension.dart';
 import '../../../../general/extensions/kiwi_extension.dart';
 
 class LiveCommentaryFeedPage extends StatefulWidget
@@ -104,7 +103,7 @@ class _LiveCommentaryFeedPageState extends State<LiveCommentaryFeedPage> {
     return Scaffold(
       backgroundColor: _color,
       appBar: AppBar(
-        backgroundColor: HexColor.fromHex('023e8a'),
+        backgroundColor: const Color(0xff023e8a),
         title: Text(
           'Live commentary by ${widget.authorUsername}',
           style: GoogleFonts.teko(

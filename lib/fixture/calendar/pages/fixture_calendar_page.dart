@@ -9,7 +9,6 @@ import '../bloc/fixture_calendar_actions.dart';
 import '../bloc/fixture_calendar_bloc.dart';
 import '../bloc/fixture_calendar_states.dart';
 import '../../common/models/vm/fixture_summary_vm.dart';
-import '../../../general/extensions/color_extension.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 import '../../../general/widgets/app_drawer.dart';
 
@@ -386,7 +385,7 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                                                 ),
                                                 backgroundColor:
                                                     MaterialStateProperty.all(
-                                                  HexColor.fromHex('023e8a'),
+                                                  const Color(0xff023e8a),
                                                 ),
                                                 foregroundColor:
                                                     MaterialStateProperty.all(

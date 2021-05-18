@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tuple/tuple.dart';
 
 import '../models/vm/discussion_vm.dart';
-import '../../../general/extensions/color_extension.dart';
 import '../discussion/pages/discussion_page.dart';
 import '../models/vm/fixture_full_vm.dart';
 
@@ -160,8 +159,8 @@ class Discussions {
 
   Color _getDiscussionColor(DiscussionVm discussion) =>
       discussion.name == 'pre-match'
-          ? HexColor.fromHex('57cc99')
+          ? const Color(0xff57cc99)
           : discussion.name == 'match'
-              ? HexColor.fromHex('7371fc')
-              : HexColor.fromHex('ef6351');
+              ? const Color(0xff7371fc)
+              : const Color(0xffef6351);
 }

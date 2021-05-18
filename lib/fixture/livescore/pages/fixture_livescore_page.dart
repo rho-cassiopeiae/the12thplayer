@@ -29,7 +29,6 @@ import '../live_commentary_feed/bloc/live_commentary_feed_bloc.dart';
 import '../live_commentary_feed/enums/live_commentary_filter.dart';
 import '../models/vm/fixture_full_vm.dart';
 import '../widgets/sweet_sheet.dart';
-import '../../../general/extensions/color_extension.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 import '../../../account/enums/account_type.dart';
 
@@ -231,7 +230,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
       body: Stack(
         children: <Widget>[
           Container(
-            color: HexColor.fromHex('1d3461'),
+            color: const Color(0xff1d3461),
             child: Stack(
               children: <Widget>[
                 Positioned(

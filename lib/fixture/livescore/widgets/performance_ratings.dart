@@ -8,7 +8,6 @@ import '../bloc/fixture_livescore_actions.dart';
 import '../bloc/fixture_livescore_bloc.dart';
 import '../models/vm/fixture_full_vm.dart';
 import '../models/vm/performance_ratings_vm.dart';
-import '../../../general/extensions/color_extension.dart';
 
 class PerformanceRatings {
   final FixtureFullVm fixture;
@@ -91,7 +90,7 @@ class PerformanceRatings {
                     right: 25,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: HexColor.fromHex('553066be'),
+                        color: const Color(0x553066be),
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
                     ),
@@ -103,7 +102,7 @@ class PerformanceRatings {
                     right: 15,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: HexColor.fromHex('773066be'), // 4059ad
+                        color: const Color(0x773066be), // 4059ad
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
                     ),
@@ -115,7 +114,7 @@ class PerformanceRatings {
                     right: 0,
                     child: Card(
                       elevation: 5,
-                      color: HexColor.fromHex('3066be'),
+                      color: const Color(0xff3066be),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
                           color: Colors.black26,
@@ -150,7 +149,7 @@ class PerformanceRatings {
                                   Card(
                                     margin: EdgeInsets.zero,
                                     elevation: 7,
-                                    color: HexColor.fromHex('5465ff'),
+                                    color: const Color(0xff5465ff),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(12),
@@ -233,12 +232,12 @@ class PerformanceRatings {
                                         customColors: CustomSliderColors(
                                           trackColor: Colors.white70,
                                           progressBarColors: [
-                                            // HexColor.fromHex('9bb1ff'),
-                                            // HexColor.fromHex('788bff'),
-                                            // HexColor.fromHex('5465ff'),
-                                            HexColor.fromHex('7209b7'),
-                                            HexColor.fromHex('4361ee'),
-                                            HexColor.fromHex('caf0f8'),
+                                            // const Color(0xff9bb1ff),
+                                            // const Color(0xff788bff),
+                                            // const Color(0xff5465ff),
+                                            const Color(0xff7209b7),
+                                            const Color(0xff4361ee),
+                                            const Color(0xffcaf0f8),
                                           ],
                                         ),
                                       ),
@@ -294,7 +293,7 @@ class PerformanceRatings {
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(65),
                                         ),
-                                        color: HexColor.fromHex('4361ee'),
+                                        color: const Color(0xff4361ee),
                                       ),
                                     ),
                                     Container(

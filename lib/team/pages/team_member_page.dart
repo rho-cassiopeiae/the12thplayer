@@ -7,7 +7,6 @@ import '../models/vm/team_member_vm.dart';
 import '../bloc/team_actions.dart';
 import '../bloc/team_states.dart';
 import '../widgets/team_member_card.dart';
-import '../../general/extensions/color_extension.dart';
 import '../../general/extensions/kiwi_extension.dart';
 import '../bloc/team_bloc.dart';
 
@@ -33,7 +32,7 @@ class TeamMemberPage extends StatelessWidgetInjected<TeamBloc> {
     return Scaffold(
       backgroundColor: _color,
       appBar: AppBar(
-        backgroundColor: HexColor.fromHex('023e8a'),
+        backgroundColor: const Color(0xff023e8a),
         title: Text(
           'The 12th Player',
           style: GoogleFonts.teko(
