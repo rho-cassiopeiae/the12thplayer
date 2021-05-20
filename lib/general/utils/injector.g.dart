@@ -22,7 +22,8 @@ class _$Injector extends Injector {
         c<IFixtureCalendarRepository>(),
         c<IFixtureRepository>(),
         c<ILiveCommentaryFeedRepository>(),
-        c<ILiveCommentaryRecordingRepository>()));
+        c<ILiveCommentaryRecordingRepository>(),
+        c<IVideoReactionRepository>()));
   }
 
   @override
@@ -111,6 +112,19 @@ class _$Injector extends Injector {
     container.registerSingleton((c) => DiscussionService(
         c<Storage>(), c<IDiscussionApiService>(), c<AccountService>()));
     container.registerFactory((c) => DiscussionBloc(c<DiscussionService>()));
+  }
+
+  @override
+  void configureVideoReaction() {
+    final KiwiContainer container = KiwiContainer();
+    container.registerSingleton<IVideoReactionApiService>(
+        (c) => VideoReactionApiService(c<ServerConnector>()));
+    container.registerSingleton<IVideoReactionRepository>(
+        (c) => VideoReactionRepository(c<DbConfigurator>()));
+    container.registerSingleton((c) => VideoReactionService(
+        c<Storage>(), c<IVideoReactionApiService>(), c<AccountService>()));
+    container
+        .registerSingleton((c) => VideoReactionBloc(c<VideoReactionService>()));
   }
 
   @override

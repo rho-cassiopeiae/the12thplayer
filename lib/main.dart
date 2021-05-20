@@ -3,6 +3,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
+import 'fixture/livescore/video_reaction/pages/video_page.dart';
+import 'fixture/livescore/video_reaction/pages/video_reaction_page.dart';
 import 'account/pages/profile_page.dart';
 import 'team/models/vm/team_member_vm.dart';
 import 'team/pages/team_member_page.dart';
@@ -108,6 +110,18 @@ class Application extends StatelessWidget {
           case ProfilePage.routeName:
             return MaterialPageRoute(
               builder: (_) => ProfilePage(),
+            );
+          case VideoReactionPage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => VideoReactionPage(
+                fixtureId: settings.arguments as int,
+              ),
+            );
+          case VideoPage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => VideoPage(
+                videoId: settings.arguments as String,
+              ),
             );
           default:
             return null;

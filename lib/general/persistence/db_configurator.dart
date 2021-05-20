@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../fixture/livescore/video_reaction/persistence/tables/fixture_video_reaction_votes_table.dart';
 import '../../fixture/livescore/live_commentary_feed/persistence/tables/fixture_live_commentary_feed_votes_table.dart';
 import '../../fixture/livescore/live_commentary_feed/persistence/tables/live_commentary_feed_entry_table.dart';
 import '../../fixture/livescore/live_commentary_feed/persistence/tables/live_commentary_feed_table.dart';
@@ -82,6 +83,8 @@ class DbConfigurator {
       await txn.execute(LiveCommentaryFeedEntryTable.createTableCommand);
 
       await txn.execute(FixtureLiveCommentaryFeedVotesTable.createTableCommand);
+
+      await txn.execute(FixtureVideoReactionVotesTable.createTableCommand);
     });
   }
 }

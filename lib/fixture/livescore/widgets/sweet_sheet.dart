@@ -172,6 +172,9 @@ class SweetSheetAction extends StatelessWidget {
             onPressed: onPressed,
             label: Text(
               title,
+              style: TextStyle(
+                color: color,
+              ),
             ),
             icon: Icon(
               icon,

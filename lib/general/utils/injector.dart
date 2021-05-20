@@ -1,5 +1,11 @@
 import 'package:kiwi/kiwi.dart';
 
+import '../../fixture/livescore/video_reaction/interfaces/ivideo_reaction_repository.dart';
+import '../../fixture/livescore/video_reaction/persistence/repositories/video_reaction_repository.dart';
+import '../../fixture/livescore/video_reaction/bloc/video_reaction_bloc.dart';
+import '../../fixture/livescore/video_reaction/interfaces/ivideo_reaction_api_service.dart';
+import '../../fixture/livescore/video_reaction/services/video_reaction_api_service.dart';
+import '../../fixture/livescore/video_reaction/services/video_reaction_service.dart';
 import '../../team/bloc/team_bloc.dart';
 import '../../team/interfaces/iteam_api_service.dart';
 import '../../team/services/team_api_service.dart';
@@ -112,6 +118,12 @@ abstract class Injector {
   @Register.factory(DiscussionBloc)
   void configureDiscussion();
 
+  @Register.singleton(IVideoReactionApiService, from: VideoReactionApiService)
+  @Register.singleton(IVideoReactionRepository, from: VideoReactionRepository)
+  @Register.singleton(VideoReactionService)
+  @Register.singleton(VideoReactionBloc)
+  void configureVideoReaction();
+
   @Register.singleton(ITeamApiService, from: TeamApiService)
   @Register.singleton(ITeamRepository, from: TeamRepository)
   @Register.singleton(TeamService)
@@ -128,6 +140,7 @@ abstract class Injector {
     configureLiveCommentaryFeed();
     configureLiveCommentaryRecording();
     configureDiscussion();
+    configureVideoReaction();
     configureTeam();
   }
 }

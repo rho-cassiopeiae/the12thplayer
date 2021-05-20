@@ -1,0 +1,4 @@
+enum VideoReactionFilter {
+  Top,
+  Newest,
+}

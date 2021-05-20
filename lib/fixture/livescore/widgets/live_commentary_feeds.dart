@@ -31,7 +31,7 @@ class LiveCommentaryFeeds {
     @required this.imageBloc,
   });
 
-  void _loadLiveCommentaryFeeds(FixtureFullVm fixture, int start) {
+  void _loadLiveCommentaryFeeds(int start) {
     liveCommentaryFeedBloc.dispatchAction(
       LoadLiveCommentaryFeeds(
         fixtureId: fixture.id,
@@ -46,7 +46,7 @@ class LiveCommentaryFeeds {
     @required void Function(LiveCommentaryFilter) onChangeLiveCommentaryFilter,
     @required Future<bool> Function(String, String) onProtectedActionInvoked,
   }) {
-    _loadLiveCommentaryFeeds(fixture, 0);
+    _loadLiveCommentaryFeeds(0);
     var width = MediaQuery.of(context).size.width * 0.18;
 
     return [
@@ -96,7 +96,7 @@ class LiveCommentaryFeeds {
                                   onChangeLiveCommentaryFilter(
                                     selectedLiveCommentaryFilter,
                                   );
-                                  _loadLiveCommentaryFeeds(fixture, 0);
+                                  _loadLiveCommentaryFeeds(0);
                                 }
                               : null,
                         ),
@@ -109,7 +109,7 @@ class LiveCommentaryFeeds {
                                   onChangeLiveCommentaryFilter(
                                     selectedLiveCommentaryFilter,
                                   );
-                                  _loadLiveCommentaryFeeds(fixture, 0);
+                                  _loadLiveCommentaryFeeds(0);
                                 }
                               : null,
                         ),
@@ -152,7 +152,7 @@ class LiveCommentaryFeeds {
                                     ),
                                   );
 
-                                  _loadLiveCommentaryFeeds(fixture, 0);
+                                  _loadLiveCommentaryFeeds(0);
                                 }
                               },
                             ),

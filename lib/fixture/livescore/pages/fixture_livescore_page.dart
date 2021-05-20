@@ -2,6 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../video_reaction/bloc/video_reaction_bloc.dart';
+import '../video_reaction/enums/video_reaction_filter.dart';
+import '../widgets/video_reactions.dart';
 import '../../../general/bloc/image_bloc.dart';
 import '../widgets/discussions.dart';
 import '../widgets/live_commentary_feeds.dart';
@@ -34,8 +37,8 @@ import '../../../account/enums/account_type.dart';
 
 class FixtureLivescorePage extends StatefulWidget
     with
-        DependencyResolver4<FixtureLivescoreBloc, LiveCommentaryFeedBloc,
-            AccountBloc, ImageBloc> {
+        DependencyResolver5<FixtureLivescoreBloc, LiveCommentaryFeedBloc,
+            AccountBloc, ImageBloc, VideoReactionBloc> {
   static const String routeName = '/fixture/livescore';
 
   final FixtureSummaryVm fixture;
@@ -51,6 +54,7 @@ class FixtureLivescorePage extends StatefulWidget
         resolve2(),
         resolve3(),
         resolve4(),
+        resolve5(),
       );
 }
 
@@ -59,6 +63,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   final LiveCommentaryFeedBloc _liveCommentaryFeedBloc;
   final AccountBloc _accountBloc;
   final ImageBloc _imageBloc;
+  final VideoReactionBloc _videoReactionBloc;
 
   final SweetSheet _sweetSheet = SweetSheet();
 
@@ -74,6 +79,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   FixtureLivescoreSubmenu _selectedSubmenu;
   LineupSubmenu _selectedLineupSubmenu;
   LiveCommentaryFilter _selectedLiveCommentaryFilter;
+  VideoReactionFilter _selectedVideoReactionFilter;
 
   ScrollController _benchPlayersScrollController;
 
@@ -84,6 +90,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     this._liveCommentaryFeedBloc,
     this._accountBloc,
     this._imageBloc,
+    this._videoReactionBloc,
   );
 
   @override
@@ -94,6 +101,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     _selectedSubmenu = FixtureLivescoreSubmenu.Lineups;
     _selectedLineupSubmenu = LineupSubmenu.HomeTeam;
     _selectedLiveCommentaryFilter = LiveCommentaryFilter.Top;
+    _selectedVideoReactionFilter = VideoReactionFilter.Top;
 
     _benchPlayersScrollController = ScrollController();
 
@@ -304,6 +312,16 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                           ),
                           selected: _selectedSubmenu ==
                               FixtureLivescoreSubmenu.PerformanceRatings,
+                        ),
+                        SizedBox(width: 20),
+                        SubmenuIconTile(
+                          iconData: Icons.videocam,
+                          iconSize: 32,
+                          toggle: () => _toggleOpen(
+                            FixtureLivescoreSubmenu.VideoReactions,
+                          ),
+                          selected: _selectedSubmenu ==
+                              FixtureLivescoreSubmenu.VideoReactions,
                         ),
                       ],
                     ),
@@ -563,8 +581,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
           onChangeLiveCommentaryFilter: (filter) {
             _selectedLiveCommentaryFilter = filter;
           },
-          onProtectedActionInvoked: (notLoggedInDesc, unconfirmedDesc) =>
-              _showAuthDialogIfNecessary(notLoggedInDesc, unconfirmedDesc),
+          onProtectedActionInvoked: _showAuthDialogIfNecessary,
         );
       case FixtureLivescoreSubmenu.PerformanceRatings:
         return PerformanceRatings(
@@ -572,6 +589,19 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
           theme: theme,
           fixtureLivescoreBloc: _fixtureLivescoreBloc,
         ).build();
+      case FixtureLivescoreSubmenu.VideoReactions:
+        return VideoReactions(
+          fixture: fixture,
+          theme: theme,
+          selectedVideoReactionFilter: _selectedVideoReactionFilter,
+          videoReactionBloc: _videoReactionBloc,
+        ).build(
+          context: context,
+          onChangeVideoReactionFilter: (filter) {
+            _selectedVideoReactionFilter = filter;
+          },
+          onProtectedActionInvoked: _showAuthDialogIfNecessary,
+        );
     }
 
     return [];
