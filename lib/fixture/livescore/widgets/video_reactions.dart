@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../video_reaction/pages/video_page.dart';
+import '../pages/video_page.dart';
 import '../video_reaction/enums/video_reaction_vote_action.dart';
 import '../models/vm/fixture_full_vm.dart';
 import '../video_reaction/bloc/video_reaction_actions.dart';
@@ -181,157 +181,164 @@ class VideoReactions {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Card(
-                    color: _color,
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                    child: Column(
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black87,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12)),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.network(
-                                  reaction.thumbnailUrl,
-                                  fit: BoxFit.contain,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                      VideoPage.routeName,
-                                      arguments: reaction.videoId,
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.play_arrow_rounded,
-                                    size: 80,
-                                    color: Colors.white54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                  child: Stack(
+                    children: [
+                      Card(
+                        color: _color,
+                        elevation: 5,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 24,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                          child: Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    reaction.title,
-                                    style: GoogleFonts.exo2(
-                                      textStyle: TextStyle(
-                                        fontSize: 20,
-                                      ),
+                        child: Column(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: Container(
+                                color: Colors.black87,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Image.network(
+                                      reaction.thumbnailUrl,
+                                      fit: BoxFit.contain,
                                     ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    'by ${reaction.authorUsername}',
-                                    style: GoogleFonts.patuaOne(
-                                      textStyle: TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              Column(
-                                children: [
-                                  InkWell(
-                                    child: Icon(
-                                      Icons.arrow_drop_up,
-                                      size: 32,
-                                      color: reaction.upvoted
-                                          ? Colors.orange
-                                          : null,
-                                    ),
-                                    onTap: () async {
-                                      bool canContinue =
-                                          await onProtectedActionInvoked(
-                                        'Only logged-in users can vote',
-                                        'Only confirmed users can vote',
-                                      );
-
-                                      if (canContinue) {
-                                        videoReactionBloc.dispatchAction(
-                                          VoteForVideoReaction(
-                                            fixtureId: fixture.id,
-                                            authorId: reaction.authorId,
-                                            voteAction:
-                                                VideoReactionVoteAction.Upvote,
-                                            fixtureVideoReactions:
-                                                fixtureVideoReactions.copy(),
-                                          ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                          VideoPage.routeName,
+                                          arguments: reaction.videoId,
                                         );
-                                      }
-                                    },
-                                  ),
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundColor: theme.primaryColor,
+                                      },
+                                      child: Icon(
+                                        Icons.play_arrow,
+                                        color: Colors.white54,
+                                        size: 80,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 5,
                                     child: Text(
-                                      reaction.rating.toString(),
-                                      style: GoogleFonts.lexendMega(
-                                        textStyle: TextStyle(
-                                          color: Colors.white,
-                                        ),
+                                      reaction.title,
+                                      style: GoogleFonts.josefinSans(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
                                       ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  InkWell(
-                                    child: Icon(
-                                      Icons.arrow_drop_down,
-                                      size: 32,
-                                      color: reaction.downvoted
-                                          ? Colors.orange
-                                          : null,
-                                    ),
-                                    onTap: () async {
-                                      bool canContinue =
-                                          await onProtectedActionInvoked(
-                                        'Only logged-in users can vote',
-                                        'Only confirmed users can vote',
-                                      );
-
-                                      if (canContinue) {
-                                        videoReactionBloc.dispatchAction(
-                                          VoteForVideoReaction(
-                                            fixtureId: fixture.id,
-                                            authorId: reaction.authorId,
-                                            voteAction: VideoReactionVoteAction
-                                                .Downvote,
-                                            fixtureVideoReactions:
-                                                fixtureVideoReactions.copy(),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                          child: Icon(
+                                            Icons.thumb_down,
+                                            color: reaction.downvoted
+                                                ? Colors.orange
+                                                : null,
                                           ),
-                                        );
-                                      }
-                                    },
+                                          onTap: () async {
+                                            bool canContinue =
+                                                await onProtectedActionInvoked(
+                                              'Only logged-in users can vote',
+                                              'Only confirmed users can vote',
+                                            );
+
+                                            if (canContinue) {
+                                              videoReactionBloc.dispatchAction(
+                                                VoteForVideoReaction(
+                                                  fixtureId: fixture.id,
+                                                  authorId: reaction.authorId,
+                                                  voteAction:
+                                                      VideoReactionVoteAction
+                                                          .Downvote,
+                                                  fixtureVideoReactions:
+                                                      fixtureVideoReactions
+                                                          .copy(),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                        Text(
+                                          reaction.rating.toString(),
+                                          style: GoogleFonts.lexendMega(
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          child: Icon(
+                                            Icons.thumb_up,
+                                            color: reaction.upvoted
+                                                ? Colors.orange
+                                                : null,
+                                          ),
+                                          onTap: () async {
+                                            bool canContinue =
+                                                await onProtectedActionInvoked(
+                                              'Only logged-in users can vote',
+                                              'Only confirmed users can vote',
+                                            );
+
+                                            if (canContinue) {
+                                              videoReactionBloc.dispatchAction(
+                                                VoteForVideoReaction(
+                                                  fixtureId: fixture.id,
+                                                  authorId: reaction.authorId,
+                                                  voteAction:
+                                                      VideoReactionVoteAction
+                                                          .Upvote,
+                                                  fixtureVideoReactions:
+                                                      fixtureVideoReactions
+                                                          .copy(),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        left: 12,
+                        child: Card(
+                          color: const Color(0xff2b2d42),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            child: Text(
+                              reaction.authorUsername,
+                              style: GoogleFonts.patuaOne(
+                                fontSize: 22,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },

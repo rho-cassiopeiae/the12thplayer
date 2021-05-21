@@ -29,3 +29,19 @@ class PostVideoReactionError extends PostVideoReactionState {
 
   PostVideoReactionError({@required this.message});
 }
+
+abstract class GetVideoQualityUrlsState extends VideoReactionState {}
+
+class VideoQualityUrlsLoading extends GetVideoQualityUrlsState {}
+
+class VideoQualityUrlsReady extends GetVideoQualityUrlsState {
+  final Map<String, String> qualityToUrl;
+
+  VideoQualityUrlsReady({@required this.qualityToUrl});
+}
+
+class VideoQualityUrlsError extends GetVideoQualityUrlsState {
+  final String message;
+
+  VideoQualityUrlsError({@required this.message});
+}

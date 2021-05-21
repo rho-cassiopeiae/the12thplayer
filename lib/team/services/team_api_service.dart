@@ -19,11 +19,11 @@ class TeamApiService implements ITeamApiService {
   dynamic _wrapError(DioError error) {
     // ignore: missing_enum_constant_in_switch
     switch (error.type) {
-      case DioErrorType.CONNECT_TIMEOUT:
-      case DioErrorType.SEND_TIMEOUT:
-      case DioErrorType.RECEIVE_TIMEOUT:
+      case DioErrorType.connectTimeout:
+      case DioErrorType.sendTimeout:
+      case DioErrorType.receiveTimeout:
         return ConnectionError();
-      case DioErrorType.RESPONSE:
+      case DioErrorType.response:
         var statusCode = error.response.statusCode;
         if (statusCode >= 500) {
           return ServerError();

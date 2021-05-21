@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_config/flutter_config.dart';
 
 import '../../general/services/server_connector.dart';
 import '../errors/account_error.dart';
@@ -22,24 +21,16 @@ import '../models/dto/responses/sign_in_response_dto.dart';
 class AccountApiService implements IAccountApiService {
   final ServerConnector _serverConnector;
 
-  Dio _dio;
-
-  AccountApiService(this._serverConnector) {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: FlutterConfig.get('IDENTITY_API_HOST'),
-      ),
-    );
-  }
+  AccountApiService(this._serverConnector);
 
   dynamic _wrapError(DioError error) {
     // ignore: missing_enum_constant_in_switch
     switch (error.type) {
-      case DioErrorType.CONNECT_TIMEOUT:
-      case DioErrorType.SEND_TIMEOUT:
-      case DioErrorType.RECEIVE_TIMEOUT:
+      case DioErrorType.connectTimeout:
+      case DioErrorType.sendTimeout:
+      case DioErrorType.receiveTimeout:
         return ConnectionError();
-      case DioErrorType.RESPONSE:
+      case DioErrorType.response:
         var statusCode = error.response.statusCode;
         if (statusCode >= 500) {
           return ServerError();
@@ -74,7 +65,7 @@ class AccountApiService implements IAccountApiService {
   @override
   Future signUp(String email, String username, String password) async {
     try {
-      await _dio.post(
+      await _serverConnector.dioIdentity.post(
         '/api/account/sign-up',
         data: SignUpRequestDto(
           email: email,
@@ -93,7 +84,7 @@ class AccountApiService implements IAccountApiService {
     String confirmationCode,
   ) async {
     try {
-      var response = await _dio.post(
+      var response = await _serverConnector.dioIdentity.post(
         '/api/account/confirm-email',
         data: ConfirmEmailRequestDto(
           email: email,
@@ -110,7 +101,7 @@ class AccountApiService implements IAccountApiService {
   @override
   Future<SignInResponseDto> signIn(String email, String password) async {
     try {
-      var response = await _dio.post(
+      var response = await _serverConnector.dioIdentity.post(
         '/api/account/sign-in',
         data: SignInRequestDto(
           email: email,
@@ -127,7 +118,7 @@ class AccountApiService implements IAccountApiService {
   @override
   Future<RefreshAccessTokenResponseDto> refreshAccessToken() async {
     try {
-      var response = await _dio.post(
+      var response = await _serverConnector.dioIdentity.post(
         '/api/account/refresh-access-token',
         data: RefreshAccessTokenRequestDto(
           accessToken: _serverConnector.accessToken,

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:either_option/either_option.dart';
 
+import '../interfaces/ivimeo_api_service.dart';
 import '../../../../general/errors/connection_error.dart';
 import '../../../../general/errors/server_error.dart';
 import '../../../../account/services/account_service.dart';
@@ -18,6 +19,7 @@ import '../../../../general/errors/error.dart';
 class VideoReactionService {
   final Storage _storage;
   final IVideoReactionApiService _videoReactionApiService;
+  final IVimeoApiService _vimeoApiService;
   final AccountService _accountService;
 
   PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
@@ -27,6 +29,7 @@ class VideoReactionService {
   VideoReactionService(
     this._storage,
     this._videoReactionApiService,
+    this._vimeoApiService,
     this._accountService,
   ) {
     _wsApiPolicy = Policy.on<AuthenticationTokenExpiredError>(
@@ -209,6 +212,23 @@ class VideoReactionService {
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
+    }
+  }
+
+  Future<Either<Error, Map<String, String>>> getVideoQualityUrls(
+    String videoId,
+  ) async {
+    try {
+      var qualityToUrl = await _apiPolicy.execute(
+        () => _vimeoApiService.getVideoQualityUrls(videoId),
+      );
+
+      return Right(qualityToUrl);
+    } catch (error, stackTrace) {
+      print('========== $error ==========');
+      print(stackTrace);
+
+      return Left(Error(error.toString()));
     }
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
-import 'fixture/livescore/video_reaction/pages/video_page.dart';
+import 'fixture/livescore/pages/video_page.dart';
 import 'fixture/livescore/video_reaction/pages/video_reaction_page.dart';
 import 'account/pages/profile_page.dart';
 import 'team/models/vm/team_member_vm.dart';

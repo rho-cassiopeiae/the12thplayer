@@ -21,6 +21,8 @@ class VideoReactionBloc extends Bloc<VideoReactionAction> {
         _voteForVideoReaction(action);
       } else if (action is PostVideoReaction) {
         _postVideoReaction(action);
+      } else if (action is GetVideoQualityUrls) {
+        _getVideoQualityUrls(action);
       }
     });
   }
@@ -78,5 +80,18 @@ class VideoReactionBloc extends Bloc<VideoReactionAction> {
       action.videoBytes,
       action.fileName,
     );
+  }
+
+  void _getVideoQualityUrls(GetVideoQualityUrls action) async {
+    var result = await _videoReactionService.getVideoQualityUrls(
+      action.videoId,
+    );
+
+    var state = result.fold(
+      (error) => VideoQualityUrlsError(message: error.toString()),
+      (qualityToUrl) => VideoQualityUrlsReady(qualityToUrl: qualityToUrl),
+    );
+
+    action.complete(state);
   }
 }

@@ -119,10 +119,14 @@ class _$Injector extends Injector {
     final KiwiContainer container = KiwiContainer();
     container.registerSingleton<IVideoReactionApiService>(
         (c) => VideoReactionApiService(c<ServerConnector>()));
+    container.registerSingleton<IVimeoApiService>((c) => VimeoApiService());
     container.registerSingleton<IVideoReactionRepository>(
         (c) => VideoReactionRepository(c<DbConfigurator>()));
     container.registerSingleton((c) => VideoReactionService(
-        c<Storage>(), c<IVideoReactionApiService>(), c<AccountService>()));
+        c<Storage>(),
+        c<IVideoReactionApiService>(),
+        c<IVimeoApiService>(),
+        c<AccountService>()));
     container
         .registerSingleton((c) => VideoReactionBloc(c<VideoReactionService>()));
   }

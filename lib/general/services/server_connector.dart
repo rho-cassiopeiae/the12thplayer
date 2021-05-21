@@ -14,6 +14,7 @@ class ServerConnector {
 
   HubConnection _connection;
   Dio _dio;
+  Dio _dioIdentity;
 
   Completer _connected;
 
@@ -22,6 +23,7 @@ class ServerConnector {
 
   HubConnection get connection => _connection;
   Dio get dio => _dio;
+  Dio get dioIdentity => _dioIdentity;
 
   String get accessToken => _accessToken;
   String get refreshToken => _refreshToken;
@@ -38,6 +40,11 @@ class ServerConnector {
     _dio = Dio(
       BaseOptions(
         baseUrl: FlutterConfig.get('WEBSERVER_API_HOST'),
+      ),
+    );
+    _dioIdentity = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('IDENTITY_API_HOST'),
       ),
     );
   }

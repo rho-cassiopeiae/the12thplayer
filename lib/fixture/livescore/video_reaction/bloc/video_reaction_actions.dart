@@ -58,3 +58,10 @@ class PostVideoReaction
     @required this.fileName,
   });
 }
+
+class GetVideoQualityUrls
+    extends VideoReactionActionFutureState<GetVideoQualityUrlsState> {
+  final String videoId;
+
+  GetVideoQualityUrls({@required this.videoId});
+}
