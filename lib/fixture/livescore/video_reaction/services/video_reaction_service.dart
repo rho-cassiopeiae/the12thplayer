@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:either_option/either_option.dart';
 
 import '../interfaces/ivimeo_api_service.dart';
@@ -25,6 +26,8 @@ class VideoReactionService {
   PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
   PolicyExecutor3<ConnectionError, ServerError, AuthenticationTokenExpiredError>
       _apiPolicy;
+
+  int _notificationId = 1;
 
   VideoReactionService(
     this._storage,
@@ -200,13 +203,22 @@ class VideoReactionService {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var response = await _apiPolicy.execute(
+      await _apiPolicy.execute(
         () => _videoReactionApiService.postVideoReaction(
           fixtureId,
           currentTeam.id,
           title,
           videoBytes,
           fileName,
+        ),
+      );
+
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: _notificationId++,
+          channelKey: 'video_reaction_channel',
+          title: 'Your video is ready',
+          body: 'It\'s successfully published and now available to everyone',
         ),
       );
     } catch (error, stackTrace) {

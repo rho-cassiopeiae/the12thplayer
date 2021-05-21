@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
@@ -27,6 +28,21 @@ void main() async {
   await FlutterConfig.loadEnvVariables();
   await DefaultCacheManager().emptyCache();
 
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'video_reaction_channel',
+        channelName: 'Video reactions',
+        channelDescription:
+            'Notifying users when their video reactions get successfully uploaded and processed',
+        defaultColor: const Color.fromRGBO(39, 87, 203, 1.0),
+        ledColor: Colors.white,
+      )
+    ],
+    debug: true,
+  );
+
   setup();
 
   runApp(Application());
@@ -39,7 +55,9 @@ class Application extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: generateMaterialColor(Color.fromRGBO(39, 87, 203, 1.0)),
+        primarySwatch: generateMaterialColor(
+          const Color.fromRGBO(39, 87, 203, 1.0),
+        ),
         accentColor: Colors.grey[300],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

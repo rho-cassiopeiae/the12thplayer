@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../../account/bloc/account_actions.dart';
@@ -17,19 +18,83 @@ class _WelcomePageState extends State<WelcomePage> {
   _WelcomePageState(this._accountBloc);
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    var action = LoadAccount();
-    _accountBloc.dispatchAction(action);
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
+      if (!isAllowed) {
+        await _requestUserPermission();
+      }
 
-    action.state.then((state) {
+      var action = LoadAccount();
+      _accountBloc.dispatchAction(action);
+
+      var state = await action.state;
       if (state is AccountReady) {
         Navigator.of(context).pushReplacementNamed(
           FixtureCalendarPage.routeName,
         );
       }
     });
+  }
+
+  Future _requestUserPermission() {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xfffbfbfb),
+        title: Text(
+          'Notifications',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/animated-bell.gif',
+              height: 200,
+              fit: BoxFit.fitWidth,
+            ),
+            Text(
+              'Allow The12thPlayer to send notifications',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.grey,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Later',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.deepPurple,
+            ),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await AwesomeNotifications()
+                  .requestPermissionToSendNotifications();
+            },
+            child: Text(
+              'Allow',
+              style: TextStyle(color: Colors.white),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
