@@ -4,7 +4,6 @@ import '../../models/vm/performance_ratings_vm.dart';
 import '../../models/vm/stats_vm.dart';
 import '../../../../general/models/entities/team_entity.dart';
 import 'colors_vm.dart';
-import 'discussion_vm.dart';
 import 'lineups_vm.dart';
 import 'match_events_vm.dart';
 
@@ -16,7 +15,6 @@ class FixtureFullVm extends FixtureSummaryVm {
   final StatsVm stats;
   final PerformanceRatingsVm performanceRatings;
   final bool isCompletedAndInactive;
-  final List<DiscussionVm> discussions;
 
   final bool shouldSubscribe;
 
@@ -30,9 +28,6 @@ class FixtureFullVm extends FixtureSummaryVm {
         events = MatchEventsVm.fromEntity(fixture),
         stats = StatsVm.fromEntity(fixture),
         performanceRatings = PerformanceRatingsVm.fromEntity(fixture),
-        discussions = fixture.discussions
-            .map((discussion) => DiscussionVm.fromEntity(discussion))
-            .toList(),
         isCompletedAndInactive = fixture.isFullyLoaded,
         super.fromEntity(team, fixture);
 }

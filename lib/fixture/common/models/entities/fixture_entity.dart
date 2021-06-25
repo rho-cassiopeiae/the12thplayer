@@ -5,7 +5,6 @@ import '../dto/performance_rating_dto.dart';
 import '../../../livescore/models/dto/fixture_full_dto.dart';
 import '../../persistence/tables/fixture_table.dart';
 import '../dto/fixture_summary_dto.dart';
-import 'discussion_entity.dart';
 import 'team_color_entity.dart';
 import 'game_time_entity.dart';
 import 'score_entity.dart';
@@ -36,7 +35,6 @@ class FixtureEntity {
   final List<TeamMatchEventsEntity> events;
   final List<TeamStatsEntity> stats;
   final List<PerformanceRatingEntity> performanceRatings;
-  final List<DiscussionEntity> discussions;
   final bool isFullyLoaded;
 
   FixtureEntity._(
@@ -60,7 +58,6 @@ class FixtureEntity {
     this.events,
     this.stats,
     this.performanceRatings,
-    this.discussions,
     this.isFullyLoaded,
   );
 
@@ -99,7 +96,6 @@ class FixtureEntity {
       events,
       stats,
       performanceRatings ?? this.performanceRatings,
-      discussions,
       isFullyLoaded,
     );
   }
@@ -150,7 +146,6 @@ class FixtureEntity {
     map[FixtureTable.stats] = jsonEncode(stats);
     map[FixtureTable.performanceRatings] =
         performanceRatings != null ? jsonEncode(performanceRatings) : null;
-    map[FixtureTable.discussions] = jsonEncode(discussions);
     map[FixtureTable.isFullyLoaded] = isFullyLoaded ? 1 : 0;
 
     return map;
@@ -186,7 +181,6 @@ class FixtureEntity {
     if (performanceRatings != null) {
       map[FixtureTable.performanceRatings] = jsonEncode(performanceRatings);
     }
-    map[FixtureTable.discussions] = jsonEncode(discussions);
 
     return map;
   }
@@ -240,11 +234,6 @@ class FixtureEntity {
                     as List<dynamic>)
                 .map((ratingMap) => PerformanceRatingEntity.fromMap(ratingMap))
                 .toList(),
-        discussions = map.notContainsOrNull(FixtureTable.discussions)
-            ? null
-            : (jsonDecode(map[FixtureTable.discussions]) as List<dynamic>)
-                .map((discussionMap) => DiscussionEntity.fromMap(discussionMap))
-                .toList(),
         isFullyLoaded = !map.containsKey(FixtureTable.isFullyLoaded)
             ? null
             : map[FixtureTable.isFullyLoaded] == 1;
@@ -270,7 +259,6 @@ class FixtureEntity {
         events = null,
         stats = null,
         performanceRatings = null,
-        discussions = null,
         isFullyLoaded = false;
 
   FixtureEntity.fromFullDto(
@@ -306,9 +294,6 @@ class FixtureEntity {
             .toList(),
         performanceRatings = performanceRatings
             .map((rating) => PerformanceRatingEntity.fromDto(rating))
-            .toList(),
-        discussions = fixture.discussions
-            .map((discussion) => DiscussionEntity.fromDto(discussion))
             .toList(),
         isFullyLoaded = fixture.isCompletedAndInactive;
 
@@ -346,9 +331,6 @@ class FixtureEntity {
             ?.toList(),
         performanceRatings = performanceRatings
             .map((rating) => PerformanceRatingEntity.fromDto(rating))
-            .toList(),
-        discussions = update.discussions
-            .map((discussion) => DiscussionEntity.fromDto(discussion))
             .toList(),
         isFullyLoaded = null;
 }

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:either_option/either_option.dart';
 
+import '../models/vm/fixture_discussions_vm.dart';
 import '../../../../account/services/account_service.dart';
 import '../../../../general/errors/authentication_token_expired_error.dart';
 import '../../../../general/utils/policy.dart';
@@ -33,6 +34,27 @@ class DiscussionService {
         ),
       ],
     );
+  }
+
+  Future<Either<Error, FixtureDiscussionsVm>> loadDiscussions(
+    int fixtureId,
+  ) async {
+    try {
+      var currentTeam = await _storage.loadCurrentTeam();
+
+      var fixtureDiscussions =
+          await _discussionApiService.getDiscussionsForFixture(
+        fixtureId,
+        currentTeam.id,
+      );
+
+      return Right(FixtureDiscussionsVm.fromDto(fixtureDiscussions));
+    } catch (error, stackTrace) {
+      print('========== $error ==========');
+      print(stackTrace);
+
+      return Left(Error(error.toString()));
+    }
   }
 
   Stream<Either<Error, List<DiscussionEntryVm>>> loadDiscussion(

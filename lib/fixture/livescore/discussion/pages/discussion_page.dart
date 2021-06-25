@@ -116,9 +116,9 @@ class _DiscussionPageState extends State<DiscussionPage> {
         },
         child: Stack(
           children: [
-            StreamBuilder<DiscussionState>(
+            StreamBuilder<LoadDiscussionState>(
               initialData: DiscussionLoading(),
-              stream: _discussionBloc.state$,
+              stream: _discussionBloc.discussionState$,
               builder: (context, snapshot) {
                 var state = snapshot.data;
                 if (state is DiscussionLoading) {

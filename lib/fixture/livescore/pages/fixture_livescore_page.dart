@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../discussion/bloc/discussion_bloc.dart';
 import '../video_reaction/bloc/video_reaction_bloc.dart';
 import '../video_reaction/enums/video_reaction_filter.dart';
 import '../widgets/video_reactions.dart';
@@ -37,8 +38,8 @@ import '../../../account/enums/account_type.dart';
 
 class FixtureLivescorePage extends StatefulWidget
     with
-        DependencyResolver5<FixtureLivescoreBloc, LiveCommentaryFeedBloc,
-            AccountBloc, ImageBloc, VideoReactionBloc> {
+        DependencyResolver6<FixtureLivescoreBloc, DiscussionBloc,
+            LiveCommentaryFeedBloc, AccountBloc, ImageBloc, VideoReactionBloc> {
   static const String routeName = '/fixture/livescore';
 
   final FixtureSummaryVm fixture;
@@ -55,11 +56,13 @@ class FixtureLivescorePage extends StatefulWidget
         resolve3(),
         resolve4(),
         resolve5(),
+        resolve6(),
       );
 }
 
 class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   final FixtureLivescoreBloc _fixtureLivescoreBloc;
+  final DiscussionBloc _discussionBloc;
   final LiveCommentaryFeedBloc _liveCommentaryFeedBloc;
   final AccountBloc _accountBloc;
   final ImageBloc _imageBloc;
@@ -87,6 +90,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
 
   _FixtureLivescorePageState(
     this._fixtureLivescoreBloc,
+    this._discussionBloc,
     this._liveCommentaryFeedBloc,
     this._accountBloc,
     this._imageBloc,
@@ -142,6 +146,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     );
     _subscriptionState = SubscriptionState.Disposed;
 
+    _discussionBloc.dispose();
     _liveCommentaryFeedBloc.dispose();
 
     _benchPlayersScrollController.dispose();
@@ -534,8 +539,8 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   }
 
   List<Widget> _buildBody(FixtureFullVm fixture, ThemeData theme) {
-    // @@NOTE: Since every case must return a list of widgets, we can't extract
-    // the code into separate 'real' widgets. So instead we create a bunch of
+    // @@NOTE: Since every case must return a *list* of widgets, we can't extract
+    // the code into separate *real* widgets. So instead we create a bunch of
     // pseudo-widgets, which really are just simple dart classes, build methods
     // of which return a list of widgets.
 
@@ -568,6 +573,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
         return Discussions(
           fixture: fixture,
           theme: theme,
+          discussionBloc: _discussionBloc,
         ).build(context: context);
       case FixtureLivescoreSubmenu.LiveCommentaryFeeds:
         return LiveCommentaryFeeds(

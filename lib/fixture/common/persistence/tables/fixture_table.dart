@@ -21,7 +21,6 @@ class FixtureTable {
   static const events = 'Events';
   static const stats = 'Stats';
   static const performanceRatings = 'PerformanceRatings';
-  static const discussions = 'Discussions';
   static const isFullyLoaded = 'IsFullyLoaded';
 
   static final createTableCommand = '''
@@ -46,7 +45,6 @@ class FixtureTable {
       $events TEXT,
       $stats TEXT,
       $performanceRatings TEXT,
-      $discussions TEXT,
       $isFullyLoaded INTEGER NOT NULL,
       PRIMARY KEY ($id, $teamId)
     );

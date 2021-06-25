@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:signalr_core/signalr_core.dart';
 
+import '../models/dto/fixture_discussions_dto.dart';
+import '../models/dto/requests/get_discussions_for_fixture_request_dto.dart';
 import '../../../../general/services/subscription_tracker.dart';
 import '../../../../general/enums/message_type.dart' as enums;
 import '../models/dto/discussion_entry_dto.dart';
@@ -60,6 +62,30 @@ class DiscussionApiService implements IDiscussionApiService {
     print(ex);
 
     return ApiError();
+  }
+
+  @override
+  Future<FixtureDiscussionsDto> getDiscussionsForFixture(
+    int fixtureId,
+    int teamId,
+  ) async {
+    await _serverConnector.ensureConnected();
+
+    try {
+      var result = await _connection.invoke(
+        'GetDiscussionsForFixture',
+        args: [
+          GetDiscussionsForFixtureRequestDto(
+            fixtureId: fixtureId,
+            teamId: teamId,
+          ),
+        ],
+      );
+
+      return FixtureDiscussionsDto.fromMap(result['data']);
+    } on Exception catch (ex) {
+      throw _wrapHubException(ex);
+    }
   }
 
   void _updateDiscussion(List<dynamic> args) {

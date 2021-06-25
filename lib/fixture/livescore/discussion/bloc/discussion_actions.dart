@@ -14,6 +14,12 @@ abstract class DiscussionActionFutureState<TState extends DiscussionState>
   void complete(TState state) => _stateReady.complete(state);
 }
 
+class LoadDiscussions extends DiscussionAction {
+  final int fixtureId;
+
+  LoadDiscussions({@required this.fixtureId});
+}
+
 class LoadDiscussion extends DiscussionAction {
   final int fixtureId;
   final String discussionIdentifier;
@@ -25,7 +31,7 @@ class LoadDiscussion extends DiscussionAction {
 }
 
 class LoadMoreDiscussionEntries
-    extends DiscussionActionFutureState<DiscussionState> {
+    extends DiscussionActionFutureState<LoadDiscussionState> {
   final int fixtureId;
   final String discussionIdentifier;
   final String lastReceivedEntryId;

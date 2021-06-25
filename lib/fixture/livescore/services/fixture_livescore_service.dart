@@ -8,7 +8,6 @@ import '../../../account/services/account_service.dart';
 import '../../../general/errors/authentication_token_expired_error.dart';
 import '../../../general/utils/policy.dart';
 import '../../common/interfaces/ifixture_api_service.dart';
-import '../../common/models/dto/performance_rating_dto.dart';
 import '../../common/models/entities/fixture_entity.dart';
 import '../models/vm/fixture_full_vm.dart';
 import '../../../general/persistence/storage.dart';
@@ -84,7 +83,7 @@ class FixtureLivescoreService {
         ),
       );
 
-      Iterable<PerformanceRatingDto> performanceRatings;
+      var performanceRatings = fixtureDto.performanceRatings;
       if (!fixtureDto.isCompletedAndInactive) {
         performanceRatings = fixtureDto
             .buildPerformanceRatingsFromLineupAndEvents(currentTeam.id);
@@ -93,7 +92,7 @@ class FixtureLivescoreService {
       fixtureEntity = FixtureEntity.fromFullDto(
         currentTeam.id,
         fixtureDto,
-        performanceRatings ?? fixtureDto.performanceRatings,
+        performanceRatings,
       );
 
       // @@NOTE: Overwrites everything other than performanceRatings, which it updates instead.
@@ -109,7 +108,7 @@ class FixtureLivescoreService {
         FixtureFullVm.fromEntity(
           currentTeam,
           fixtureEntity,
-          shouldSubscribe: true /*!fixtureEntity.isCompleted*/,
+          shouldSubscribe: fixtureDto.shouldSubscribe,
         ),
       );
     } catch (error, stackTrace) {

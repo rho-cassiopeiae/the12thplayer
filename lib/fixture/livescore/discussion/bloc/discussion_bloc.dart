@@ -1,20 +1,28 @@
 import 'dart:async';
 
 import '../../../../general/bloc/bloc.dart';
-import 'discussion_states.dart';
 import '../services/discussion_service.dart';
 import 'discussion_actions.dart';
+import 'discussion_states.dart';
 
 class DiscussionBloc extends Bloc<DiscussionAction> {
   final DiscussionService _discussionService;
 
-  StreamController<DiscussionState> _stateChannel =
-      StreamController<DiscussionState>.broadcast();
-  Stream<DiscussionState> get state$ => _stateChannel.stream;
+  StreamController<LoadDiscussionsState> _discussionsStateChannel =
+      StreamController<LoadDiscussionsState>.broadcast();
+  Stream<LoadDiscussionsState> get discussionsState$ =>
+      _discussionsStateChannel.stream;
+
+  StreamController<LoadDiscussionState> _discussionStateChannel =
+      StreamController<LoadDiscussionState>.broadcast();
+  Stream<LoadDiscussionState> get discussionState$ =>
+      _discussionStateChannel.stream;
 
   DiscussionBloc(this._discussionService) {
     actionChannel.stream.listen((action) {
-      if (action is LoadDiscussion) {
+      if (action is LoadDiscussions) {
+        _loadDiscussions(action);
+      } else if (action is LoadDiscussion) {
         _loadDiscussion(action);
       } else if (action is LoadMoreDiscussionEntries) {
         _loadMoreDiscussionEntries(action);
@@ -30,8 +38,10 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
 
   @override
   void dispose({DiscussionAction cleanupAction}) {
-    _stateChannel.close();
-    _stateChannel = null;
+    _discussionsStateChannel.close();
+    _discussionsStateChannel = null;
+    _discussionStateChannel.close();
+    _discussionStateChannel = null;
 
     if (cleanupAction != null) {
       dispatchAction(cleanupAction);
@@ -39,6 +49,18 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
       actionChannel.close();
       actionChannel = null;
     }
+  }
+
+  void _loadDiscussions(LoadDiscussions action) async {
+    var result = await _discussionService.loadDiscussions(action.fixtureId);
+
+    var state = result.fold(
+      (error) => DiscussionsError(message: error.toString()),
+      (fixtureDiscussions) =>
+          DiscussionsReady(fixtureDiscussions: fixtureDiscussions),
+    );
+
+    _discussionsStateChannel?.add(state);
   }
 
   void _loadDiscussion(LoadDiscussion action) async {
@@ -51,7 +73,7 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
         (entries) => DiscussionReady(entries: entries),
       );
 
-      _stateChannel?.add(state);
+      _discussionStateChannel?.add(state);
     }
   }
 
@@ -68,7 +90,7 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
     );
 
     action.complete(state);
-    _stateChannel?.add(state);
+    _discussionStateChannel?.add(state);
   }
 
   void _unsubscribeFromDiscussion(UnsubscribeFromDiscussion action) {

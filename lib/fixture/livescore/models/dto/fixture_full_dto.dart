@@ -1,4 +1,3 @@
-import '../../../common/models/dto/discussion_dto.dart';
 import '../../../common/models/dto/fixture_summary_dto.dart';
 import '../../../common/models/dto/performance_rating_dto.dart';
 import '../../../common/models/dto/team_color_dto.dart';
@@ -14,7 +13,7 @@ class FixtureFullDto extends FixtureSummaryDto {
   final Iterable<TeamStatsDto> stats;
   final Iterable<PerformanceRatingDto> performanceRatings;
   final bool isCompletedAndInactive;
-  final Iterable<DiscussionDto> discussions;
+  final bool shouldSubscribe;
 
   FixtureFullDto.fromMap(Map<String, dynamic> map)
       : refereeName = map['refereeName'],
@@ -29,8 +28,7 @@ class FixtureFullDto extends FixtureSummaryDto {
         performanceRatings = (map['performanceRatings'] as List<dynamic>)
             .map((ratingMap) => PerformanceRatingDto.fromMap(ratingMap)),
         isCompletedAndInactive = map['isCompletedAndInactive'],
-        discussions = (map['discussions'] as List<dynamic>)
-            .map((discussionMap) => DiscussionDto.fromMap(discussionMap)),
+        shouldSubscribe = map['shouldSubscribe'],
         super.fromMap(map);
 
   List<PerformanceRatingDto> buildPerformanceRatingsFromLineupAndEvents(

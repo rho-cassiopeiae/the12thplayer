@@ -1,4 +1,3 @@
-import '../../../common/models/dto/discussion_dto.dart';
 import '../../../common/models/dto/game_time_dto.dart';
 import '../../../common/models/dto/performance_rating_dto.dart';
 import '../../../common/models/dto/score_dto.dart';
@@ -18,7 +17,6 @@ class FixtureLivescoreUpdateDto {
   final Iterable<TeamLineupDto> lineups;
   final Iterable<TeamMatchEventsDto> events;
   final Iterable<TeamStatsDto> stats;
-  final Iterable<DiscussionDto> discussions;
 
   FixtureLivescoreUpdateDto.fromMap(Map<String, dynamic> map)
       : fixtureId = map['fixtureId'],
@@ -44,9 +42,7 @@ class FixtureLivescoreUpdateDto {
         stats = map['stats'] == null
             ? null
             : (map['stats'] as List<dynamic>)
-                .map((statsMap) => TeamStatsDto.fromMap(statsMap)),
-        discussions = (map['discussions'] as List<dynamic>)
-            .map((discussionMap) => DiscussionDto.fromMap(discussionMap));
+                .map((statsMap) => TeamStatsDto.fromMap(statsMap));
 
   List<PerformanceRatingDto> buildPerformanceRatingsFromLineupAndEvents() {
     var performanceRatings = <PerformanceRatingDto>[];
