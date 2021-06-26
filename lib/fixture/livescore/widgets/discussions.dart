@@ -164,11 +164,13 @@ class Discussions {
   ) {
     var widgets = [
       InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(
+        onTap: () async {
+          await Navigator.of(context).pushNamed(
             DiscussionPage.routeName,
             arguments: Tuple2(fixture.id, discussion.identifier),
           );
+
+          _loadDiscussions();
         },
         child: Card(
           color: _getDiscussionColor(discussion),

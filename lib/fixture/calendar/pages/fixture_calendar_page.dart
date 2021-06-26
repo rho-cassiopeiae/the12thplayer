@@ -104,9 +104,9 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1d4e89),
+      backgroundColor: const Color(0xFF398AE5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1d4e89),
+        backgroundColor: const Color(0xFF398AE5),
         title: Text(
           'The 12th Player',
           style: GoogleFonts.teko(

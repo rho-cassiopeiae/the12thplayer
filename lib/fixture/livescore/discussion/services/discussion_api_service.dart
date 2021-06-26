@@ -129,7 +129,12 @@ class DiscussionApiService implements IDiscussionApiService {
         ],
       );
 
-      updatesChannel.add(FixtureDiscussionUpdateDto.fromMap(result['data']));
+      var discussion = FixtureDiscussionUpdateDto.fromMap(result['data']);
+
+      updatesChannel.add(discussion);
+      if (!discussion.shouldSubscribe) {
+        _subscriptionTracker.removeSubscription(discussionFullIdentifier);
+      }
 
       return updatesChannel.stream;
     } on Exception catch (ex) {
@@ -180,6 +185,7 @@ class DiscussionApiService implements IDiscussionApiService {
 
     var discussionFullIdentifier =
         'fixture:$fixtureId.team:$teamId.discussion:$discussionIdentifier';
+
     _subscriptionTracker.removeSubscription(discussionFullIdentifier);
 
     var updatesChannel = _discussionIdentifierToUpdatesChannel.remove(
