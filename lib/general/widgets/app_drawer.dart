@@ -15,8 +15,6 @@ import '../extensions/kiwi_extension.dart';
 class AppDrawer extends StatelessWidgetInjected<AccountBloc> {
   @override
   Widget buildInjected(BuildContext context, AccountBloc accountBloc) {
-    var theme = Theme.of(context);
-
     var action = LoadAccount();
     accountBloc.dispatchAction(action);
 
@@ -26,7 +24,7 @@ class AppDrawer extends StatelessWidgetInjected<AccountBloc> {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: theme.primaryColor,
+              color: const Color(0xFF1e2749),
             ),
             child: Text(
               'The 12th Player',

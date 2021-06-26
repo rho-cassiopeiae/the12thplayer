@@ -171,7 +171,7 @@ class FixtureLivescoreService {
     String participantIdentifier,
     double rating,
   ) async {
-    var revertMyRatingIfError = false;
+    var shouldRevertMyRatingOnError = false;
     double oldRating;
     try {
       var currentTeam = await _storage.loadCurrentTeam();
@@ -183,7 +183,7 @@ class FixtureLivescoreService {
         rating,
       );
 
-      revertMyRatingIfError = true;
+      shouldRevertMyRatingOnError = true;
 
       var performanceRating = await _wsApiPolicy.execute(
         () => _fixtureApiService.rateParticipantOfGivenFixture(
@@ -203,7 +203,7 @@ class FixtureLivescoreService {
         performanceRating.totalVoters,
       );
 
-      revertMyRatingIfError = false;
+      shouldRevertMyRatingOnError = false;
 
       var fixture = await _storage.loadFixtureForTeam(
         fixtureId,
@@ -215,7 +215,7 @@ class FixtureLivescoreService {
       print('========== $error ==========');
       print(stackTrace);
 
-      if (revertMyRatingIfError) {
+      if (shouldRevertMyRatingOnError) {
         var currentTeam = await _storage.loadCurrentTeam();
 
         await _storage.updateMyRatingOfParticipantOfGivenFixture(
@@ -225,9 +225,6 @@ class FixtureLivescoreService {
           oldRating,
         );
       }
-
-      // @@TODO: Handle error. Currently just displays error message (fully replacing livescore page),
-      // which is, or course, a very poor design. Show a snackbar describing the error and do nothing else ??
 
       return Left(Error(error.toString()));
     }

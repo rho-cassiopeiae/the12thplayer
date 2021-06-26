@@ -12,6 +12,9 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
       StreamController<FixtureLivescoreState>.broadcast();
   Stream<FixtureLivescoreState> get state$ => _stateChannel.stream;
 
+  FixtureLivescoreState _latestReadyState;
+  FixtureLivescoreState get latestReadyState => _latestReadyState;
+
   FixtureLivescoreBloc(this._fixtureLivescoreService) {
     actionChannel.stream.listen((action) {
       if (action is LoadFixture) {
@@ -32,6 +35,7 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
   void dispose({FixtureLivescoreAction cleanupAction}) {
     _stateChannel.close();
     _stateChannel = null;
+    _latestReadyState = null;
 
     if (cleanupAction != null) {
       dispatchAction(cleanupAction);
@@ -39,6 +43,10 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
       actionChannel.close();
       actionChannel = null;
     }
+  }
+
+  void replayLatestReadyState() {
+    _stateChannel?.add(latestReadyState);
   }
 
   void _loadFixture(LoadFixture action) async {
@@ -52,6 +60,10 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
 
     action.complete(state);
     _stateChannel?.add(state);
+
+    if (state is FixtureReady) {
+      _latestReadyState = state;
+    }
   }
 
   void _subscribeToFixture(SubscribeToFixture action) async {
@@ -64,6 +76,10 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
       );
 
       _stateChannel?.add(state);
+
+      if (state is FixtureReady) {
+        _latestReadyState = state;
+      }
     }
   }
 
@@ -86,5 +102,9 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
     );
 
     _stateChannel?.add(state);
+
+    if (state is FixtureReady) {
+      _latestReadyState = state;
+    }
   }
 }
