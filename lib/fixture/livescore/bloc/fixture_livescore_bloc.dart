@@ -12,9 +12,6 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
       StreamController<FixtureLivescoreState>.broadcast();
   Stream<FixtureLivescoreState> get state$ => _stateChannel.stream;
 
-  FixtureLivescoreState _latestReadyState;
-  FixtureLivescoreState get latestReadyState => _latestReadyState;
-
   FixtureLivescoreBloc(this._fixtureLivescoreService) {
     actionChannel.stream.listen((action) {
       if (action is LoadFixture) {
@@ -35,7 +32,6 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
   void dispose({FixtureLivescoreAction cleanupAction}) {
     _stateChannel.close();
     _stateChannel = null;
-    _latestReadyState = null;
 
     if (cleanupAction != null) {
       dispatchAction(cleanupAction);
@@ -43,10 +39,6 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
       actionChannel.close();
       actionChannel = null;
     }
-  }
-
-  void replayLatestReadyState() {
-    _stateChannel?.add(latestReadyState);
   }
 
   void _loadFixture(LoadFixture action) async {
@@ -60,26 +52,13 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
 
     action.complete(state);
     _stateChannel?.add(state);
-
-    if (state is FixtureReady) {
-      _latestReadyState = state;
-    }
   }
 
   void _subscribeToFixture(SubscribeToFixture action) async {
-    await for (var update in _fixtureLivescoreService.subscribeToFixture(
+    await for (var fixture in _fixtureLivescoreService.subscribeToFixture(
       action.fixtureId,
     )) {
-      var state = update.fold(
-        (error) => FixtureError(message: error.toString()),
-        (fixture) => FixtureReady(fixture: fixture),
-      );
-
-      _stateChannel?.add(state);
-
-      if (state is FixtureReady) {
-        _latestReadyState = state;
-      }
+      _stateChannel?.add(FixtureReady(fixture: fixture));
     }
   }
 
@@ -90,21 +69,14 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
   void _rateParticipantOfGivenFixture(
     RateParticipantOfGivenFixture action,
   ) async {
-    var result = await _fixtureLivescoreService.rateParticipantOfGivenFixture(
+    var fixture = await _fixtureLivescoreService.rateParticipantOfGivenFixture(
       action.fixtureId,
       action.participantIdentifier,
       action.rating,
     );
 
-    var state = result.fold(
-      (error) => FixtureError(message: error.toString()),
-      (fixture) => FixtureReady(fixture: fixture),
-    );
-
-    _stateChannel?.add(state);
-
-    if (state is FixtureReady) {
-      _latestReadyState = state;
+    if (fixture != null) {
+      _stateChannel?.add(FixtureReady(fixture: fixture));
     }
   }
 }

@@ -1,5 +1,7 @@
 import 'package:kiwi/kiwi.dart';
 
+import '../bloc/error_notification_bloc.dart';
+import '../services/error_notification_service.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivimeo_api_service.dart';
 import '../../fixture/livescore/video_reaction/services/vimeo_api_service.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivideo_reaction_repository.dart';
@@ -63,6 +65,8 @@ abstract class Injector {
   @Register.singleton(ServerConnector)
   @Register.singleton(Cache)
   @Register.singleton(Storage)
+  @Register.singleton(ErrorNotificationService)
+  @Register.singleton(ErrorNotificationBloc)
   void configureGeneral();
 
   @Register.singleton(IImageService, from: ImageService)

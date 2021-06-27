@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:either_option/either_option.dart';
 
+import '../../../general/services/error_notification_service.dart';
 import '../../../general/errors/connection_error.dart';
 import '../../../general/errors/server_error.dart';
 import '../../../account/services/account_service.dart';
@@ -17,6 +18,7 @@ class FixtureLivescoreService {
   final Storage _storage;
   final IFixtureApiService _fixtureApiService;
   final AccountService _accountService;
+  final ErrorNotificationService _errorNotificationService;
 
   PolicyExecutor2<ConnectionError, ServerError> _apiPolicy;
   PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
@@ -25,6 +27,7 @@ class FixtureLivescoreService {
     this._storage,
     this._fixtureApiService,
     this._accountService,
+    this._errorNotificationService,
   ) {
     _apiPolicy = Policy.on<ConnectionError>(
       strategies: [
@@ -124,9 +127,7 @@ class FixtureLivescoreService {
     }
   }
 
-  Stream<Either<Error, FixtureFullVm>> subscribeToFixture(
-    int fixtureId,
-  ) async* {
+  Stream<FixtureFullVm> subscribeToFixture(int fixtureId) async* {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
@@ -134,30 +135,35 @@ class FixtureLivescoreService {
         fixtureId,
         currentTeam.id,
       )) {
-        var performanceRatings =
-            update.buildPerformanceRatingsFromLineupAndEvents();
+        try {
+          var performanceRatings =
+              update.buildPerformanceRatingsFromLineupAndEvents();
 
-        var fixtureEntity = FixtureEntity.fromLivescoreUpdateDto(
-          update,
-          performanceRatings,
-        );
+          var fixtureEntity = FixtureEntity.fromLivescoreUpdateDto(
+            update,
+            performanceRatings,
+          );
 
-        fixtureEntity = await _storage.updateFixtureFromLivescore(
-          fixtureEntity,
-        );
+          fixtureEntity = await _storage.updateFixtureFromLivescore(
+            fixtureEntity,
+          );
 
-        yield Right(
-          FixtureFullVm.fromEntity(
+          yield FixtureFullVm.fromEntity(
             currentTeam,
             fixtureEntity,
-          ),
-        );
+          );
+        } catch (error, stackTrace) {
+          print('========== $error ==========');
+          print(stackTrace);
+
+          _errorNotificationService.showErrorMessage(error.toString());
+        }
       }
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
 
-      yield Left(Error(error.toString()));
+      _errorNotificationService.showErrorMessage(error.toString());
     }
   }
 
@@ -166,7 +172,7 @@ class FixtureLivescoreService {
     _fixtureApiService.unsubscribeFromFixture(fixtureId, currentTeam.id);
   }
 
-  Future<Either<Error, FixtureFullVm>> rateParticipantOfGivenFixture(
+  Future<FixtureFullVm> rateParticipantOfGivenFixture(
     int fixtureId,
     String participantIdentifier,
     double rating,
@@ -210,7 +216,7 @@ class FixtureLivescoreService {
         currentTeam.id,
       );
 
-      return Right(FixtureFullVm.fromEntity(currentTeam, fixture));
+      return FixtureFullVm.fromEntity(currentTeam, fixture);
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
@@ -226,7 +232,9 @@ class FixtureLivescoreService {
         );
       }
 
-      return Left(Error(error.toString()));
+      _errorNotificationService.showErrorMessage(error.toString());
+
+      return null;
     }
   }
 }

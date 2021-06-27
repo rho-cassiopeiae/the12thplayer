@@ -24,6 +24,9 @@ class _$Injector extends Injector {
         c<ILiveCommentaryFeedRepository>(),
         c<ILiveCommentaryRecordingRepository>(),
         c<IVideoReactionRepository>()));
+    container.registerSingleton((c) => ErrorNotificationService());
+    container.registerSingleton(
+        (c) => ErrorNotificationBloc(c<ErrorNotificationService>()));
   }
 
   @override
@@ -69,7 +72,10 @@ class _$Injector extends Injector {
     container.registerSingleton<IFixtureRepository>(
         (c) => FixtureRepository(c<DbConfigurator>()));
     container.registerSingleton((c) => FixtureLivescoreService(
-        c<Storage>(), c<IFixtureApiService>(), c<AccountService>()));
+        c<Storage>(),
+        c<IFixtureApiService>(),
+        c<AccountService>(),
+        c<ErrorNotificationService>()));
     container.registerFactory(
         (c) => FixtureLivescoreBloc(c<FixtureLivescoreService>()));
   }

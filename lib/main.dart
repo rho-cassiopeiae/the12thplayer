@@ -4,6 +4,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
+import 'general/bloc/error_notification_actions.dart';
+import 'general/bloc/error_notification_bloc.dart';
+import 'general/extensions/kiwi_extension.dart';
 import 'fixture/livescore/pages/video_page.dart';
 import 'fixture/livescore/video_reaction/pages/video_reaction_page.dart';
 import 'account/pages/profile_page.dart';
@@ -26,7 +29,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await FlutterConfig.loadEnvVariables();
-  await DefaultCacheManager().emptyCache();
+  await DefaultCacheManager().emptyCache(); // @@TODO: Remove in prod.
 
   AwesomeNotifications().initialize(
     null,
@@ -48,11 +51,20 @@ void main() async {
   runApp(Application());
 }
 
-class Application extends StatelessWidget {
+class Application extends StatelessWidgetInjected<ErrorNotificationBloc> {
   @override
-  Widget build(BuildContext context) {
+  Widget buildInjected(
+    BuildContext context,
+    ErrorNotificationBloc errorNotificationBloc,
+  ) {
+    var scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+    errorNotificationBloc.dispatchAction(
+      AddScaffoldMessengerKey(scaffoldMessengerKey: scaffoldMessengerKey),
+    );
+
     return MaterialApp(
       title: 'Flutter Demo',
+      scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: generateMaterialColor(

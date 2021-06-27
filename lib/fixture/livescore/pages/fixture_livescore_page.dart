@@ -363,21 +363,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                       if (state is FixtureLoading) {
                         return Center(child: CircularProgressIndicator());
                       } else if (state is FixtureError) {
-                        var message = (state as FixtureError).message;
-                        if (_fixtureLivescoreBloc.latestReadyState == null) {
-                          return Center(child: Text(message));
-                        } else {
-                          WidgetsBinding.instance.addPostFrameCallback(
-                            (_) {
-                              _fixtureLivescoreBloc.replayLatestReadyState();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(message)),
-                              );
-                            },
-                          );
-
-                          state = _fixtureLivescoreBloc.latestReadyState;
-                        }
+                        return Center(child: Text(state.message));
                       }
 
                       var fixture = (state as FixtureReady).fixture;
