@@ -20,9 +20,9 @@ class DbConfigurator {
   Database get db => _db;
 
   Future _open() async {
-    await deleteDatabase(
-      FlutterConfig.get('DATABASE'),
-    ); // @@!!: Remove for prod!
+    if (FlutterConfig.get('ENVIRONMENT').toLowerCase() == 'development') {
+      await deleteDatabase(FlutterConfig.get('DATABASE'));
+    }
 
     _db = await openDatabase(
       FlutterConfig.get('DATABASE'),

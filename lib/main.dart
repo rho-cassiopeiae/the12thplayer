@@ -29,7 +29,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await FlutterConfig.loadEnvVariables();
-  await DefaultCacheManager().emptyCache(); // @@TODO: Remove in prod.
+
+  if (FlutterConfig.get('ENVIRONMENT').toLowerCase() == 'development') {
+    await DefaultCacheManager().emptyCache();
+  }
 
   AwesomeNotifications().initialize(
     null,

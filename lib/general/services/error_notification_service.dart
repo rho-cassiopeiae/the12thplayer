@@ -14,7 +14,6 @@ class ErrorNotificationService {
     _scaffoldMessengerKey.currentState.showSnackBar(
       SnackBar(
         content: Text(message),
-        behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 2),
       ),
     );
