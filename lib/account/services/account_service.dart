@@ -22,8 +22,7 @@ class AccountService {
   final IAccountApiService _accountApiService;
   final IImageService _imageService;
 
-  PolicyExecutor3<ConnectionError, ServerError, AuthenticationTokenExpiredError>
-      _apiPolicy;
+  Policy _apiPolicy;
 
   AccountService(
     this._storage,
@@ -31,7 +30,7 @@ class AccountService {
     this._accountApiService,
     this._imageService,
   ) {
-    _apiPolicy = Policy.on<ConnectionError>(
+    _apiPolicy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -57,7 +56,7 @@ class AccountService {
           afterDoing: refreshAccessToken,
         ),
       ],
-    );
+    ).build();
   }
 
   Future<Either<Error, AccountVm>> loadAccount() async {

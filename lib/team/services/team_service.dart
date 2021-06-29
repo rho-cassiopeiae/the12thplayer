@@ -15,10 +15,10 @@ class TeamService {
   final Storage _storage;
   final ITeamApiService _teamApiService;
 
-  PolicyExecutor2<ConnectionError, ServerError> _apiPolicy;
+  Policy _apiPolicy;
 
   TeamService(this._storage, this._teamApiService) {
-    _apiPolicy = Policy.on<ConnectionError>(
+    _apiPolicy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -36,7 +36,7 @@ class TeamService {
           ),
         ),
       ],
-    );
+    ).build();
   }
 
   Future<Either<Error, TeamSquadVm>> loadTeamSquad() async {

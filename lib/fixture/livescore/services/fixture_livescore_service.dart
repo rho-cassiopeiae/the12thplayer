@@ -20,8 +20,8 @@ class FixtureLivescoreService {
   final AccountService _accountService;
   final ErrorNotificationService _errorNotificationService;
 
-  PolicyExecutor2<ConnectionError, ServerError> _apiPolicy;
-  PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
+  Policy _apiPolicy;
+  Policy _wsApiPolicy;
 
   FixtureLivescoreService(
     this._storage,
@@ -29,7 +29,7 @@ class FixtureLivescoreService {
     this._accountService,
     this._errorNotificationService,
   ) {
-    _apiPolicy = Policy.on<ConnectionError>(
+    _apiPolicy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -47,9 +47,9 @@ class FixtureLivescoreService {
           ),
         ),
       ],
-    );
+    ).build();
 
-    _wsApiPolicy = Policy.on<AuthenticationTokenExpiredError>(
+    _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
       strategies: [
         When(
           any,
@@ -57,7 +57,7 @@ class FixtureLivescoreService {
           afterDoing: _accountService.refreshAccessToken,
         ),
       ],
-    );
+    ).build();
   }
 
   Future<Either<Error, FixtureFullVm>> loadFixture(

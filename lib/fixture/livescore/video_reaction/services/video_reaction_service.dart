@@ -23,9 +23,8 @@ class VideoReactionService {
   final IVimeoApiService _vimeoApiService;
   final AccountService _accountService;
 
-  PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
-  PolicyExecutor3<ConnectionError, ServerError, AuthenticationTokenExpiredError>
-      _apiPolicy;
+  Policy _wsApiPolicy;
+  Policy _apiPolicy;
 
   int _notificationId = 1;
 
@@ -35,7 +34,7 @@ class VideoReactionService {
     this._vimeoApiService,
     this._accountService,
   ) {
-    _wsApiPolicy = Policy.on<AuthenticationTokenExpiredError>(
+    _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
       strategies: [
         When(
           any,
@@ -43,9 +42,9 @@ class VideoReactionService {
           afterDoing: _accountService.refreshAccessToken,
         ),
       ],
-    );
+    ).build();
 
-    _apiPolicy = Policy.on<ConnectionError>(
+    _apiPolicy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -71,7 +70,7 @@ class VideoReactionService {
           afterDoing: _accountService.refreshAccessToken,
         ),
       ],
-    );
+    ).build();
   }
 
   Future<Either<Error, FixtureVideoReactionsVm>> loadVideoReactions(

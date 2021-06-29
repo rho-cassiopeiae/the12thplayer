@@ -17,14 +17,14 @@ class LiveCommentaryFeedService {
   final ILiveCommentaryFeedApiService _liveCommentaryFeedApiService;
   final AccountService _accountService;
 
-  PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
+  Policy _wsApiPolicy;
 
   LiveCommentaryFeedService(
     this._storage,
     this._liveCommentaryFeedApiService,
     this._accountService,
   ) {
-    _wsApiPolicy = Policy.on<AuthenticationTokenExpiredError>(
+    _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
       strategies: [
         When(
           any,
@@ -32,7 +32,7 @@ class LiveCommentaryFeedService {
           afterDoing: _accountService.refreshAccessToken,
         ),
       ],
-    );
+    ).build();
   }
 
   Future<Either<Error, FixtureLiveCommentaryFeedsVm>> loadLiveCommentaryFeeds(

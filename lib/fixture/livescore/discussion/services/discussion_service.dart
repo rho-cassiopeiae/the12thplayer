@@ -16,7 +16,7 @@ class DiscussionService {
   final IDiscussionApiService _discussionApiService;
   final AccountService _accountService;
 
-  PolicyExecutor<AuthenticationTokenExpiredError> _wsApiPolicy;
+  Policy _wsApiPolicy;
 
   final Map<String, Color> _usernameToColor = {};
 
@@ -25,7 +25,7 @@ class DiscussionService {
     this._discussionApiService,
     this._accountService,
   ) {
-    _wsApiPolicy = Policy.on<AuthenticationTokenExpiredError>(
+    _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
       strategies: [
         When(
           any,
@@ -33,7 +33,7 @@ class DiscussionService {
           afterDoing: _accountService.refreshAccessToken,
         ),
       ],
-    );
+    ).build();
   }
 
   Future<Either<Error, FixtureDiscussionsVm>> loadDiscussions(

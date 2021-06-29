@@ -2,11 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+bool any(_) => true;
+
 class When<TException> {
   final bool Function(TException) condition;
   final int repeat;
   final Future Function() afterDoing;
   final Duration Function(int) withInterval;
+
+  Type get _exceptionType => TException;
+
+  bool _evaluateCondition(dynamic error) => condition(error);
 
   When(
     this.condition, {
@@ -16,10 +22,22 @@ class When<TException> {
   });
 }
 
-bool any(_) => true;
+class _Configuration {
+  final Type exceptionType;
+  final int maxRepeats;
+  final List<When> strategies;
 
-class Policy {
-  static PolicyExecutor<TException> on<TException>({
+  _Configuration(
+    this.exceptionType,
+    this.maxRepeats,
+    this.strategies,
+  );
+}
+
+class PolicyBuilder {
+  final List<_Configuration> _configurations = [];
+
+  PolicyBuilder on<TException>({
     int maxRepeats,
     @required List<When<TException>> strategies,
   }) {
@@ -30,238 +48,65 @@ class Policy {
       );
     }
 
-    return PolicyExecutor(maxRepeats, strategies);
-  }
-}
-
-class PolicyExecutor<TException1> {
-  final int _maxRepeats;
-  final List<When<TException1>> _strategies;
-
-  PolicyExecutor(this._maxRepeats, this._strategies);
-
-  PolicyExecutor2<TException1, TException2> on<TException2>({
-    int maxRepeats,
-    @required List<When<TException2>> strategies,
-  }) {
-    if (maxRepeats == null) {
-      maxRepeats = strategies.fold(
-        0,
-        (repeats, strategy) => repeats + strategy.repeat,
-      );
-    }
-
-    return PolicyExecutor2(
-      _maxRepeats + maxRepeats,
-      _strategies,
-      strategies,
+    _configurations.add(
+      _Configuration(
+        strategies.first._exceptionType,
+        maxRepeats,
+        strategies,
+      ),
     );
+
+    return this;
   }
 
-  Future<TResult> execute<TResult>(FutureOr<TResult> Function() f) async {
-    int totalRepeats = -1;
-    var repeats = List<int>.filled(_strategies.length, -1);
-
-    outer:
-    while (true) {
-      try {
-        TResult result = await f();
-        return result;
-      } on TException1 catch (error) {
-        if (++totalRepeats < _maxRepeats) {
-          for (int i = 0; i < _strategies.length; ++i) {
-            var strategy = _strategies[i];
-            if (strategy.condition(error)) {
-              if (++repeats[i] < strategy.repeat) {
-                if (strategy.afterDoing != null) {
-                  await strategy.afterDoing();
-                }
-                if (strategy.withInterval != null) {
-                  await Future.delayed(strategy.withInterval(repeats[i]));
-                }
-                continue outer;
-              }
-
-              rethrow;
-            }
-          }
-        }
-
-        rethrow;
-      }
-    }
-  }
-}
-
-class PolicyExecutor2<TException1, TException2> {
-  final int _maxRepeats;
-  final List<When<TException1>> _strategies1;
-  final List<When<TException2>> _strategies2;
-
-  PolicyExecutor2(
-    this._maxRepeats,
-    this._strategies1,
-    this._strategies2,
-  );
-
-  PolicyExecutor3<TException1, TException2, TException3> on<TException3>({
-    int maxRepeats,
-    @required List<When<TException3>> strategies,
-  }) {
-    if (maxRepeats == null) {
-      maxRepeats = strategies.fold(
-        0,
-        (repeats, strategy) => repeats + strategy.repeat,
+  Policy build() => Policy(
+        _configurations.fold(0, (repeats, c) => repeats + c.maxRepeats),
+        _configurations,
       );
-    }
-
-    return PolicyExecutor3(
-      _maxRepeats + maxRepeats,
-      _strategies1,
-      _strategies2,
-      strategies,
-    );
-  }
-
-  Future<TResult> execute<TResult>(FutureOr<TResult> Function() f) async {
-    int totalRepeats = -1;
-    var repeats1 = List<int>.filled(_strategies1.length, -1);
-    var repeats2 = List<int>.filled(_strategies2.length, -1);
-
-    outer:
-    while (true) {
-      try {
-        TResult result = await f();
-        return result;
-      } on TException1 catch (error) {
-        if (++totalRepeats < _maxRepeats) {
-          for (int i = 0; i < _strategies1.length; ++i) {
-            var strategy = _strategies1[i];
-            if (strategy.condition(error)) {
-              if (++repeats1[i] < strategy.repeat) {
-                if (strategy.afterDoing != null) {
-                  await strategy.afterDoing();
-                }
-                if (strategy.withInterval != null) {
-                  await Future.delayed(strategy.withInterval(repeats1[i]));
-                }
-                continue outer;
-              }
-
-              rethrow;
-            }
-          }
-        }
-
-        rethrow;
-      } on TException2 catch (error) {
-        if (++totalRepeats < _maxRepeats) {
-          for (int i = 0; i < _strategies2.length; ++i) {
-            var strategy = _strategies2[i];
-            if (strategy.condition(error)) {
-              if (++repeats2[i] < strategy.repeat) {
-                if (strategy.afterDoing != null) {
-                  await strategy.afterDoing();
-                }
-                if (strategy.withInterval != null) {
-                  await Future.delayed(strategy.withInterval(repeats2[i]));
-                }
-                continue outer;
-              }
-
-              rethrow;
-            }
-          }
-        }
-
-        rethrow;
-      }
-    }
-  }
 }
 
-class PolicyExecutor3<TException1, TException2, TException3> {
+class Policy {
   final int _maxRepeats;
-  final List<When<TException1>> _strategies1;
-  final List<When<TException2>> _strategies2;
-  final List<When<TException3>> _strategies3;
+  final List<_Configuration> _configurations;
 
-  PolicyExecutor3(
-    this._maxRepeats,
-    this._strategies1,
-    this._strategies2,
-    this._strategies3,
-  );
+  Policy(this._maxRepeats, this._configurations);
 
   Future<TResult> execute<TResult>(FutureOr<TResult> Function() f) async {
     int totalRepeats = -1;
-    var repeats1 = List<int>.filled(_strategies1.length, -1);
-    var repeats2 = List<int>.filled(_strategies2.length, -1);
-    var repeats3 = List<int>.filled(_strategies3.length, -1);
+    var repeats = _configurations
+        .map((c) => List<int>.filled(c.strategies.length, -1))
+        .toList();
 
     outer:
     while (true) {
       try {
         TResult result = await f();
         return result;
-      } on TException1 catch (error) {
+      } catch (error) {
         if (++totalRepeats < _maxRepeats) {
-          for (int i = 0; i < _strategies1.length; ++i) {
-            var strategy = _strategies1[i];
-            if (strategy.condition(error)) {
-              if (++repeats1[i] < strategy.repeat) {
-                if (strategy.afterDoing != null) {
-                  await strategy.afterDoing();
+          for (int i = 0; i < _configurations.length; ++i) {
+            var c = _configurations[i];
+            if (error.runtimeType == c.exceptionType) {
+              for (int j = 0; j < c.strategies.length; ++j) {
+                var strategy = c.strategies[j];
+                if (strategy._evaluateCondition(error)) {
+                  if (++repeats[i][j] < strategy.repeat) {
+                    if (strategy.afterDoing != null) {
+                      await strategy.afterDoing();
+                    }
+                    if (strategy.withInterval != null) {
+                      await Future.delayed(
+                        strategy.withInterval(repeats[i][j]),
+                      );
+                    }
+                    continue outer;
+                  }
+
+                  break;
                 }
-                if (strategy.withInterval != null) {
-                  await Future.delayed(strategy.withInterval(repeats1[i]));
-                }
-                continue outer;
               }
 
-              rethrow;
-            }
-          }
-        }
-
-        rethrow;
-      } on TException2 catch (error) {
-        if (++totalRepeats < _maxRepeats) {
-          for (int i = 0; i < _strategies2.length; ++i) {
-            var strategy = _strategies2[i];
-            if (strategy.condition(error)) {
-              if (++repeats2[i] < strategy.repeat) {
-                if (strategy.afterDoing != null) {
-                  await strategy.afterDoing();
-                }
-                if (strategy.withInterval != null) {
-                  await Future.delayed(strategy.withInterval(repeats2[i]));
-                }
-                continue outer;
-              }
-
-              rethrow;
-            }
-          }
-        }
-
-        rethrow;
-      } on TException3 catch (error) {
-        if (++totalRepeats < _maxRepeats) {
-          for (int i = 0; i < _strategies3.length; ++i) {
-            var strategy = _strategies3[i];
-            if (strategy.condition(error)) {
-              if (++repeats3[i] < strategy.repeat) {
-                if (strategy.afterDoing != null) {
-                  await strategy.afterDoing();
-                }
-                if (strategy.withInterval != null) {
-                  await Future.delayed(strategy.withInterval(repeats3[i]));
-                }
-                continue outer;
-              }
-
-              rethrow;
+              break;
             }
           }
         }

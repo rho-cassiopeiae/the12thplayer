@@ -18,13 +18,13 @@ class FixtureCalendarService {
   final Storage _storage;
   final IFixtureApiService _fixtureApiService;
 
-  PolicyExecutor2<ConnectionError, ServerError> _apiPolicy;
+  Policy _apiPolicy;
 
   FixtureCalendarService(
     this._storage,
     this._fixtureApiService,
   ) {
-    _apiPolicy = Policy.on<ConnectionError>(
+    _apiPolicy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -42,7 +42,7 @@ class FixtureCalendarService {
           ),
         ),
       ],
-    );
+    ).build();
   }
 
   Stream<Either<Error, FixtureCalendarVm>> loadFixtures(
