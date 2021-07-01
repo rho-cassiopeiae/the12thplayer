@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../models/dto/team_dto.dart';
 import '../../general/errors/api_error.dart';
 import '../../general/errors/connection_error.dart';
 import '../../general/errors/server_error.dart';
@@ -42,6 +43,18 @@ class TeamApiService implements ITeamApiService {
     print(error);
 
     return ApiError();
+  }
+
+  @override
+  Future<Iterable<TeamDto>> getTeamsWithCommunities() async {
+    try {
+      var response = await _dio.get('/api/teams');
+
+      return (response.data['data'] as List<dynamic>)
+          .map((teamMap) => TeamDto.fromMap(teamMap));
+    } on DioError catch (error) {
+      throw _wrapError(error);
+    }
   }
 
   @override

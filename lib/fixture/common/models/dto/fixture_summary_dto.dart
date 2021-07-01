@@ -1,7 +1,7 @@
 import 'game_time_dto.dart';
 import 'score_dto.dart';
 import 'season_dto.dart';
-import 'team_dto.dart';
+import '../../../../team/models/dto/team_dto.dart';
 import 'venue_dto.dart';
 
 class FixtureSummaryDto {

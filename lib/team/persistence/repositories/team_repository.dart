@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../models/entities/team_entity.dart';
 import '../tables/team_table.dart';
 import '../../interfaces/iteam_repository.dart';
-import '../db_configurator.dart';
+import '../../../general/persistence/db_configurator.dart';
 
 class TeamRepository implements ITeamRepository {
   DbConfigurator _dbConfigurator;
@@ -27,6 +27,16 @@ class TeamRepository implements ITeamRepository {
       whereArgs: [1],
     );
 
-    return TeamEntity.fromMap(rows.first);
+    return rows.isNotEmpty ? TeamEntity.fromMap(rows.first) : null;
+  }
+
+  Future selectTeam(TeamEntity team) async {
+    await _dbConfigurator.ensureOpen();
+
+    await _db.insert(
+      TeamTable.tableName,
+      team.toMap(true),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 }

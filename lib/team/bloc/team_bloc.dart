@@ -8,6 +8,12 @@ import 'team_states.dart';
 class TeamBloc extends Bloc<TeamAction> {
   final TeamService _teamService;
 
+  StreamController<TeamsWithCommunitiesState>
+      _teamsWithCommunitiesStateChannel =
+      StreamController<TeamsWithCommunitiesState>.broadcast();
+  Stream<TeamsWithCommunitiesState> get teamsWithCommunitiesState$ =>
+      _teamsWithCommunitiesStateChannel.stream;
+
   StreamController<TeamSquadState> _squadStateChannel =
       StreamController<TeamSquadState>.broadcast();
   Stream<TeamSquadState> get squadState$ => _squadStateChannel.stream;
@@ -18,7 +24,13 @@ class TeamBloc extends Bloc<TeamAction> {
 
   TeamBloc(this._teamService) {
     actionChannel.stream.listen((action) {
-      if (action is LoadTeamSquad) {
+      if (action is CheckSomeTeamSelected) {
+        _checkSomeTeamSelected(action);
+      } else if (action is LoadTeamsWithCommunities) {
+        _loadTeamsWithCommunities(action);
+      } else if (action is SelectTeam) {
+        _selectTeam(action);
+      } else if (action is LoadTeamSquad) {
         _loadTeamSquad(action);
       } else if (action is LoadPlayerPerformanceRatings) {
         _loadPlayerPerformanceRatings(action);
@@ -32,10 +44,37 @@ class TeamBloc extends Bloc<TeamAction> {
   void dispose({TeamAction cleanupAction}) {
     actionChannel.close();
     actionChannel = null;
+    _teamsWithCommunitiesStateChannel.close();
+    _teamsWithCommunitiesStateChannel = null;
     _squadStateChannel.close();
     _squadStateChannel = null;
     _memberStateChannel.close();
     _memberStateChannel = null;
+  }
+
+  void _checkSomeTeamSelected(CheckSomeTeamSelected action) async {
+    var selected = await _teamService.checkSomeTeamSelected();
+    action.complete(CheckSomeTeamSelectedResult(selected: selected));
+  }
+
+  void _loadTeamsWithCommunities(LoadTeamsWithCommunities action) async {
+    var result = await _teamService.loadTeamsWithCommunities();
+
+    var state = result.fold(
+      (error) => TeamsWithCommunitiesError(message: error.toString()),
+      (teams) => TeamsWithCommunitiesReady(teams: teams),
+    );
+
+    _teamsWithCommunitiesStateChannel?.add(state);
+  }
+
+  void _selectTeam(SelectTeam action) async {
+    await _teamService.selectTeam(
+      action.teamId,
+      action.teamName,
+      action.teamLogoUrl,
+    );
+    action.complete(SelectTeamReady());
   }
 
   void _loadTeamSquad(LoadTeamSquad action) async {

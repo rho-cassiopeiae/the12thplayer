@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../dto/team_dto.dart';
+
 class TeamVm {
   final int id;
   final String name;
@@ -10,4 +12,9 @@ class TeamVm {
     @required this.name,
     @required this.logoUrl,
   });
+
+  TeamVm.fromDto(TeamDto team)
+      : id = team.id,
+        name = team.name,
+        logoUrl = team.logoUrl;
 }

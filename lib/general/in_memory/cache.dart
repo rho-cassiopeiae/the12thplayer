@@ -1,5 +1,5 @@
 import '../../fixture/livescore/discussion/models/vm/discussion_entry_vm.dart';
-import '../models/entities/team_entity.dart';
+import '../../team/models/entities/team_entity.dart';
 import '../../account/models/entities/account_entity.dart';
 
 class Cache {

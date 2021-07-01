@@ -10,7 +10,7 @@ import '../../fixture/livescore/live_commentary_feed/persistence/tables/live_com
 import '../../fixture/livescore/live_commentary_recording/persistence/tables/live_commentary_recording_entry_table.dart';
 import '../../fixture/livescore/live_commentary_recording/persistence/tables/live_commentary_recording_table.dart';
 import '../../fixture/common/persistence/tables/fixture_table.dart';
-import 'tables/team_table.dart';
+import '../../team/persistence/tables/team_table.dart';
 import '../../account/persistence/tables/account_table.dart';
 
 class DbConfigurator {
@@ -60,19 +60,6 @@ class DbConfigurator {
       await txn.execute(AccountTable.createTableCommand);
 
       await txn.execute(TeamTable.createTableCommand);
-      // @@TODO: Allow to choose between multiple teams on first app startup.
-      // Should be able to switch team at any point.
-      // For now there is only one supported team.
-      await txn.insert(
-        TeamTable.tableName,
-        {
-          TeamTable.id: 18,
-          TeamTable.name: 'Chelsea',
-          TeamTable.logoUrl:
-              'https://cdn.sportmonks.com/images/soccer/teams/18/18.png',
-          TeamTable.currentlySelected: 1,
-        },
-      );
 
       await txn.execute(FixtureTable.createTableCommand);
 

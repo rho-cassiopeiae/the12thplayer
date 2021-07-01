@@ -11,7 +11,7 @@ import '../widgets/discussions.dart';
 import '../widgets/live_commentary_feeds.dart';
 import '../widgets/match_stats.dart';
 import '../widgets/performance_ratings.dart';
-import '../../common/models/vm/team_vm.dart';
+import '../../../team/models/vm/team_vm.dart';
 import '../widgets/lineups.dart';
 import '../widgets/match_events.dart';
 import '../widgets/submenu_icon_tile.dart';

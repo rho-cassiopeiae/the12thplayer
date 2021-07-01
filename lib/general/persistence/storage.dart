@@ -15,8 +15,8 @@ import '../../fixture/livescore/live_commentary_feed/models/entities/fixture_liv
 import '../../fixture/livescore/interfaces/ifixture_repository.dart';
 import '../../fixture/calendar/interfaces/ifixture_calendar_repository.dart';
 import '../../fixture/common/models/entities/fixture_entity.dart';
-import '../interfaces/iteam_repository.dart';
-import '../models/entities/team_entity.dart';
+import '../../team/interfaces/iteam_repository.dart';
+import '../../team/models/entities/team_entity.dart';
 import '../../account/interfaces/iaccount_repository.dart';
 import '../../account/models/entities/account_entity.dart';
 import '../in_memory/cache.dart';
@@ -61,10 +61,17 @@ class Storage {
     var team = _cache.loadCurrentTeam();
     if (team == null) {
       team = await _teamRepository.loadCurrentTeam();
-      _cache.saveCurrentTeam(team);
+      if (team != null) {
+        _cache.saveCurrentTeam(team);
+      }
     }
 
     return team;
+  }
+
+  Future selectTeam(TeamEntity team) async {
+    await _teamRepository.selectTeam(team);
+    _cache.saveCurrentTeam(team);
   }
 
   Future<Iterable<FixtureEntity>> loadFixturesForTeamInBetween(

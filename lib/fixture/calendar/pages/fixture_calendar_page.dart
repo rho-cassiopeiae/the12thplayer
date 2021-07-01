@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../livescore/pages/fixture_livescore_page.dart';
-import '../../common/models/vm/team_vm.dart';
+import '../../../team/models/vm/team_vm.dart';
 import '../bloc/fixture_calendar_actions.dart';
 import '../bloc/fixture_calendar_bloc.dart';
 import '../bloc/fixture_calendar_states.dart';

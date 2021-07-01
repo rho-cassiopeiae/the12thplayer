@@ -1,9 +1,9 @@
 import 'game_time_vm.dart';
 import '../entities/fixture_entity.dart';
-import '../../../../general/models/entities/team_entity.dart';
+import '../../../../team/models/entities/team_entity.dart';
 import 'league_vm.dart';
 import 'score_vm.dart';
-import 'team_vm.dart';
+import '../../../../team/models/vm/team_vm.dart';
 import 'venue_vm.dart';
 
 class FixtureSummaryVm {

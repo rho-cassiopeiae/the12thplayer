@@ -2,7 +2,7 @@ import '../../../common/models/entities/fixture_entity.dart';
 import '../../../common/models/vm/fixture_summary_vm.dart';
 import '../../models/vm/performance_ratings_vm.dart';
 import '../../models/vm/stats_vm.dart';
-import '../../../../general/models/entities/team_entity.dart';
+import '../../../../team/models/entities/team_entity.dart';
 import 'colors_vm.dart';
 import 'lineups_vm.dart';
 import 'match_events_vm.dart';

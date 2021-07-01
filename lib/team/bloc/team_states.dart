@@ -1,9 +1,34 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/vm/team_vm.dart';
 import '../models/vm/fixture_performance_rating_vm.dart';
 import '../models/vm/team_squad_vm.dart';
 
 abstract class TeamState {}
+
+class CheckSomeTeamSelectedResult extends TeamState {
+  final bool selected;
+
+  CheckSomeTeamSelectedResult({@required this.selected});
+}
+
+abstract class TeamsWithCommunitiesState extends TeamState {}
+
+class TeamsWithCommunitiesLoading extends TeamsWithCommunitiesState {}
+
+class TeamsWithCommunitiesReady extends TeamsWithCommunitiesState {
+  final List<TeamVm> teams;
+
+  TeamsWithCommunitiesReady({@required this.teams});
+}
+
+class TeamsWithCommunitiesError extends TeamsWithCommunitiesState {
+  final String message;
+
+  TeamsWithCommunitiesError({@required this.message});
+}
+
+class SelectTeamReady extends TeamState {}
 
 abstract class TeamSquadState extends TeamState {}
 

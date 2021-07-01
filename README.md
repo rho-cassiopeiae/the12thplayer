@@ -236,6 +236,6 @@ If the call throws an exception not handled by the policy or fails to execute su
 
 ## Try it out
 
-Before launching the app you need to start the server. For details on how to do it refer to the "Try it out" section of the [backend](https://github.com/rho-cassiopeiae/The12thPlayerBackend "backend") repository. Once done you simply need to open _.env_ file and replace DUMMY_IP with your server's private IP address. Instructions on how to find it out are given in that same section.
+Before launching the app you need to start the server. For details on how to do it refer to the "Try it out" section of the [backend](https://github.com/rho-cassiopeiae/The12thPlayerBackend "backend") repository. Once done you simply need to open _.env_ file and replace 192.168.0.3 (lines 3, 4, and 5) with your server's private IP address. Instructions on how to find it out are given in that same section.
 
 Note that in development environment for testing purposes the application's local db and image cache get cleaned up on app startup. So, if you sign up, close the app, and then open it again, you will have to login with your credentials.
