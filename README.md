@@ -2,7 +2,33 @@
 
 **The12thPlayer** mobile app written in Flutter. The goal of the application is to bring football fans closer together by providing a friendly, feature-rich platform where they can interact with each other in many different ways. The app does all the usual football app things like live match events, lineups, and stats, but its main focus is on fans discussing football with other fellow fans. In particular, you can chat about a game in a discussion room, watch post-match fan video reactions and post your own, rate players' and managers' performances, follow other users' live commentary feeds (maybe even create your own if you are up to it), and more.
 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/84779039/124240120-03f0a780-db4d-11eb-9d1c-0a66f70e0dd3.gif" width="24%" />
+  <img src="https://user-images.githubusercontent.com/84779039/124250863-dbba7600-db57-11eb-8af8-89496d032f5a.gif" width="24%" />
+  <img src="https://user-images.githubusercontent.com/84779039/124250885-e1b05700-db57-11eb-9db7-eb5b3281ab3c.gif" width="24%" />
+  <img src="https://user-images.githubusercontent.com/84779039/124250859-da894900-db57-11eb-9b16-84f7dddb57b7.gif" width="24%" />
+</p>
+
+<details>
+  <summary>More gifs</summary>
+
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/84779039/124250869-de1cd000-db57-11eb-9ff9-d6a6cbf2bd1d.gif" width="24%" />
+  <img src="https://user-images.githubusercontent.com/84779039/124250850-d826ef00-db57-11eb-9cae-c0771e366260.gif" width="24%" />
+  <img src="https://user-images.githubusercontent.com/84779039/124250907-e5dc7480-db57-11eb-84f3-6d23aede8d11.gif" width="24%" />
+</p>
+</details>
+
 For the server side of the application go to [this](https://github.com/rho-cassiopeiae/The12thPlayerBackend "this") repository.
+
+## Table of contents
+
+- [Features](#features)
+- [Technical details](#technical-details)
+  - [State management](#state-management)
+  - [Error handling](#error-handling)
+- [Try it out](#try-it-out)
+- [Keep in mind](#keep-in-mind)
 
 ## Features
 
@@ -24,7 +50,7 @@ This Flutter app is in many ways a learning project. Having never used Flutter b
 
 The current king of state management in Flutter is provider package, with riverpod angling to usurp it. I used provider to implement a couple of features of the app in order to test it on something more than just the standard "counter" example, but in the end decided to cut it out. I have several problems with provider, two biggest of which are the way it handles providers depending on other providers (using proxies), which is hella ugly, and the fact that provider actively pollutes widget tree with junk.
 
-Widget tree in Flutter is supposed to be a block-schema representation of the UI that you get on screen. But using provider fills it with widgets that have nothing to do with UI, so you no longer have a one-to-one correspondence between what you have in the code and what you actually see. Provider widgets are purely functional widgets, so, in my opinion, have no place in _UI_ tree. There are better ways for widgets in the tree to get access to services. I think the main reason the creator of the package opted for this design was because he wanted to make it look native to Flutter. After all, this "inherited widget" mechanism is exactly how the built-in cross-cutting concerns widgets are implemented — `Navigator`, `MediaQuery`, `Theme`, etc. But the difference between the built-in and provider widgets is the fact that the former are actually directly related to UI (`Navigator` controls which page to display, `Theme` — color and font settings, etc.), so they _do_ belong in UI tree.
+Widget tree in Flutter is supposed to be a block-schema representation of the UI that you get on screen. But using provider fills it with widgets that have nothing to do with UI, so you no longer have a one-to-one correspondence between what you have in code and what you actually see. Provider widgets are purely functional widgets, so, in my opinion, do not belong in _UI_ tree. There are better ways for widgets in the tree to get access to services. I think the main reason the creator of the package opted for this design was because he wanted to make it look native to Flutter. After all, this "inherited widget" mechanism is exactly how the built-in cross-cutting concerns widgets are implemented — `Navigator`, `MediaQuery`, `Theme`, etc. But the difference between the built-in and provider widgets is the fact that the former are actually directly related to UI (`Navigator` controls which page to display, `Theme` — color and font settings, etc.), so they _do_ belong in UI tree.
 
 After provider I tried bloc. Bloc feels a lot less magical than provider, and it's not really provider's equal alternative. Bloc solves the problem of "how to interact with a service", but it doesn't solve the "how to get access to said service in the first place". Provider solves both. Bloc is a pattern, and there are several bloc packages that implement it. I tested some of them but ultimately decided against using any, since, in my opinion, they don't bring enough value to justify introducing a new dependency.
 
@@ -50,7 +76,6 @@ If you want to create an action, dispatching of which results in a response stat
 ```dart
 class CalendarReady extends CalendarState {
   final Calendar calendar;
-
   CalendarReady(this.calendar);
 }
 
@@ -70,7 +95,7 @@ var state = await action.state;
 
 When the action is handled you call `action.complete(CalendarReady(calendar))` to return the result.
 
-The above code basically allows some calendar actions to "bring their own response transport", which doesn't necessarily have to be a future, you can use stream as transport as well.
+The above code basically allows some calendar actions to "bring their own response transport", which doesn't necessarily have to be future, you can use streams as transport as well.
 
 I've seen people working around this bloc limitation differently — by foregoing the use of input actions for some features and, instead, simply calling public methods on a bloc class. But if you do this you may as well don't use bloc at all, since its main benefit is complete decoupling which is achieved by only accepting input actions and returning output states via streams.
 
@@ -102,7 +127,6 @@ class CalendarBloc {
 class Injector {
   void configure() {
     var container = KiwiContainer(); // KiwiContainer is a singleton
-
     // register as singletons, can also register as transient
     container.registerSingleton((c) => CalendarService());
     container.registerSingleton((c) => CalendarBloc(c<CalendarService>()));
@@ -136,8 +160,7 @@ mixin DependencyResolver<TDependency> {
   TDependency resolve() => KiwiContainer().resolve<TDependency>();
 }
 
-abstract class StatelessWidgetInjected<TDependency> extends StatelessWidget
-    with DependencyResolver<TDependency> {
+abstract class StatelessWidgetInjected<TDependency> extends StatelessWidget with DependencyResolver<TDependency> {
   @override
   Widget build(BuildContext context) => buildInjected(context, resolve());
 
@@ -226,9 +249,8 @@ var policy = PolicyBuilder()
 
 var result = await policy.execute(() async {
   // Do work here.
-  // If throws SomeError, will be repeated according to the strategies.
-  // If throws AuthenticationTokenExpiredError, will be repeated after
-  // executing refreshAccessToken.
+  // If throws SomeError, the execution will be repeated according to the strategies.
+  // If throws AuthenticationTokenExpiredError, will be repeated after executing refreshAccessToken.
 });
 ```
 
@@ -239,3 +261,9 @@ If the call throws an exception not handled by the policy or fails to execute su
 Before launching the app you need to start the server. For details on how to do it refer to the "Try it out" section of the [backend](https://github.com/rho-cassiopeiae/The12thPlayerBackend "backend") repository. Once done you simply need to open _.env_ file and replace 192.168.0.3 (lines 3, 4, and 5) with your server's private IP address. Instructions on how to find it out are given in that same section.
 
 Note that in development environment for testing purposes the application's local db and image cache get cleaned up on app startup. So, if you sign up, close the app, and then open it again, you will have to login with your credentials.
+
+## Keep in mind
+
+- This is work in progress. There are still many essential things missing — input validation, tests, graceful error display, lots of UI elements, better caching — just to name a few. Currently the app is **not production ready**.
+- UI colors are supposed to change depending on which team community is selected. At the moment though all colors are simply hardcoded.
+- The app hasn't been tested on IOS devices (even an emulator) as of yet, since I don't have a Mac, which is required to build an actual executable file. The app itself doesn't have any platform-specific code, though there are a couple of dependencies that do. They have been configured according to their instructions in order to work on both platforms, so the app should work on IOS with no adjustments.

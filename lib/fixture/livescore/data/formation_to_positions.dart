@@ -1,16 +1,16 @@
 var formationToPositions = {
   '3-1-4-2': {
-    '1': {'top': 25},
-    '2': {'top': 90, 'left': 60},
-    '3': {'top': 90},
-    '4': {'top': 90, 'right': 60},
-    '5': {'top': 170},
-    '6': {'top': 240, 'left': 5},
-    '7': {'top': 240, 'left': 108},
-    '8': {'top': 240, 'right': 108},
-    '9': {'top': 240, 'right': 5},
-    '10': {'top': 360, 'left': 100},
-    '11': {'top': 360, 'right': 100}
+    '1': {'top': 25, 'radius': 22},
+    '2': {'top': 90, 'left': 60, 'radius': 24},
+    '3': {'top': 90, 'radius': 24},
+    '4': {'top': 90, 'right': 60, 'radius': 24},
+    '5': {'top': 170, 'radius': 26},
+    '6': {'top': 240, 'left': 5, 'radius': 28},
+    '7': {'top': 240, 'left': 108, 'radius': 28},
+    '8': {'top': 240, 'right': 108, 'radius': 28},
+    '9': {'top': 240, 'right': 5, 'radius': 28},
+    '10': {'top': 360, 'left': 100, 'radius': 30},
+    '11': {'top': 360, 'right': 100, 'radius': 30}
   },
   '3-2-4-1': {
     '1': {'top': 25},
@@ -52,17 +52,17 @@ var formationToPositions = {
     '11': {'top': 300, 'right': 15}
   },
   '3-4-1-2': {
-    '1': {'top': 25},
-    '2': {'top': 90, 'left': 60},
-    '3': {'top': 90},
-    '4': {'top': 90, 'right': 60},
-    '5': {'top': 220, 'left': 5},
-    '6': {'top': 185, 'left': 100},
-    '7': {'top': 185, 'right': 100},
-    '8': {'top': 220, 'right': 5},
-    '9': {'top': 270},
-    '10': {'top': 360, 'left': 90},
-    '11': {'top': 360, 'right': 90}
+    '1': {'top': 25, 'radius': 22},
+    '2': {'top': 90, 'left': 60, 'radius': 24},
+    '3': {'top': 90, 'radius': 24},
+    '4': {'top': 90, 'right': 60, 'radius': 24},
+    '5': {'top': 220, 'left': 5, 'radius': 27},
+    '6': {'top': 185, 'left': 100, 'radius': 26},
+    '7': {'top': 185, 'right': 100, 'radius': 26},
+    '8': {'top': 220, 'right': 5, 'radius': 27},
+    '9': {'top': 270, 'radius': 29},
+    '10': {'top': 360, 'left': 90, 'radius': 31},
+    '11': {'top': 360, 'right': 90, 'radius': 31}
   },
   '3-4-2-1': {
     '1': {'top': 25, 'radius': 22},
