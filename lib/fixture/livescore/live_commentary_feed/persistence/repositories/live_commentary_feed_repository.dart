@@ -1,13 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../../enums/live_commentary_feed_vote_action.dart';
 import '../../models/entities/live_commentary_feed_entity.dart';
 import '../../models/entities/live_commentary_feed_entry_entity.dart';
 import '../tables/live_commentary_feed_entry_table.dart';
 import '../tables/live_commentary_feed_table.dart';
 import '../../interfaces/ilive_commentary_feed_repository.dart';
-import '../../models/entities/fixture_live_commentary_feed_votes_entity.dart';
-import '../tables/fixture_live_commentary_feed_votes_table.dart';
 import '../../../../../general/persistence/db_configurator.dart';
 
 class LiveCommentaryFeedRepository implements ILiveCommentaryFeedRepository {
@@ -16,80 +13,6 @@ class LiveCommentaryFeedRepository implements ILiveCommentaryFeedRepository {
   Database get _db => _dbConfigurator.db;
 
   LiveCommentaryFeedRepository(this._dbConfigurator);
-
-  @override
-  Future<FixtureLiveCommentaryFeedVotesEntity>
-      loadLiveCommentaryFeedVotesForFixture(
-    int fixtureId,
-    int teamId,
-  ) async {
-    await _dbConfigurator.ensureOpen();
-
-    List<Map<String, dynamic>> rows = await _db.query(
-      FixtureLiveCommentaryFeedVotesTable.tableName,
-      where:
-          '${FixtureLiveCommentaryFeedVotesTable.fixtureId} = ? AND ${FixtureLiveCommentaryFeedVotesTable.teamId} = ?',
-      whereArgs: [fixtureId, teamId],
-    );
-
-    return rows.isEmpty
-        ? FixtureLiveCommentaryFeedVotesEntity.noVotes(
-            fixtureId: fixtureId,
-            teamId: teamId,
-          )
-        : FixtureLiveCommentaryFeedVotesEntity.fromMap(rows.first);
-  }
-
-  @override
-  Future<LiveCommentaryFeedVoteAction> updateVoteActionForLiveCommentaryFeed(
-    int fixtureId,
-    int teamId,
-    int authorId,
-    LiveCommentaryFeedVoteAction voteAction,
-  ) async {
-    await _dbConfigurator.ensureOpen();
-
-    return await _db.transaction(
-      (txn) async {
-        List<Map<String, dynamic>> rows = await txn.query(
-          FixtureLiveCommentaryFeedVotesTable.tableName,
-          where:
-              '${FixtureLiveCommentaryFeedVotesTable.fixtureId} = ? AND ${FixtureLiveCommentaryFeedVotesTable.teamId} = ?',
-          whereArgs: [fixtureId, teamId],
-        );
-
-        var fixtureLiveCommFeedVotes = rows.isEmpty
-            ? FixtureLiveCommentaryFeedVotesEntity.noVotes(
-                fixtureId: fixtureId,
-                teamId: teamId,
-              )
-            : FixtureLiveCommentaryFeedVotesEntity.fromMap(rows.first);
-
-        var authorIdToVoteAction =
-            fixtureLiveCommFeedVotes.authorIdToVoteAction;
-        LiveCommentaryFeedVoteAction oldVoteAction;
-        if (authorIdToVoteAction.containsKey(authorId)) {
-          oldVoteAction = authorIdToVoteAction[authorId];
-          if (voteAction == oldVoteAction) {
-            authorIdToVoteAction.remove(authorId);
-          } else {
-            authorIdToVoteAction[authorId] = voteAction;
-          }
-        } else {
-          authorIdToVoteAction[authorId] = voteAction;
-        }
-
-        await txn.insert(
-          FixtureLiveCommentaryFeedVotesTable.tableName,
-          fixtureLiveCommFeedVotes.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-
-        return oldVoteAction;
-      },
-      exclusive: true,
-    );
-  }
 
   @override
   Future<LiveCommentaryFeedEntity> loadLiveCommentaryFeed(

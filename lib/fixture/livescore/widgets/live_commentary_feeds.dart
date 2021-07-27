@@ -289,7 +289,10 @@ class LiveCommentaryFeeds {
                                   child: Icon(
                                     Icons.arrow_drop_up,
                                     size: 32,
-                                    color: feed.upvoted ? Colors.orange : null,
+                                    color: feed.voteAction ==
+                                            LiveCommentaryFeedVoteAction.Upvote
+                                        ? Colors.orange
+                                        : null,
                                   ),
                                   onTap: () async {
                                     bool canContinue =
@@ -329,8 +332,11 @@ class LiveCommentaryFeeds {
                                   child: Icon(
                                     Icons.arrow_drop_down,
                                     size: 32,
-                                    color:
-                                        feed.downvoted ? Colors.orange : null,
+                                    color: feed.voteAction ==
+                                            LiveCommentaryFeedVoteAction
+                                                .Downvote
+                                        ? Colors.orange
+                                        : null,
                                   ),
                                   onTap: () async {
                                     bool canContinue =

@@ -6,9 +6,7 @@ import '../../fixture/livescore/live_commentary_recording/interfaces/ilive_comme
 import '../../fixture/livescore/live_commentary_recording/models/entities/live_commentary_recording_entity.dart';
 import '../../fixture/livescore/live_commentary_feed/models/entities/live_commentary_feed_entry_entity.dart';
 import '../../fixture/livescore/live_commentary_feed/models/entities/live_commentary_feed_entity.dart';
-import '../../fixture/livescore/live_commentary_feed/enums/live_commentary_feed_vote_action.dart';
 import '../../fixture/livescore/live_commentary_feed/interfaces/ilive_commentary_feed_repository.dart';
-import '../../fixture/livescore/live_commentary_feed/models/entities/fixture_live_commentary_feed_votes_entity.dart';
 import '../../fixture/livescore/interfaces/ifixture_repository.dart';
 import '../../fixture/calendar/interfaces/ifixture_calendar_repository.dart';
 import '../../fixture/common/models/entities/fixture_entity.dart';
@@ -126,31 +124,6 @@ class Storage {
       participantIdentifier,
       totalRating,
       totalVoters,
-    );
-  }
-
-  Future<FixtureLiveCommentaryFeedVotesEntity>
-      loadLiveCommentaryFeedVotesForFixture(
-    int fixtureId,
-    int teamId,
-  ) {
-    return _liveCommentaryFeedRepository.loadLiveCommentaryFeedVotesForFixture(
-      fixtureId,
-      teamId,
-    );
-  }
-
-  Future<LiveCommentaryFeedVoteAction> updateVoteActionForLiveCommentaryFeed(
-    int fixtureId,
-    int teamId,
-    int authorId,
-    LiveCommentaryFeedVoteAction voteAction,
-  ) {
-    return _liveCommentaryFeedRepository.updateVoteActionForLiveCommentaryFeed(
-      fixtureId,
-      teamId,
-      authorId,
-      voteAction,
     );
   }
 

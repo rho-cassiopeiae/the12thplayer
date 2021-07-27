@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:signalr_core/signalr_core.dart';
 
+import '../models/dto/voted_for_live_commentary_feed_dto.dart';
 import '../../../../general/services/subscription_tracker.dart';
 import '../../../../general/enums/message_type.dart' as enums;
 import '../models/dto/requests/unsubscribe_from_live_commentary_feed_request_dto.dart';
@@ -96,7 +97,7 @@ class LiveCommentaryFeedApiService implements ILiveCommentaryFeedApiService {
   }
 
   @override
-  Future<int> voteForLiveCommentaryFeed(
+  Future<VotedForLiveCommentaryFeedDto> voteForLiveCommentaryFeed(
     int fixtureId,
     int teamId,
     int authorId,
@@ -117,7 +118,7 @@ class LiveCommentaryFeedApiService implements ILiveCommentaryFeedApiService {
         ],
       );
 
-      return result['data']['updatedRating'];
+      return VotedForLiveCommentaryFeedDto.fromMap(result['data']);
     } on Exception catch (ex) {
       throw _wrapHubException(ex);
     }

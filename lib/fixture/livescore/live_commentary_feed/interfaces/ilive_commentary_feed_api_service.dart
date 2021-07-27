@@ -1,3 +1,4 @@
+import '../models/dto/voted_for_live_commentary_feed_dto.dart';
 import '../models/dto/fixture_live_commentary_feed_update_dto.dart';
 import '../enums/live_commentary_feed_vote_action.dart';
 import '../enums/live_commentary_filter.dart';
@@ -11,7 +12,7 @@ abstract class ILiveCommentaryFeedApiService {
     int start,
   );
 
-  Future<int> voteForLiveCommentaryFeed(
+  Future<VotedForLiveCommentaryFeedDto> voteForLiveCommentaryFeed(
     int fixtureId,
     int teamId,
     int authorId,

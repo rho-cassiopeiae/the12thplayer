@@ -1,4 +1,3 @@
-import '../../enums/live_commentary_feed_vote_action.dart';
 import '../dto/fixture_live_commentary_feeds_dto.dart';
 import 'live_commentary_feed_vm.dart';
 
@@ -15,14 +14,10 @@ class FixtureLiveCommentaryFeedsVm {
 
   FixtureLiveCommentaryFeedsVm.fromDto(
     FixtureLiveCommentaryFeedsDto fixtureLiveCommFeeds,
-    Map<int, LiveCommentaryFeedVoteAction> authorIdToVoteAction,
   )   : fixtureId = fixtureLiveCommFeeds.fixtureId,
         ongoing = fixtureLiveCommFeeds.ongoing,
         feeds = fixtureLiveCommFeeds.feeds
-            .map(
-              (feed) =>
-                  LiveCommentaryFeedVm.fromDto(feed, authorIdToVoteAction),
-            )
+            .map((feed) => LiveCommentaryFeedVm.fromDto(feed))
             .toList();
 
   FixtureLiveCommentaryFeedsVm copy() {

@@ -51,18 +51,9 @@ class LiveCommentaryFeedService {
         start,
       );
 
-      var fixtureLiveCommFeedVotes =
-          await _storage.loadLiveCommentaryFeedVotesForFixture(
-        fixtureId,
-        currentTeam.id,
+      return Right(
+        FixtureLiveCommentaryFeedsVm.fromDto(fixtureLiveCommFeedsDto),
       );
-
-      var fixtureLiveCommFeedsVm = FixtureLiveCommentaryFeedsVm.fromDto(
-        fixtureLiveCommFeedsDto,
-        fixtureLiveCommFeedVotes.authorIdToVoteAction,
-      );
-
-      return Right(fixtureLiveCommFeedsVm);
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
@@ -80,58 +71,33 @@ class LiveCommentaryFeedService {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var oldVoteAction = await _storage.updateVoteActionForLiveCommentaryFeed(
-        fixtureId,
-        currentTeam.id,
-        authorId,
-        voteAction,
-      );
-
-      if (oldVoteAction != null) {
-        if (voteAction == oldVoteAction) {
-          voteAction =
-              LiveCommentaryFeedVoteAction.values[voteAction.index + 2];
-        } else {
-          voteAction =
-              LiveCommentaryFeedVoteAction.values[voteAction.index + 4];
-        }
-      }
-
-      int incrScoreBy;
-      switch (voteAction) {
-        case LiveCommentaryFeedVoteAction.Upvote:
-          incrScoreBy = 1;
-          break;
-        case LiveCommentaryFeedVoteAction.Downvote:
-          incrScoreBy = -1;
-          break;
-        case LiveCommentaryFeedVoteAction.RevertUpvote:
-          incrScoreBy = -1;
-          break;
-        case LiveCommentaryFeedVoteAction.RevertDownvote:
-          incrScoreBy = 1;
-          break;
-        case LiveCommentaryFeedVoteAction.RevertDownvoteAndThenUpvote:
-          incrScoreBy = 2;
-          break;
-        case LiveCommentaryFeedVoteAction.RevertUpvoteAndThenDownvote:
-          incrScoreBy = -2;
-          break;
-      }
-
       var feeds = fixtureLiveCommFeeds.feeds;
       var index = feeds.indexWhere((feed) => feed.authorId == authorId);
       var feed = feeds[index];
+
+      var oldVoteAction = feed.voteAction;
+      LiveCommentaryFeedVoteAction newVoteAction;
+      int incrScoreBy;
+      if (oldVoteAction == null) {
+        newVoteAction = voteAction;
+        incrScoreBy = voteAction.toInt();
+      } else if (voteAction == oldVoteAction) {
+        incrScoreBy = -voteAction.toInt();
+      } else {
+        newVoteAction = voteAction;
+        incrScoreBy = voteAction.toInt() * 2;
+      }
+
       feeds[index] = feed.copyWith(
         rating: feed.rating + incrScoreBy,
-        voteAction: voteAction,
+        voteAction: newVoteAction,
       );
 
       feeds.sort((f1, f2) => f2.rating.compareTo(f1.rating));
 
       yield Right(fixtureLiveCommFeeds);
 
-      int rating = await _wsApiPolicy.execute(
+      var result = await _wsApiPolicy.execute(
         () => _liveCommentaryFeedApiService.voteForLiveCommentaryFeed(
           fixtureId,
           currentTeam.id,
@@ -143,7 +109,14 @@ class LiveCommentaryFeedService {
       fixtureLiveCommFeeds = fixtureLiveCommFeeds.copy();
       feeds = fixtureLiveCommFeeds.feeds;
       index = feeds.indexWhere((feed) => feed.authorId == authorId);
-      feeds[index] = feeds[index].copyWith(rating: rating);
+
+      feeds[index] = feeds[index].copyWith(
+        rating: result.updatedRating,
+        voteAction: LiveCommentaryFeedVoteActionExtension.fromInt(
+          result.updatedVoteAction,
+        ),
+      );
+
       feeds.sort((f1, f2) => f2.rating.compareTo(f1.rating));
 
       yield Right(fixtureLiveCommFeeds);

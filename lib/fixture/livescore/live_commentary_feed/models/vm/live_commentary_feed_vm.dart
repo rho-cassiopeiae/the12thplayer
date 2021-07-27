@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../enums/live_commentary_feed_vote_action.dart';
 import '../dto/live_commentary_feed_dto.dart';
 
@@ -6,45 +8,35 @@ class LiveCommentaryFeedVm {
   final String title;
   final String authorUsername;
   final int rating;
-  final LiveCommentaryFeedVoteAction _voteAction;
-
-  bool get upvoted =>
-      _voteAction == LiveCommentaryFeedVoteAction.Upvote ||
-      _voteAction == LiveCommentaryFeedVoteAction.RevertDownvoteAndThenUpvote;
-
-  bool get downvoted =>
-      _voteAction == LiveCommentaryFeedVoteAction.Downvote ||
-      _voteAction == LiveCommentaryFeedVoteAction.RevertUpvoteAndThenDownvote;
+  final LiveCommentaryFeedVoteAction voteAction;
 
   LiveCommentaryFeedVm._(
     this.authorId,
     this.title,
     this.authorUsername,
     this.rating,
-    this._voteAction,
+    this.voteAction,
   );
 
-  LiveCommentaryFeedVm.fromDto(
-    LiveCommentaryFeedDto feed,
-    Map<int, LiveCommentaryFeedVoteAction> authorIdToVoteAction,
-  )   : authorId = feed.authorId,
+  LiveCommentaryFeedVm.fromDto(LiveCommentaryFeedDto feed)
+      : authorId = feed.authorId,
         title = feed.title,
         authorUsername = feed.authorUsername,
         rating = feed.rating,
-        _voteAction = authorIdToVoteAction.containsKey(feed.authorId)
-            ? authorIdToVoteAction[feed.authorId]
-            : null;
+        voteAction = LiveCommentaryFeedVoteActionExtension.fromInt(
+          feed.voteAction,
+        );
 
   LiveCommentaryFeedVm copyWith({
-    int rating,
-    LiveCommentaryFeedVoteAction voteAction,
+    @required int rating,
+    @required LiveCommentaryFeedVoteAction voteAction,
   }) {
     return LiveCommentaryFeedVm._(
       authorId,
       title,
       authorUsername,
-      rating ?? this.rating,
-      voteAction ?? _voteAction,
+      rating,
+      voteAction,
     );
   }
 }
