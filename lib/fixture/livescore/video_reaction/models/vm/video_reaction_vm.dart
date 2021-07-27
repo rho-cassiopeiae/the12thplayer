@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../enums/video_reaction_vote_action.dart';
 import '../dto/video_reaction_dto.dart';
 
@@ -8,15 +10,7 @@ class VideoReactionVm {
   final int rating;
   final String videoId;
   final String thumbnailUrl;
-  final VideoReactionVoteAction _voteAction;
-
-  bool get upvoted =>
-      _voteAction == VideoReactionVoteAction.Upvote ||
-      _voteAction == VideoReactionVoteAction.RevertDownvoteAndThenUpvote;
-
-  bool get downvoted =>
-      _voteAction == VideoReactionVoteAction.Downvote ||
-      _voteAction == VideoReactionVoteAction.RevertUpvoteAndThenDownvote;
+  final VideoReactionVoteAction voteAction;
 
   VideoReactionVm._(
     this.authorId,
@@ -25,34 +19,32 @@ class VideoReactionVm {
     this.rating,
     this.videoId,
     this.thumbnailUrl,
-    this._voteAction,
+    this.voteAction,
   );
 
-  VideoReactionVm.fromDto(
-    VideoReactionDto reaction,
-    Map<int, VideoReactionVoteAction> authorIdToVoteAction,
-  )   : authorId = reaction.authorId,
+  VideoReactionVm.fromDto(VideoReactionDto reaction)
+      : authorId = reaction.authorId,
         title = reaction.title,
         authorUsername = reaction.authorUsername,
         rating = reaction.rating,
         videoId = reaction.videoId,
         thumbnailUrl = reaction.thumbnailUrl,
-        _voteAction = authorIdToVoteAction.containsKey(reaction.authorId)
-            ? authorIdToVoteAction[reaction.authorId]
-            : null;
+        voteAction = VideoReactionVoteActionExtension.fromInt(
+          reaction.voteAction,
+        );
 
   VideoReactionVm copyWith({
-    int rating,
-    VideoReactionVoteAction voteAction,
+    @required int rating,
+    @required VideoReactionVoteAction voteAction,
   }) {
     return VideoReactionVm._(
       authorId,
       title,
       authorUsername,
-      rating ?? this.rating,
+      rating,
       videoId,
       thumbnailUrl,
-      voteAction ?? _voteAction,
+      voteAction,
     );
   }
 }

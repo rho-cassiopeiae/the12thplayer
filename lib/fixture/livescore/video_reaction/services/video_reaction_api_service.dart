@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:signalr_core/signalr_core.dart';
 
+import '../models/dto/voted_for_video_reaction_dto.dart';
 import '../models/dto/posted_video_reaction_dto.dart';
 import '../enums/video_reaction_filter.dart';
 import '../enums/video_reaction_vote_action.dart';
@@ -123,7 +124,7 @@ class VideoReactionApiService implements IVideoReactionApiService {
   }
 
   @override
-  Future<int> voteForVideoReaction(
+  Future<VotedForVideoReactionDto> voteForVideoReaction(
     int fixtureId,
     int teamId,
     int authorId,
@@ -144,7 +145,7 @@ class VideoReactionApiService implements IVideoReactionApiService {
         ],
       );
 
-      return result['data']['updatedRating'];
+      return VotedForVideoReactionDto.fromMap(result['data']);
     } on Exception catch (ex) {
       throw _wrapHubException(ex);
     }

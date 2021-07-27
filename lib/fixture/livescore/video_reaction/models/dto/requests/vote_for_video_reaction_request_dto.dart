@@ -21,7 +21,7 @@ class VoteForVideoReactionRequestDto {
     map['fixtureId'] = fixtureId;
     map['teamId'] = teamId;
     map['authorId'] = authorId;
-    map['voteAction'] = voteAction.index;
+    map['voteAction'] = voteAction.toInt();
 
     return map;
   }

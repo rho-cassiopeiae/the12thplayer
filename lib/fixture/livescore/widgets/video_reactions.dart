@@ -246,7 +246,9 @@ class VideoReactions {
                                         GestureDetector(
                                           child: Icon(
                                             Icons.thumb_down,
-                                            color: reaction.downvoted
+                                            color: reaction.voteAction ==
+                                                    VideoReactionVoteAction
+                                                        .Downvote
                                                 ? Colors.orange
                                                 : null,
                                           ),
@@ -282,7 +284,9 @@ class VideoReactions {
                                         GestureDetector(
                                           child: Icon(
                                             Icons.thumb_up,
-                                            color: reaction.upvoted
+                                            color: reaction.voteAction ==
+                                                    VideoReactionVoteAction
+                                                        .Upvote
                                                 ? Colors.orange
                                                 : null,
                                           ),

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../models/dto/voted_for_video_reaction_dto.dart';
 import '../models/dto/posted_video_reaction_dto.dart';
 import '../enums/video_reaction_vote_action.dart';
 import '../enums/video_reaction_filter.dart';
@@ -13,7 +14,7 @@ abstract class IVideoReactionApiService {
     int start,
   );
 
-  Future<int> voteForVideoReaction(
+  Future<VotedForVideoReactionDto> voteForVideoReaction(
     int fixtureId,
     int teamId,
     int authorId,

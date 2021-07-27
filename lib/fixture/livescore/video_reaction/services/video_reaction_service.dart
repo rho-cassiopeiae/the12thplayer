@@ -89,18 +89,9 @@ class VideoReactionService {
         start,
       );
 
-      var fixtureVideoReactionVotes =
-          await _storage.loadVideoReactionVotesForFixture(
-        fixtureId,
-        currentTeam.id,
+      return Right(
+        FixtureVideoReactionsVm.fromDto(fixtureVideoReactionsDto),
       );
-
-      var fixtureVideoReactionsVm = FixtureVideoReactionsVm.fromDto(
-        fixtureVideoReactionsDto,
-        fixtureVideoReactionVotes.authorIdToVoteAction,
-      );
-
-      return Right(fixtureVideoReactionsVm);
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
@@ -118,58 +109,35 @@ class VideoReactionService {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var oldVoteAction = await _storage.updateVoteActionForVideoReaction(
-        fixtureId,
-        currentTeam.id,
-        authorId,
-        voteAction,
-      );
-
-      if (oldVoteAction != null) {
-        if (voteAction == oldVoteAction) {
-          voteAction = VideoReactionVoteAction.values[voteAction.index + 2];
-        } else {
-          voteAction = VideoReactionVoteAction.values[voteAction.index + 4];
-        }
-      }
-
-      int incrScoreBy;
-      switch (voteAction) {
-        case VideoReactionVoteAction.Upvote:
-          incrScoreBy = 1;
-          break;
-        case VideoReactionVoteAction.Downvote:
-          incrScoreBy = -1;
-          break;
-        case VideoReactionVoteAction.RevertUpvote:
-          incrScoreBy = -1;
-          break;
-        case VideoReactionVoteAction.RevertDownvote:
-          incrScoreBy = 1;
-          break;
-        case VideoReactionVoteAction.RevertDownvoteAndThenUpvote:
-          incrScoreBy = 2;
-          break;
-        case VideoReactionVoteAction.RevertUpvoteAndThenDownvote:
-          incrScoreBy = -2;
-          break;
-      }
-
       var reactions = fixtureVideoReactions.reactions;
       var index = reactions.indexWhere(
         (reaction) => reaction.authorId == authorId,
       );
       var reaction = reactions[index];
+
+      var oldVoteAction = reaction.voteAction;
+      VideoReactionVoteAction newVoteAction;
+      int incrScoreBy;
+      if (oldVoteAction == null) {
+        newVoteAction = voteAction;
+        incrScoreBy = voteAction.toInt();
+      } else if (voteAction == oldVoteAction) {
+        incrScoreBy = -voteAction.toInt();
+      } else {
+        newVoteAction = voteAction;
+        incrScoreBy = voteAction.toInt() * 2;
+      }
+
       reactions[index] = reaction.copyWith(
         rating: reaction.rating + incrScoreBy,
-        voteAction: voteAction,
+        voteAction: newVoteAction,
       );
 
       reactions.sort((r1, r2) => r2.rating.compareTo(r1.rating));
 
       yield Right(fixtureVideoReactions);
 
-      int rating = await _wsApiPolicy.execute(
+      var result = await _wsApiPolicy.execute(
         () => _videoReactionApiService.voteForVideoReaction(
           fixtureId,
           currentTeam.id,
@@ -181,7 +149,14 @@ class VideoReactionService {
       fixtureVideoReactions = fixtureVideoReactions.copy();
       reactions = fixtureVideoReactions.reactions;
       index = reactions.indexWhere((reaction) => reaction.authorId == authorId);
-      reactions[index] = reactions[index].copyWith(rating: rating);
+
+      reactions[index] = reactions[index].copyWith(
+        rating: result.updatedRating,
+        voteAction: VideoReactionVoteActionExtension.fromInt(
+          result.updatedVoteAction,
+        ),
+      );
+
       reactions.sort((r1, r2) => r2.rating.compareTo(r1.rating));
 
       yield Right(fixtureVideoReactions);

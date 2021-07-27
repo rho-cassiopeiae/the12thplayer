@@ -22,8 +22,7 @@ class _$Injector extends Injector {
         c<IFixtureCalendarRepository>(),
         c<IFixtureRepository>(),
         c<ILiveCommentaryFeedRepository>(),
-        c<ILiveCommentaryRecordingRepository>(),
-        c<IVideoReactionRepository>()));
+        c<ILiveCommentaryRecordingRepository>()));
     container.registerSingleton((c) => ErrorNotificationService());
     container.registerSingleton(
         (c) => ErrorNotificationBloc(c<ErrorNotificationService>()));
@@ -126,8 +125,6 @@ class _$Injector extends Injector {
     container.registerSingleton<IVideoReactionApiService>(
         (c) => VideoReactionApiService(c<ServerConnector>()));
     container.registerSingleton<IVimeoApiService>((c) => VimeoApiService());
-    container.registerSingleton<IVideoReactionRepository>(
-        (c) => VideoReactionRepository(c<DbConfigurator>()));
     container.registerSingleton((c) => VideoReactionService(
         c<Storage>(),
         c<IVideoReactionApiService>(),

@@ -4,8 +4,6 @@ import '../bloc/error_notification_bloc.dart';
 import '../services/error_notification_service.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivimeo_api_service.dart';
 import '../../fixture/livescore/video_reaction/services/vimeo_api_service.dart';
-import '../../fixture/livescore/video_reaction/interfaces/ivideo_reaction_repository.dart';
-import '../../fixture/livescore/video_reaction/persistence/repositories/video_reaction_repository.dart';
 import '../../fixture/livescore/video_reaction/bloc/video_reaction_bloc.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivideo_reaction_api_service.dart';
 import '../../fixture/livescore/video_reaction/services/video_reaction_api_service.dart';
@@ -126,7 +124,6 @@ abstract class Injector {
 
   @Register.singleton(IVideoReactionApiService, from: VideoReactionApiService)
   @Register.singleton(IVimeoApiService, from: VimeoApiService)
-  @Register.singleton(IVideoReactionRepository, from: VideoReactionRepository)
   @Register.singleton(VideoReactionService)
   @Register.singleton(VideoReactionBloc)
   void configureVideoReaction();

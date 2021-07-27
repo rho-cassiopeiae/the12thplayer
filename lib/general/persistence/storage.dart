@@ -1,6 +1,3 @@
-import '../../fixture/livescore/video_reaction/enums/video_reaction_vote_action.dart';
-import '../../fixture/livescore/video_reaction/models/entities/fixture_video_reaction_votes_entity.dart';
-import '../../fixture/livescore/video_reaction/interfaces/ivideo_reaction_repository.dart';
 import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_entry_status.dart';
 import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_status.dart';
 import '../../fixture/livescore/live_commentary_recording/models/entities/live_commentary_recording_entry_entity.dart';
@@ -29,7 +26,6 @@ class Storage {
   final IFixtureRepository _fixtureRepository;
   final ILiveCommentaryFeedRepository _liveCommentaryFeedRepository;
   final ILiveCommentaryRecordingRepository _liveCommentaryRecordingRepository;
-  final IVideoReactionRepository _videoReactionRepository;
 
   Storage(
     this._cache,
@@ -39,7 +35,6 @@ class Storage {
     this._fixtureRepository,
     this._liveCommentaryFeedRepository,
     this._liveCommentaryRecordingRepository,
-    this._videoReactionRepository,
   );
 
   Future<AccountEntity> loadAccount() async {
@@ -288,29 +283,5 @@ class Storage {
   ) {
     return _liveCommentaryRecordingRepository
         .updateLiveCommentaryRecordingEntries(entries);
-  }
-
-  Future<FixtureVideoReactionVotesEntity> loadVideoReactionVotesForFixture(
-    int fixtureId,
-    int teamId,
-  ) {
-    return _videoReactionRepository.loadVideoReactionVotesForFixture(
-      fixtureId,
-      teamId,
-    );
-  }
-
-  Future<VideoReactionVoteAction> updateVoteActionForVideoReaction(
-    int fixtureId,
-    int teamId,
-    int authorId,
-    VideoReactionVoteAction voteAction,
-  ) {
-    return _videoReactionRepository.updateVoteActionForVideoReaction(
-      fixtureId,
-      teamId,
-      authorId,
-      voteAction,
-    );
   }
 }

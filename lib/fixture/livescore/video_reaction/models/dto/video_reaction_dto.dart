@@ -5,6 +5,7 @@ class VideoReactionDto {
   final int rating;
   final String videoId;
   final String thumbnailUrl;
+  final int voteAction;
 
   VideoReactionDto.fromMap(Map<String, dynamic> map)
       : authorId = map['authorId'],
@@ -12,5 +13,6 @@ class VideoReactionDto {
         authorUsername = map['authorUsername'],
         rating = map['rating'],
         videoId = map['videoId'],
-        thumbnailUrl = map['thumbnailUrl'];
+        thumbnailUrl = map['thumbnailUrl'],
+        voteAction = map.containsKey('voteAction') ? map['voteAction'] : null;
 }
