@@ -1,14 +1,12 @@
 import 'dart:convert';
 
 import '../../../livescore/models/dto/fixture_livescore_update_dto.dart';
-import '../dto/performance_rating_dto.dart';
 import '../../../livescore/models/dto/fixture_full_dto.dart';
 import '../../persistence/tables/fixture_table.dart';
 import '../dto/fixture_summary_dto.dart';
 import 'team_color_entity.dart';
 import 'game_time_entity.dart';
 import 'score_entity.dart';
-import 'performance_rating_entity.dart';
 import 'team_stats_entity.dart';
 import 'team_lineup_entity.dart';
 import 'team_match_events_entity.dart';
@@ -34,32 +32,7 @@ class FixtureEntity {
   final List<TeamLineupEntity> lineups;
   final List<TeamMatchEventsEntity> events;
   final List<TeamStatsEntity> stats;
-  final List<PerformanceRatingEntity> performanceRatings;
   final bool isFullyLoaded;
-
-  FixtureEntity._(
-    this.id,
-    this.teamId,
-    this.leagueName,
-    this.leagueLogoUrl,
-    this.opponentTeamId,
-    this.opponentTeamName,
-    this.opponentTeamLogoUrl,
-    this.homeStatus,
-    this.startTime,
-    this.status,
-    this.gameTime,
-    this.score,
-    this.venueName,
-    this.venueImageUrl,
-    this.refereeName,
-    this.colors,
-    this.lineups,
-    this.events,
-    this.stats,
-    this.performanceRatings,
-    this.isFullyLoaded,
-  );
 
   bool get isCompleted =>
       status == 'FT' || status == 'AET' || status == 'FT_PEN';
@@ -72,32 +45,6 @@ class FixtureEntity {
     players.addAll(lineups[1].subs ?? []);
 
     return players;
-  }
-
-  FixtureEntity copyWith({List<PerformanceRatingEntity> performanceRatings}) {
-    return FixtureEntity._(
-      id,
-      teamId,
-      leagueName,
-      leagueLogoUrl,
-      opponentTeamId,
-      opponentTeamName,
-      opponentTeamLogoUrl,
-      homeStatus,
-      startTime,
-      status,
-      gameTime,
-      score,
-      venueName,
-      venueImageUrl,
-      refereeName,
-      colors,
-      lineups,
-      events,
-      stats,
-      performanceRatings ?? this.performanceRatings,
-      isFullyLoaded,
-    );
   }
 
   Map<String, dynamic> toSummaryMap() {
@@ -144,8 +91,6 @@ class FixtureEntity {
     map[FixtureTable.lineups] = jsonEncode(lineups);
     map[FixtureTable.events] = jsonEncode(events);
     map[FixtureTable.stats] = jsonEncode(stats);
-    map[FixtureTable.performanceRatings] =
-        performanceRatings != null ? jsonEncode(performanceRatings) : null;
     map[FixtureTable.isFullyLoaded] = isFullyLoaded ? 1 : 0;
 
     return map;
@@ -177,9 +122,6 @@ class FixtureEntity {
     }
     if (stats != null) {
       map[FixtureTable.stats] = jsonEncode(stats);
-    }
-    if (performanceRatings != null) {
-      map[FixtureTable.performanceRatings] = jsonEncode(performanceRatings);
     }
 
     return map;
@@ -227,13 +169,6 @@ class FixtureEntity {
             : (jsonDecode(map[FixtureTable.stats]) as List<dynamic>)
                 .map((statsMap) => TeamStatsEntity.fromMap(statsMap))
                 .toList(),
-        performanceRatings = map
-                .notContainsOrNull(FixtureTable.performanceRatings)
-            ? null
-            : (jsonDecode(map[FixtureTable.performanceRatings])
-                    as List<dynamic>)
-                .map((ratingMap) => PerformanceRatingEntity.fromMap(ratingMap))
-                .toList(),
         isFullyLoaded = !map.containsKey(FixtureTable.isFullyLoaded)
             ? null
             : map[FixtureTable.isFullyLoaded] == 1;
@@ -258,13 +193,11 @@ class FixtureEntity {
         lineups = null,
         events = null,
         stats = null,
-        performanceRatings = null,
         isFullyLoaded = false;
 
   FixtureEntity.fromFullDto(
     int teamId,
     FixtureFullDto fixture,
-    Iterable<PerformanceRatingDto> performanceRatings,
   )   : id = fixture.id,
         teamId = teamId,
         leagueName = fixture.season.leagueName,
@@ -292,15 +225,10 @@ class FixtureEntity {
         stats = fixture.stats
             .map((stats) => TeamStatsEntity.fromDto(stats))
             .toList(),
-        performanceRatings = performanceRatings
-            .map((rating) => PerformanceRatingEntity.fromDto(rating))
-            .toList(),
-        isFullyLoaded = fixture.isCompletedAndInactive;
+        isFullyLoaded = fixture.isCompleted;
 
-  FixtureEntity.fromLivescoreUpdateDto(
-    FixtureLivescoreUpdateDto update,
-    List<PerformanceRatingDto> performanceRatings,
-  )   : id = update.fixtureId,
+  FixtureEntity.fromLivescoreUpdateDto(FixtureLivescoreUpdateDto update)
+      : id = update.fixtureId,
         teamId = update.teamId,
         leagueName = null,
         leagueLogoUrl = null,
@@ -329,8 +257,5 @@ class FixtureEntity {
         stats = update.stats
             ?.map((stats) => TeamStatsEntity.fromDto(stats))
             ?.toList(),
-        performanceRatings = performanceRatings
-            .map((rating) => PerformanceRatingEntity.fromDto(rating))
-            .toList(),
         isFullyLoaded = null;
 }

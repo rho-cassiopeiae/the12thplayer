@@ -22,7 +22,8 @@ class _$Injector extends Injector {
         c<IFixtureCalendarRepository>(),
         c<IFixtureRepository>(),
         c<ILiveCommentaryFeedRepository>(),
-        c<ILiveCommentaryRecordingRepository>()));
+        c<ILiveCommentaryRecordingRepository>(),
+        c<IPerformanceRatingRepository>()));
     container.registerSingleton((c) => ErrorNotificationService());
     container.registerSingleton(
         (c) => ErrorNotificationBloc(c<ErrorNotificationService>()));
@@ -71,10 +72,7 @@ class _$Injector extends Injector {
     container.registerSingleton<IFixtureRepository>(
         (c) => FixtureRepository(c<DbConfigurator>()));
     container.registerSingleton((c) => FixtureLivescoreService(
-        c<Storage>(),
-        c<IFixtureApiService>(),
-        c<AccountService>(),
-        c<ErrorNotificationService>()));
+        c<Storage>(), c<IFixtureApiService>(), c<ErrorNotificationService>()));
     container.registerFactory(
         (c) => FixtureLivescoreBloc(c<FixtureLivescoreService>()));
   }
@@ -117,6 +115,22 @@ class _$Injector extends Injector {
     container.registerSingleton((c) => DiscussionService(
         c<Storage>(), c<IDiscussionApiService>(), c<AccountService>()));
     container.registerFactory((c) => DiscussionBloc(c<DiscussionService>()));
+  }
+
+  @override
+  void configurePerformanceRating() {
+    final KiwiContainer container = KiwiContainer();
+    container.registerSingleton<IPerformanceRatingApiService>(
+        (c) => PerformanceRatingApiService(c<ServerConnector>()));
+    container.registerSingleton<IPerformanceRatingRepository>(
+        (c) => PerformanceRatingRepository(c<DbConfigurator>()));
+    container.registerSingleton((c) => PerformanceRatingService(
+        c<Storage>(),
+        c<AccountService>(),
+        c<IPerformanceRatingApiService>(),
+        c<ErrorNotificationService>()));
+    container.registerSingleton(
+        (c) => PerformanceRatingBloc(c<PerformanceRatingService>()));
   }
 
   @override

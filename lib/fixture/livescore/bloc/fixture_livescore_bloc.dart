@@ -22,8 +22,6 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
         _unsubscribeFromFixture(action);
         actionChannel.close();
         actionChannel = null;
-      } else if (action is RateParticipantOfGivenFixture) {
-        _rateParticipantOfGivenFixture(action);
       }
     });
   }
@@ -64,19 +62,5 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
 
   void _unsubscribeFromFixture(UnsubscribeFromFixture action) {
     _fixtureLivescoreService.unsubscribeFromFixture(action.fixtureId);
-  }
-
-  void _rateParticipantOfGivenFixture(
-    RateParticipantOfGivenFixture action,
-  ) async {
-    var fixture = await _fixtureLivescoreService.rateParticipantOfGivenFixture(
-      action.fixtureId,
-      action.participantIdentifier,
-      action.rating,
-    );
-
-    if (fixture != null) {
-      _stateChannel?.add(FixtureReady(fixture: fixture));
-    }
   }
 }

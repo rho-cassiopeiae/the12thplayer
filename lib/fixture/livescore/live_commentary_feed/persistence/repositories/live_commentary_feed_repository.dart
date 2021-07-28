@@ -8,7 +8,7 @@ import '../../interfaces/ilive_commentary_feed_repository.dart';
 import '../../../../../general/persistence/db_configurator.dart';
 
 class LiveCommentaryFeedRepository implements ILiveCommentaryFeedRepository {
-  DbConfigurator _dbConfigurator;
+  final DbConfigurator _dbConfigurator;
 
   Database get _db => _dbConfigurator.db;
 

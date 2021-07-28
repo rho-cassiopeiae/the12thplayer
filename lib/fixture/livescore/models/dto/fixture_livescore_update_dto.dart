@@ -1,5 +1,4 @@
 import '../../../common/models/dto/game_time_dto.dart';
-import '../../../common/models/dto/performance_rating_dto.dart';
 import '../../../common/models/dto/score_dto.dart';
 import '../../../common/models/dto/team_color_dto.dart';
 import '../../../common/models/dto/team_lineup_dto.dart';
@@ -43,40 +42,4 @@ class FixtureLivescoreUpdateDto {
             ? null
             : (map['stats'] as List<dynamic>)
                 .map((statsMap) => TeamStatsDto.fromMap(statsMap));
-
-  List<PerformanceRatingDto> buildPerformanceRatingsFromLineupAndEvents() {
-    var performanceRatings = <PerformanceRatingDto>[];
-
-    var lineup = lineups?.firstWhere((lineup) => lineup.teamId == teamId);
-    if (lineup != null) {
-      if (lineup.manager != null) {
-        performanceRatings.add(
-          PerformanceRatingDto(
-            participantIdentifier: 'manager:${lineup.manager.id}',
-          ),
-        );
-      }
-
-      lineup.startingXI?.forEach(
-        (player) => performanceRatings.add(
-          PerformanceRatingDto(
-            participantIdentifier: 'player:${player.id}',
-          ),
-        ),
-      );
-    }
-
-    var events = this.events?.firstWhere((events) => events.teamId == teamId);
-    events?.events?.forEach((event) {
-      if (event.type == 'substitution' && event.playerId != null) {
-        performanceRatings.add(
-          PerformanceRatingDto(
-            participantIdentifier: 'player:${event.playerId}',
-          ),
-        );
-      }
-    });
-
-    return performanceRatings;
-  }
 }

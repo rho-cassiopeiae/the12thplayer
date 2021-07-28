@@ -8,11 +8,6 @@ import 'package:signalr_core/signalr_core.dart';
 import '../../../general/services/subscription_tracker.dart';
 import '../../../general/enums/message_type.dart' as enums;
 import '../errors/fixture_error.dart';
-import '../models/dto/performance_rating_dto.dart';
-import '../../livescore/models/dto/requests/rate_participant_of_given_fixture_request_dto.dart';
-import '../../../general/errors/authentication_token_expired_error.dart';
-import '../../../general/errors/forbidden_error.dart';
-import '../../../general/errors/invalid_authentication_token_error.dart';
 import '../../livescore/models/dto/requests/unsubscribe_from_fixture_request_dto.dart';
 import '../../livescore/models/dto/fixture_full_dto.dart';
 import '../../livescore/models/dto/fixture_livescore_update_dto.dart';
@@ -78,20 +73,8 @@ class FixtureApiService implements IFixtureApiService {
 
   dynamic _wrapHubException(Exception ex) {
     var errorMessage = ex.toString();
-    if (errorMessage.contains('[AuthorizationError]')) {
-      if (errorMessage.contains('Forbidden')) {
-        return ForbiddenError();
-      } else if (errorMessage.contains('token expired at')) {
-        return AuthenticationTokenExpiredError();
-      } else {
-        return InvalidAuthenticationTokenError(
-          errorMessage.split('[AuthorizationError] ').last,
-        );
-      }
-    } else if (errorMessage.contains('[ValidationError]')) {
+    if (errorMessage.contains('[ValidationError]')) {
       return ValidationError();
-    } else if (errorMessage.contains('[FixtureError]')) {
-      return FixtureError(errorMessage.split('[FixtureError] ').last);
     }
 
     print(ex);
@@ -204,36 +187,6 @@ class FixtureApiService implements IFixtureApiService {
           ),
         ],
       );
-    }
-  }
-
-  @override
-  Future<PerformanceRatingDto> rateParticipantOfGivenFixture(
-    int fixtureId,
-    int teamId,
-    String participantIdentifier,
-    int rating,
-    int oldRating,
-  ) async {
-    await _serverConnector.ensureConnected();
-
-    try {
-      var result = await _connection.invoke(
-        'RateParticipantOfGivenFixture',
-        args: [
-          RateParticipantOfGivenFixtureRequestDto(
-            fixtureId: fixtureId,
-            teamId: teamId,
-            participantIdentifier: participantIdentifier,
-            rating: rating,
-            oldRating: oldRating,
-          ),
-        ],
-      );
-
-      return PerformanceRatingDto.fromMap(result['data']);
-    } on Exception catch (ex) {
-      throw _wrapHubException(ex);
     }
   }
 }

@@ -1,3 +1,5 @@
+import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_repository.dart';
+import '../../fixture/livescore/performance_rating/models/entities/fixture_performance_ratings_entity.dart';
 import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_entry_status.dart';
 import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_status.dart';
 import '../../fixture/livescore/live_commentary_recording/models/entities/live_commentary_recording_entry_entity.dart';
@@ -24,6 +26,7 @@ class Storage {
   final IFixtureRepository _fixtureRepository;
   final ILiveCommentaryFeedRepository _liveCommentaryFeedRepository;
   final ILiveCommentaryRecordingRepository _liveCommentaryRecordingRepository;
+  final IPerformanceRatingRepository _performanceRatingRepository;
 
   Storage(
     this._cache,
@@ -33,6 +36,7 @@ class Storage {
     this._fixtureRepository,
     this._liveCommentaryFeedRepository,
     this._liveCommentaryRecordingRepository,
+    this._performanceRatingRepository,
   );
 
   Future<AccountEntity> loadAccount() async {
@@ -83,49 +87,16 @@ class Storage {
     return _fixtureCalendarRepository.saveFixtures(fixtures);
   }
 
-  Future<FixtureEntity> loadFixtureForTeam(int fixtureId, int teamId) {
-    return _fixtureRepository.loadFixtureForTeam(fixtureId, teamId);
-  }
+  Future<FixtureEntity> loadFixtureForTeam(int fixtureId, int teamId) =>
+      _fixtureRepository.loadFixtureForTeam(fixtureId, teamId);
 
-  Future<FixtureEntity> updateFixture(FixtureEntity fixture) {
-    return _fixtureRepository.updateFixture(fixture);
-  }
+  Future updateFixture(FixtureEntity fixture) =>
+      _fixtureRepository.updateFixture(fixture);
 
   Future<FixtureEntity> updateFixtureFromLivescore(
     FixtureEntity fixture,
-  ) {
-    return _fixtureRepository.updateFixtureFromLivescore(fixture);
-  }
-
-  Future<double> updateMyRatingOfParticipantOfGivenFixture(
-    int fixtureId,
-    int teamId,
-    String participantIdentifier,
-    double rating,
-  ) {
-    return _fixtureRepository.updateMyRatingOfParticipantOfGivenFixture(
-      fixtureId,
-      teamId,
-      participantIdentifier,
-      rating,
-    );
-  }
-
-  Future updateRatingOfParticipantOfGivenFixture(
-    int fixtureId,
-    int teamId,
-    String participantIdentifier,
-    int totalRating,
-    int totalVoters,
-  ) {
-    return _fixtureRepository.updateRatingOfParticipantOfGivenFixture(
-      fixtureId,
-      teamId,
-      participantIdentifier,
-      totalRating,
-      totalVoters,
-    );
-  }
+  ) =>
+      _fixtureRepository.updateFixtureFromLivescore(fixture);
 
   Future<LiveCommentaryFeedEntity> loadLiveCommentaryFeed(
     int fixtureId,
@@ -257,4 +228,38 @@ class Storage {
     return _liveCommentaryRecordingRepository
         .updateLiveCommentaryRecordingEntries(entries);
   }
+
+  Future<FixturePerformanceRatingsEntity> loadPerformanceRatingsForFixture(
+    int fixtureId,
+    int teamId,
+  ) =>
+      _performanceRatingRepository.loadPerformanceRatingsForFixture(
+        fixtureId,
+        teamId,
+      );
+
+  Future savePerformanceRatingsForFixture(
+    FixturePerformanceRatingsEntity fixturePerformanceRatings,
+  ) =>
+      _performanceRatingRepository
+          .savePerformanceRatingsForFixture(fixturePerformanceRatings);
+
+  Future<FixturePerformanceRatingsEntity>
+      updatePerformanceRatingForFixtureParticipant(
+    int fixtureId,
+    int teamId,
+    String participantIdentifier,
+    int totalRating,
+    int totalVoters,
+    double myRating,
+  ) =>
+          _performanceRatingRepository
+              .updatePerformanceRatingForFixtureParticipant(
+            fixtureId,
+            teamId,
+            participantIdentifier,
+            totalRating,
+            totalVoters,
+            myRating,
+          );
 }

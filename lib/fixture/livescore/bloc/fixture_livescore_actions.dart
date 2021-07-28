@@ -32,15 +32,3 @@ class UnsubscribeFromFixture extends FixtureLivescoreAction {
 
   UnsubscribeFromFixture({@required this.fixtureId});
 }
-
-class RateParticipantOfGivenFixture extends FixtureLivescoreAction {
-  final int fixtureId;
-  final String participantIdentifier;
-  final double rating;
-
-  RateParticipantOfGivenFixture({
-    @required this.fixtureId,
-    @required this.participantIdentifier,
-    @required this.rating,
-  });
-}

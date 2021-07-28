@@ -1,5 +1,11 @@
 import 'package:kiwi/kiwi.dart';
 
+import '../../fixture/livescore/performance_rating/bloc/performance_rating_bloc.dart';
+import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_api_service.dart';
+import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_repository.dart';
+import '../../fixture/livescore/performance_rating/persistence/repositories/performance_rating_repository.dart';
+import '../../fixture/livescore/performance_rating/services/performance_rating_api_service.dart';
+import '../../fixture/livescore/performance_rating/services/performance_rating_service.dart';
 import '../bloc/error_notification_bloc.dart';
 import '../services/error_notification_service.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivimeo_api_service.dart';
@@ -122,6 +128,18 @@ abstract class Injector {
   @Register.factory(DiscussionBloc)
   void configureDiscussion();
 
+  @Register.singleton(
+    IPerformanceRatingApiService,
+    from: PerformanceRatingApiService,
+  )
+  @Register.singleton(
+    IPerformanceRatingRepository,
+    from: PerformanceRatingRepository,
+  )
+  @Register.singleton(PerformanceRatingService)
+  @Register.singleton(PerformanceRatingBloc)
+  void configurePerformanceRating();
+
   @Register.singleton(IVideoReactionApiService, from: VideoReactionApiService)
   @Register.singleton(IVimeoApiService, from: VimeoApiService)
   @Register.singleton(VideoReactionService)
@@ -144,6 +162,7 @@ abstract class Injector {
     configureLiveCommentaryFeed();
     configureLiveCommentaryRecording();
     configureDiscussion();
+    configurePerformanceRating();
     configureVideoReaction();
     configureTeam();
   }

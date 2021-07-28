@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../performance_rating/bloc/performance_rating_bloc.dart';
 import '../discussion/bloc/discussion_bloc.dart';
 import '../video_reaction/bloc/video_reaction_bloc.dart';
 import '../video_reaction/enums/video_reaction_filter.dart';
@@ -38,8 +39,14 @@ import '../../../account/enums/account_type.dart';
 
 class FixtureLivescorePage extends StatefulWidget
     with
-        DependencyResolver6<FixtureLivescoreBloc, DiscussionBloc,
-            LiveCommentaryFeedBloc, AccountBloc, ImageBloc, VideoReactionBloc> {
+        DependencyResolver7<
+            FixtureLivescoreBloc,
+            DiscussionBloc,
+            LiveCommentaryFeedBloc,
+            AccountBloc,
+            ImageBloc,
+            PerformanceRatingBloc,
+            VideoReactionBloc> {
   static const String routeName = '/fixture/livescore';
 
   final FixtureSummaryVm fixture;
@@ -57,6 +64,7 @@ class FixtureLivescorePage extends StatefulWidget
         resolve4(),
         resolve5(),
         resolve6(),
+        resolve7(),
       );
 }
 
@@ -66,6 +74,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   final LiveCommentaryFeedBloc _liveCommentaryFeedBloc;
   final AccountBloc _accountBloc;
   final ImageBloc _imageBloc;
+  final PerformanceRatingBloc _performanceRatingBloc;
   final VideoReactionBloc _videoReactionBloc;
 
   final SweetSheet _sweetSheet = SweetSheet();
@@ -94,6 +103,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     this._liveCommentaryFeedBloc,
     this._accountBloc,
     this._imageBloc,
+    this._performanceRatingBloc,
     this._videoReactionBloc,
   );
 
@@ -114,7 +124,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
 
     action.state.then((state) {
       if (state is FixtureReady &&
-          state.fixture.shouldSubscribe &&
+          !state.fixture.isCompleted &&
           _subscriptionState == SubscriptionState.NotSubscribed) {
         _subscriptionState = SubscriptionState.Subscribed;
         _fixtureLivescoreBloc.dispatchAction(
@@ -593,8 +603,8 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
         return PerformanceRatings(
           fixture: fixture,
           theme: theme,
-          fixtureLivescoreBloc: _fixtureLivescoreBloc,
-        ).build();
+          performanceRatingBloc: _performanceRatingBloc,
+        ).build(context: context);
       case FixtureLivescoreSubmenu.VideoReactions:
         return VideoReactions(
           fixture: fixture,
