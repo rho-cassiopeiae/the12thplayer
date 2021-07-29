@@ -72,7 +72,6 @@ class VideoReactionBloc extends Bloc<VideoReactionAction> {
 
   void _postVideoReaction(PostVideoReaction action) async {
     // @@TODO: Validation.
-    action.complete(PostVideoReactionInProgress());
 
     _videoReactionService.postVideoReaction(
       action.fixtureId,

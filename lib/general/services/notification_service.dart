@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ErrorNotificationService {
+class NotificationService {
   GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey;
 
   void addScaffoldMessengerKey(
@@ -9,12 +9,12 @@ class ErrorNotificationService {
     _scaffoldMessengerKey = scaffoldMessengerKey;
   }
 
-  void showErrorMessage(String message) {
+  void showMessage(String message) {
     _scaffoldMessengerKey.currentState.hideCurrentSnackBar();
     _scaffoldMessengerKey.currentState.showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 2), // @@TODO: Config.
       ),
     );
   }

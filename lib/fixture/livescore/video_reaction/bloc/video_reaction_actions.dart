@@ -44,8 +44,7 @@ class VoteForVideoReaction extends VideoReactionAction {
   });
 }
 
-class PostVideoReaction
-    extends VideoReactionActionFutureState<PostVideoReactionState> {
+class PostVideoReaction extends VideoReactionAction {
   final int fixtureId;
   final String title;
   final Uint8List videoBytes;

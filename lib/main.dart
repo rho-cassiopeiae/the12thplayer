@@ -4,8 +4,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
-import 'general/bloc/error_notification_actions.dart';
-import 'general/bloc/error_notification_bloc.dart';
+import 'general/bloc/notification_actions.dart';
+import 'general/bloc/notification_bloc.dart';
 import 'general/extensions/kiwi_extension.dart';
 import 'fixture/livescore/pages/video_page.dart';
 import 'fixture/livescore/video_reaction/pages/video_reaction_page.dart';
@@ -54,14 +54,14 @@ void main() async {
   runApp(Application());
 }
 
-class Application extends StatelessWidgetInjected<ErrorNotificationBloc> {
+class Application extends StatelessWidgetInjected<NotificationBloc> {
   @override
   Widget buildInjected(
     BuildContext context,
-    ErrorNotificationBloc errorNotificationBloc,
+    NotificationBloc notificationBloc,
   ) {
     var scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-    errorNotificationBloc.dispatchAction(
+    notificationBloc.dispatchAction(
       AddScaffoldMessengerKey(scaffoldMessengerKey: scaffoldMessengerKey),
     );
 

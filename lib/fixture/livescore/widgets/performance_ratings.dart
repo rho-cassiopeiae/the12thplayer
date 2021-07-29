@@ -58,15 +58,32 @@ class PerformanceRatings {
             ],
           ),
           alignment: Alignment.center,
-          child: Text(
-            'Ratings',
-            style: GoogleFonts.exo2(
-              textStyle: TextStyle(
-                color: theme.primaryColorDark,
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+          child: Row(
+            children: [
+              Spacer(),
+              Text(
+                'Ratings',
+                style: GoogleFonts.exo2(
+                  textStyle: TextStyle(
+                    color: theme.primaryColorDark,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.refresh,
+                      color: Colors.grey,
+                    ),
+                    onPressed: _loadPerformanceRatings,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

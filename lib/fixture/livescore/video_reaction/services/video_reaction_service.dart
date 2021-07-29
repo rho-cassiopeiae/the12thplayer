@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:either_option/either_option.dart';
 
+import '../../../../general/services/notification_service.dart';
 import '../interfaces/ivimeo_api_service.dart';
 import '../../../../general/errors/connection_error.dart';
 import '../../../../general/errors/server_error.dart';
@@ -22,6 +23,7 @@ class VideoReactionService {
   final IVideoReactionApiService _videoReactionApiService;
   final IVimeoApiService _vimeoApiService;
   final AccountService _accountService;
+  final NotificationService _notificationService;
 
   Policy _wsApiPolicy;
   Policy _apiPolicy;
@@ -33,6 +35,7 @@ class VideoReactionService {
     this._videoReactionApiService,
     this._vimeoApiService,
     this._accountService,
+    this._notificationService,
   ) {
     _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
       strategies: [
@@ -177,6 +180,8 @@ class VideoReactionService {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
+      _notificationService.showMessage('Video will be published shortly');
+
       await _apiPolicy.execute(
         () => _videoReactionApiService.postVideoReaction(
           fixtureId,
@@ -186,19 +191,23 @@ class VideoReactionService {
           fileName,
         ),
       );
-
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: _notificationId++,
-          channelKey: 'video_reaction_channel',
-          title: 'Your video is ready',
-          body: 'It\'s successfully published and now available to everyone',
-        ),
-      );
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
+
+      _notificationService.showMessage(error.toString());
+
+      return;
     }
+
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: _notificationId++,
+        channelKey: 'video_reaction_channel',
+        title: 'Your video is ready',
+        body: 'It\'s successfully published and now available to everyone',
+      ),
+    );
   }
 
   Future<Either<Error, Map<String, String>>> getVideoQualityUrls(

@@ -24,9 +24,9 @@ class _$Injector extends Injector {
         c<ILiveCommentaryFeedRepository>(),
         c<ILiveCommentaryRecordingRepository>(),
         c<IPerformanceRatingRepository>()));
-    container.registerSingleton((c) => ErrorNotificationService());
-    container.registerSingleton(
-        (c) => ErrorNotificationBloc(c<ErrorNotificationService>()));
+    container.registerSingleton((c) => NotificationService());
+    container
+        .registerSingleton((c) => NotificationBloc(c<NotificationService>()));
   }
 
   @override
@@ -72,7 +72,7 @@ class _$Injector extends Injector {
     container.registerSingleton<IFixtureRepository>(
         (c) => FixtureRepository(c<DbConfigurator>()));
     container.registerSingleton((c) => FixtureLivescoreService(
-        c<Storage>(), c<IFixtureApiService>(), c<ErrorNotificationService>()));
+        c<Storage>(), c<IFixtureApiService>(), c<NotificationService>()));
     container.registerFactory(
         (c) => FixtureLivescoreBloc(c<FixtureLivescoreService>()));
   }
@@ -128,7 +128,7 @@ class _$Injector extends Injector {
         c<Storage>(),
         c<AccountService>(),
         c<IPerformanceRatingApiService>(),
-        c<ErrorNotificationService>()));
+        c<NotificationService>()));
     container.registerSingleton(
         (c) => PerformanceRatingBloc(c<PerformanceRatingService>()));
   }
@@ -143,7 +143,8 @@ class _$Injector extends Injector {
         c<Storage>(),
         c<IVideoReactionApiService>(),
         c<IVimeoApiService>(),
-        c<AccountService>()));
+        c<AccountService>(),
+        c<NotificationService>()));
     container
         .registerSingleton((c) => VideoReactionBloc(c<VideoReactionService>()));
   }

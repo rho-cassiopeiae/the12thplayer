@@ -20,16 +20,6 @@ class VideoReactionsError extends LoadVideoReactionsState {
   VideoReactionsError({@required this.message});
 }
 
-abstract class PostVideoReactionState extends VideoReactionState {}
-
-class PostVideoReactionInProgress extends PostVideoReactionState {}
-
-class PostVideoReactionError extends PostVideoReactionState {
-  final String message;
-
-  PostVideoReactionError({@required this.message});
-}
-
 abstract class GetVideoQualityUrlsState extends VideoReactionState {}
 
 class VideoQualityUrlsLoading extends GetVideoQualityUrlsState {}

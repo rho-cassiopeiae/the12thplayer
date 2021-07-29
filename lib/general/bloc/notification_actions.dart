@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-abstract class ErrorNotificationAction {}
+abstract class NotificationAction {}
 
-class AddScaffoldMessengerKey extends ErrorNotificationAction {
+class AddScaffoldMessengerKey extends NotificationAction {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
 
   AddScaffoldMessengerKey({@required this.scaffoldMessengerKey});

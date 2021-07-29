@@ -6,8 +6,8 @@ import '../../fixture/livescore/performance_rating/interfaces/iperformance_ratin
 import '../../fixture/livescore/performance_rating/persistence/repositories/performance_rating_repository.dart';
 import '../../fixture/livescore/performance_rating/services/performance_rating_api_service.dart';
 import '../../fixture/livescore/performance_rating/services/performance_rating_service.dart';
-import '../bloc/error_notification_bloc.dart';
-import '../services/error_notification_service.dart';
+import '../bloc/notification_bloc.dart';
+import '../services/notification_service.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivimeo_api_service.dart';
 import '../../fixture/livescore/video_reaction/services/vimeo_api_service.dart';
 import '../../fixture/livescore/video_reaction/bloc/video_reaction_bloc.dart';
@@ -69,8 +69,8 @@ abstract class Injector {
   @Register.singleton(ServerConnector)
   @Register.singleton(Cache)
   @Register.singleton(Storage)
-  @Register.singleton(ErrorNotificationService)
-  @Register.singleton(ErrorNotificationBloc)
+  @Register.singleton(NotificationService)
+  @Register.singleton(NotificationBloc)
   void configureGeneral();
 
   @Register.singleton(IImageService, from: ImageService)

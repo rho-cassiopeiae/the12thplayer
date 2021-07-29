@@ -7,7 +7,6 @@ import 'package:path/path.dart';
 
 import '../bloc/video_reaction_actions.dart';
 import '../bloc/video_reaction_bloc.dart';
-import '../bloc/video_reaction_states.dart';
 import '../../../../general/extensions/kiwi_extension.dart';
 
 class VideoReactionPage extends StatefulWidget
@@ -186,25 +185,13 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
             Icons.upload_rounded,
             color: Colors.white,
           ),
-          onPressed: () async {
-            var action = PostVideoReaction(
-              fixtureId: widget.fixtureId,
-              title: _title,
-              videoBytes: _videoBytes,
-              fileName: _fileName,
-            );
-
-            _videoReactionBloc.dispatchAction(action);
-
-            var state = await action.state;
-            var message = state is PostVideoReactionError
-                ? state.message
-                : 'Video will be published shortly';
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                duration: Duration(seconds: 2),
+          onPressed: () {
+            _videoReactionBloc.dispatchAction(
+              PostVideoReaction(
+                fixtureId: widget.fixtureId,
+                title: _title,
+                videoBytes: _videoBytes,
+                fileName: _fileName,
               ),
             );
 

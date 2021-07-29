@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:either_option/either_option.dart';
 
-import '../../../general/services/error_notification_service.dart';
+import '../../../general/services/notification_service.dart';
 import '../../../general/errors/connection_error.dart';
 import '../../../general/errors/server_error.dart';
 import '../../../general/utils/policy.dart';
@@ -15,14 +15,14 @@ import '../../../general/errors/error.dart';
 class FixtureLivescoreService {
   final Storage _storage;
   final IFixtureApiService _fixtureApiService;
-  final ErrorNotificationService _errorNotificationService;
+  final NotificationService _notificationService;
 
   Policy _apiPolicy;
 
   FixtureLivescoreService(
     this._storage,
     this._fixtureApiService,
-    this._errorNotificationService,
+    this._notificationService,
   ) {
     _apiPolicy = PolicyBuilder().on<ConnectionError>(
       strategies: [
@@ -103,14 +103,14 @@ class FixtureLivescoreService {
           print('========== $error ==========');
           print(stackTrace);
 
-          _errorNotificationService.showErrorMessage(error.toString());
+          _notificationService.showMessage(error.toString());
         }
       }
     } catch (error, stackTrace) {
       print('========== $error ==========');
       print(stackTrace);
 
-      _errorNotificationService.showErrorMessage(error.toString());
+      _notificationService.showMessage(error.toString());
     }
   }
 

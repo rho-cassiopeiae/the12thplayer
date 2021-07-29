@@ -1,6 +1,6 @@
 import 'package:either_option/either_option.dart';
 
-import '../../../../general/services/error_notification_service.dart';
+import '../../../../general/services/notification_service.dart';
 import '../../../../account/services/account_service.dart';
 import '../../../../general/errors/authentication_token_expired_error.dart';
 import '../../../../general/utils/policy.dart';
@@ -14,7 +14,7 @@ class PerformanceRatingService {
   final Storage _storage;
   final AccountService _accountService;
   final IPerformanceRatingApiService _performanceRatingApiService;
-  final ErrorNotificationService _errorNotificationService;
+  final NotificationService _notificationService;
 
   Policy _wsApiPolicy;
 
@@ -22,7 +22,7 @@ class PerformanceRatingService {
     this._storage,
     this._accountService,
     this._performanceRatingApiService,
-    this._errorNotificationService,
+    this._notificationService,
   ) {
     _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
       strategies: [
@@ -128,7 +128,7 @@ class PerformanceRatingService {
         currentTeam.id,
       );
 
-      _errorNotificationService.showErrorMessage(error.toString());
+      _notificationService.showMessage(error.toString());
 
       return PerformanceRatingsVm.fromEntity(
         fixture,
