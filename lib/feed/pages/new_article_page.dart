@@ -7,6 +7,7 @@ import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../general/extensions/flutter_quill_extension.dart';
 import '../bloc/feed_actions.dart';
 import '../bloc/feed_bloc.dart';
 import '../../general/extensions/kiwi_extension.dart';
@@ -59,26 +60,27 @@ class _NewArticlePageState extends State<NewArticlePage> {
       readOnly: false,
       expands: false,
       padding: EdgeInsets.zero,
-      // customStyles: DefaultStyles(
-      //   h1: DefaultTextBlockStyle(
-      //     const TextStyle(
-      //       fontSize: 32,
-      //       color: Colors.black,
-      //       height: 1.15,
-      //       fontWeight: FontWeight.w300,
-      //     ),
-      //     const Tuple2(16, 0),
-      //     const Tuple2(0, 0),
-      //     null,
-      //   ),
-      //   sizeSmall: const TextStyle(fontSize: 9),
-      // ),
     );
 
     var toolbar = QuillToolbar.basic(
       controller: _controller,
       onImagePickCallback: _onImagePickCallback,
-      // onVideoPickCallback: _onVideoPickCallback,
+    );
+
+    var buttons = List<Widget>.from(toolbar.children);
+    var index = buttons.indexWhere((button) => button is ImageButton);
+    buttons.insert(
+      index + 1,
+      HostedVideoButton(
+        icon: Icons.movie_creation,
+        controller: _controller,
+      ),
+    );
+
+    toolbar = QuillToolbar(
+      children: buttons,
+      toolBarHeight: toolbar.toolBarHeight,
+      multiRowsDisplay: toolbar.multiRowsDisplay,
     );
 
     return SafeArea(
@@ -103,12 +105,4 @@ class _NewArticlePageState extends State<NewArticlePage> {
     var dir = await getApplicationDocumentsDirectory();
     return (await file.copy('${dir.path}/${basename(file.path)}')).path;
   }
-
-  // Future<String> _onVideoPickCallback(File file) async {
-  //   // Copies the picked file from temporary cache to applications directory
-  //   final appDocDir = await getApplicationDocumentsDirectory();
-  //   final copiedFile =
-  //       await file.copy('${appDocDir.path}/${basename(file.path)}');
-  //   return copiedFile.path.toString();
-  // }
 }
