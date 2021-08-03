@@ -659,7 +659,7 @@ class _LiveCommentaryRecordingPageState
                               return;
                             }
 
-                            var pickedImage = await imagePicker.getImage(
+                            var pickedImage = await imagePicker.pickImage(
                               source: source,
                             );
                             if (pickedImage != null) {

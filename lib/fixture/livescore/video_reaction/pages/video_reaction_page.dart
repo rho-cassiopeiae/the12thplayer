@@ -152,7 +152,7 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                       return;
                     }
 
-                    var pickedFile = await imagePicker.getVideo(
+                    var pickedFile = await imagePicker.pickVideo(
                       source: source,
                       maxDuration: Duration(minutes: 5), // @@TODO: Config.
                     );
@@ -160,10 +160,7 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                     if (pickedFile != null) {
                       _videoBytes = await pickedFile.readAsBytes();
                       setState(() {
-                        _fileName =
-                            basenameWithoutExtension(pickedFile.path) + '.mp4';
-                        // @@NOTE: ImagePicker plugin has a bug where it returns picked video's path
-                        // with .jpg extension instead of .mp4, so we manually replace it with .mp4.
+                        _fileName = basename(pickedFile.path);
                       });
                     }
                   },

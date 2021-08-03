@@ -160,4 +160,11 @@ class _$Injector extends Injector {
         (c) => TeamService(c<Storage>(), c<ITeamApiService>()));
     container.registerSingleton((c) => TeamBloc(c<TeamService>()));
   }
+
+  @override
+  void configureFeed() {
+    final KiwiContainer container = KiwiContainer();
+    container.registerSingleton((c) => FeedService());
+    container.registerSingleton((c) => FeedBloc(c<FeedService>()));
+  }
 }

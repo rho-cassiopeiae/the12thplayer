@@ -85,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
 
-    var pickedFile = await imagePicker.getImage(source: source);
+    var pickedFile = await imagePicker.pickImage(source: source);
 
     if (pickedFile == null) {
       return;

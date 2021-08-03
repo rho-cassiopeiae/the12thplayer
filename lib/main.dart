@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
+import 'feed/pages/new_article_page.dart';
 import 'general/bloc/notification_actions.dart';
 import 'general/bloc/notification_bloc.dart';
 import 'general/extensions/kiwi_extension.dart';
@@ -155,6 +156,10 @@ class Application extends StatelessWidgetInjected<NotificationBloc> {
               builder: (_) => VideoPage(
                 videoId: settings.arguments as String,
               ),
+            );
+          case NewArticlePage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => NewArticlePage(),
             );
           default:
             return null;

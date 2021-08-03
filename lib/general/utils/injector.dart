@@ -1,5 +1,7 @@
 import 'package:kiwi/kiwi.dart';
 
+import '../../feed/bloc/feed_bloc.dart';
+import '../../feed/services/feed_service.dart';
 import '../../fixture/livescore/performance_rating/bloc/performance_rating_bloc.dart';
 import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_api_service.dart';
 import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_repository.dart';
@@ -152,6 +154,10 @@ abstract class Injector {
   @Register.singleton(TeamBloc)
   void configureTeam();
 
+  @Register.singleton(FeedService)
+  @Register.singleton(FeedBloc)
+  void configureFeed();
+
   void configure() {
     configureGeneral();
     configureImage();
@@ -165,6 +171,7 @@ abstract class Injector {
     configurePerformanceRating();
     configureVideoReaction();
     configureTeam();
+    configureFeed();
   }
 }
 
