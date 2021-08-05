@@ -32,15 +32,17 @@ For the server side of the application go to [this](https://github.com/rho-cassi
 
 ## Features
 
-- Live match events, lineups, stats.
-- Performance ratings. Players' performance history.
-- Live match discussions.
-- Live commentary feeds.
-- Fan video reactions.
-- User blogs — _Planned_.
-- Match predictions — _Planned_.
-- Rating players' attributes FIFA-style — _Planned_.
-- Forum — _Planned_.
+- ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Live match events, lineups, stats.
+- ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Performance ratings. Players' performance history.
+- ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Live match discussions.
+- ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Live commentary feeds.
+- ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Fan video reactions.
+- ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) User rating system — _In Progress_.
+- ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) News feed — _In Progress_.
+- ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) User blogs — _Planned_.
+- ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Match predictions — _Planned_.
+- ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Rating players' attributes FIFA-style — _Planned_.
+- ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Forum — _Planned_.
 
 ## Technical details
 
