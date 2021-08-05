@@ -7,7 +7,6 @@ import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../general/extensions/flutter_quill_extension.dart';
 import '../bloc/feed_actions.dart';
 import '../bloc/feed_bloc.dart';
 import '../../general/extensions/kiwi_extension.dart';
@@ -65,22 +64,7 @@ class _NewArticlePageState extends State<NewArticlePage> {
     var toolbar = QuillToolbar.basic(
       controller: _controller,
       onImagePickCallback: _onImagePickCallback,
-    );
-
-    var buttons = List<Widget>.from(toolbar.children);
-    var index = buttons.indexWhere((button) => button is ImageButton);
-    buttons.insert(
-      index + 1,
-      HostedVideoButton(
-        icon: Icons.movie_creation,
-        controller: _controller,
-      ),
-    );
-
-    toolbar = QuillToolbar(
-      children: buttons,
-      toolBarHeight: toolbar.toolBarHeight,
-      multiRowsDisplay: toolbar.multiRowsDisplay,
+      mediaPickSettingSelector: selectMediaPickSetting,
     );
 
     return SafeArea(
@@ -100,6 +84,41 @@ class _NewArticlePageState extends State<NewArticlePage> {
       ),
     );
   }
+
+  Future<MediaPickSetting> selectMediaPickSetting(BuildContext context) =>
+      showDialog<MediaPickSetting>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton.icon(
+                icon: const Icon(
+                  Icons.collections,
+                  color: Colors.black,
+                ),
+                label: const Text(
+                  'Gallery',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onPressed: () => Navigator.pop(ctx, MediaPickSetting.Gallery),
+              ),
+              TextButton.icon(
+                icon: const Icon(
+                  Icons.link,
+                  color: Colors.black,
+                ),
+                label: const Text(
+                  'Link',
+                  style: TextStyle(color: Colors.black),
+                ),
+                onPressed: () => Navigator.pop(ctx, MediaPickSetting.Link),
+              )
+            ],
+          ),
+        ),
+      );
 
   Future<String> _onImagePickCallback(File file) async {
     var dir = await getApplicationDocumentsDirectory();
