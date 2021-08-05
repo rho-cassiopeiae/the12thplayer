@@ -101,6 +101,36 @@ class AccountService {
     }
   }
 
+  Future<AccountEntity> _createProfileAndSaveAccount(
+    String email,
+    String username,
+    String accessToken,
+    String refreshToken,
+  ) async {
+    await _apiPolicy.execute(
+      () => _accountApiService.createProfile(
+        accessToken,
+        email,
+      ),
+    );
+
+    var account = AccountEntity.confirmed(
+      email: email,
+      username: username,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+
+    await _storage.saveAccount(account);
+
+    await _serverConnector.setTokensAndAbortConnection(
+      accessToken,
+      refreshToken,
+    );
+
+    return account;
+  }
+
   Future<Either<Error, AccountVm>> confirmEmail(
     String confirmationCode,
   ) async {
@@ -114,21 +144,44 @@ class AccountService {
         ),
       );
 
-      var confirmedAccount = AccountEntity.confirmed(
-        email: account.email,
-        username: account.username,
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
+      account = await _createProfileAndSaveAccount(
+        account.email,
+        account.username,
+        response.accessToken,
+        response.refreshToken,
       );
 
-      await _storage.saveAccount(confirmedAccount);
+      return Right(AccountVm.fromEntity(account));
+    } catch (error, stackTrace) {
+      print('===== $error =====');
+      print(stackTrace);
 
-      await _serverConnector.setTokensAndAbortConnection(
-        confirmedAccount.accessToken,
-        confirmedAccount.refreshToken,
+      return Left(Error(error.toString()));
+    }
+  }
+
+  Future<Either<Error, AccountVm>> resumeInterruptedConfirmation(
+    String password,
+  ) async {
+    try {
+      var account = await _storage.loadAccount();
+
+      var response = await _apiPolicy.execute(
+        () => _accountApiService.signIn(
+          account.email,
+          password,
+        ),
       );
 
-      return Right(AccountVm.fromEntity(confirmedAccount));
+      // @@NOTE: Can only get here if account is confirmed, so no need to check the response.
+      account = await _createProfileAndSaveAccount(
+        account.email,
+        response.username,
+        response.accessToken,
+        response.refreshToken,
+      );
+
+      return Right(AccountVm.fromEntity(account));
     } catch (error, stackTrace) {
       print('===== $error =====');
       print(stackTrace);
@@ -150,26 +203,29 @@ class AccountService {
       );
 
       AccountEntity account;
-      if (response.accessToken != null) {
-        account = AccountEntity.confirmed(
-          email: email,
-          username: response.username,
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
-        );
-
-        await _serverConnector.setTokensAndAbortConnection(
-          account.accessToken,
-          account.refreshToken,
-        );
-      } else {
+      if (response.accessToken == null) {
         account = AccountEntity.unconfirmed(
           email: email,
           username: response.username,
         );
-      }
 
-      await _storage.saveAccount(account);
+        await _storage.saveAccount(account);
+      } else {
+        // @@NOTE: Creating profile is idempotent. We need to create a profile upon login
+        // to account for the possibility that user sent email confirmation code and his
+        // email was confirmed on the server, but then he closed the app before the call
+        // to create a profile could be issued. So user has a confirmed account but no profile.
+        // Then imagine that he opened the app from another device and signed-in. We need to
+        // finish profile creation for him, that's why we call createProfile. This is a very rare
+        // case, so the call almost always does nothing on the server. It's fine, since we don't
+        // expect users to sign-in a lot — they sign-up/sign-in once and just keep using the app.
+        account = await _createProfileAndSaveAccount(
+          email,
+          response.username,
+          response.accessToken,
+          response.refreshToken,
+        );
+      }
 
       return Right(AccountVm.fromEntity(account));
     } catch (error, stackTrace) {

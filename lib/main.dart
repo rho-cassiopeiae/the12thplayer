@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
+import 'account/pages/interrupted_confirmation_page.dart';
 import 'feed/pages/new_article_page.dart';
 import 'general/bloc/notification_actions.dart';
 import 'general/bloc/notification_bloc.dart';
@@ -94,6 +95,12 @@ class Application extends StatelessWidgetInjected<NotificationBloc> {
                 goBackAfterConfirm: settings.arguments != null
                     ? settings.arguments as bool
                     : false,
+              ),
+            );
+          case InterruptedConfirmationPage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => InterruptedConfirmationPage(
+                goBackAfterConfirm: settings.arguments as bool,
               ),
             );
           case FixtureCalendarPage.routeName:

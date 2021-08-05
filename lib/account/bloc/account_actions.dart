@@ -35,6 +35,13 @@ class ConfirmEmail extends AccountActionFutureState<AuthState> {
   ConfirmEmail({@required this.confirmationCode});
 }
 
+class ResumeInterruptedConfirmation
+    extends AccountActionFutureState<AuthState> {
+  final String password;
+
+  ResumeInterruptedConfirmation({@required this.password});
+}
+
 class SignIn extends AccountActionFutureState<AuthState> {
   final String email;
   final String password;

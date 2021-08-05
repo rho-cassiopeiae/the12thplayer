@@ -1,64 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 
-import 'interrupted_confirmation_page.dart';
-import '../../fixture/calendar/pages/fixture_calendar_page.dart';
 import '../bloc/account_actions.dart';
-import '../bloc/account_bloc.dart';
 import '../bloc/account_states.dart';
+import '../bloc/account_bloc.dart';
+import '../../fixture/calendar/pages/fixture_calendar_page.dart';
 import '../../general/extensions/kiwi_extension.dart';
 import '../../general/widgets/app_drawer.dart';
 
 // @@NOTE: We mutate data but don't actually need to redraw, so using stateful widget is not necessary.
 // ignore: must_be_immutable
-class EmailConfirmationPage extends StatelessWidgetInjected<AccountBloc> {
-  static const routeName = '/account/confirm-email';
+class InterruptedConfirmationPage extends StatelessWidgetInjected<AccountBloc> {
+  static const routeName = '/account/confirm-password';
 
   final bool goBackAfterConfirm;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String _confirmationCode;
+  String _password;
 
-  EmailConfirmationPage({@required this.goBackAfterConfirm});
+  InterruptedConfirmationPage({@required this.goBackAfterConfirm});
 
-  Widget _buildOtpField(BuildContext context) {
-    return Container(
-      height: 60.0,
-      decoration: BoxDecoration(
-        color: const Color(0xFF6CA8F1),
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black38,
-            blurRadius: 6.0,
-            offset: const Offset(0, 2),
+  Widget _buildPasswordField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Password',
+          style: GoogleFonts.openSans(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-      ),
-      child: PinCodeTextField(
-        appContext: context,
-        length: 6,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        backgroundColor: Colors.transparent,
-        obscureText: false,
-        keyboardType: TextInputType.number,
-        textStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
         ),
-        pinTheme: PinTheme(
-          shape: PinCodeFieldShape.underline,
-          activeColor: Colors.white,
-          inactiveColor: Colors.white,
-          selectedColor: Colors.white,
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: BoxDecoration(
+            color: const Color(0xFF6CA8F1),
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6.0,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          height: 60.0,
+          child: TextField(
+            onChanged: (value) => _password = value,
+            obscureText: true,
+            style: GoogleFonts.openSans(color: Colors.white),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
-        onChanged: (value) => _confirmationCode = value,
-        beforeTextPaste: (text) => true,
-      ),
+      ],
     );
   }
 
@@ -87,23 +91,14 @@ class EmailConfirmationPage extends StatelessWidgetInjected<AccountBloc> {
             ),
           ),
           onPressed: () async {
-            var action = ConfirmEmail(
-              confirmationCode: _confirmationCode,
-            );
+            var action = ResumeInterruptedConfirmation(password: _password);
             accountBloc.dispatchAction(action);
 
             var state = await action.state;
             if (state is AuthError) {
-              if (state.message.contains('already confirmed')) {
-                Navigator.of(context).pushReplacementNamed(
-                  InterruptedConfirmationPage.routeName,
-                  arguments: goBackAfterConfirm,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
             } else {
               if (goBackAfterConfirm) {
                 Navigator.of(context).pop();
@@ -164,7 +159,7 @@ class EmailConfirmationPage extends StatelessWidgetInjected<AccountBloc> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Confirm email',
+                        'Confirm password',
                         style: GoogleFonts.openSans(
                           color: Colors.white,
                           fontSize: 30.0,
@@ -172,7 +167,7 @@ class EmailConfirmationPage extends StatelessWidgetInjected<AccountBloc> {
                         ),
                       ),
                       SizedBox(height: 30.0),
-                      _buildOtpField(context),
+                      _buildPasswordField(),
                       SizedBox(height: 30.0),
                       _buildSubmitButton(accountBloc),
                     ],

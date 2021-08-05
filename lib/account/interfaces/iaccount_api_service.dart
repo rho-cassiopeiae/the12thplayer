@@ -14,5 +14,7 @@ abstract class IAccountApiService {
 
   Future<RefreshAccessTokenResponseDto> refreshAccessToken();
 
+  Future createProfile(String accessToken, String email);
+
   Future updateProfileImage(List<int> imageBytes, String filename);
 }

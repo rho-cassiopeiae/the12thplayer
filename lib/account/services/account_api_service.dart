@@ -133,6 +133,27 @@ class AccountApiService implements IAccountApiService {
   }
 
   @override
+  Future createProfile(String accessToken, String email) async {
+    var formData = FormData.fromMap(
+      {
+        'email': email,
+      },
+    );
+
+    try {
+      await _serverConnector.dio.put(
+        '/api/profile',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+        data: formData,
+      );
+    } on DioError catch (error) {
+      throw _wrapError(error);
+    }
+  }
+
+  @override
   Future updateProfileImage(List<int> imageBytes, String filename) async {
     var formData = FormData.fromMap(
       {

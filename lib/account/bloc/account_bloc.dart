@@ -14,6 +14,8 @@ class AccountBloc extends Bloc<AccountAction> {
         _signUp(action);
       } else if (action is ConfirmEmail) {
         _confirmEmail(action);
+      } else if (action is ResumeInterruptedConfirmation) {
+        _resumeInterruptedConfirmation(action);
       } else if (action is SignIn) {
         _signIn(action);
       } else if (action is UpdateProfileImage) {
@@ -57,6 +59,22 @@ class AccountBloc extends Bloc<AccountAction> {
   void _confirmEmail(ConfirmEmail action) async {
     // @@TODO: Validation.
     var result = await _accountService.confirmEmail(action.confirmationCode);
+
+    var state = result.fold(
+      (error) => AuthError(message: error.toString()),
+      (account) => AuthSuccess(account: account),
+    );
+
+    action.complete(state);
+  }
+
+  void _resumeInterruptedConfirmation(
+    ResumeInterruptedConfirmation action,
+  ) async {
+    // @@TODO: Validation.
+    var result = await _accountService.resumeInterruptedConfirmation(
+      action.password,
+    );
 
     var state = result.fold(
       (error) => AuthError(message: error.toString()),
