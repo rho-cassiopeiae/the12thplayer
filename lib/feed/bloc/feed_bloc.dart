@@ -8,7 +8,9 @@ class FeedBloc extends Bloc<FeedAction> {
   FeedBloc(this._feedService) {
     actionChannel.stream.listen(
       (action) {
-        if (action is CreateNewArticle) {
+        if (action is SubscribeToFeed) {
+          _subscribeToFeed(action);
+        } else if (action is CreateNewArticle) {
           _createNewArticle(action);
         }
       },
@@ -20,6 +22,8 @@ class FeedBloc extends Bloc<FeedAction> {
     actionChannel.close();
     actionChannel = null;
   }
+
+  void _subscribeToFeed(SubscribeToFeed action) async {}
 
   void _createNewArticle(CreateNewArticle action) async {
     await _feedService.createNewArticle(action.content);

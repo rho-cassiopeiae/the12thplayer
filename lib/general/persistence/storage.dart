@@ -1,3 +1,4 @@
+import '../../feed/models/vm/article_vm.dart';
 import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_repository.dart';
 import '../../fixture/livescore/performance_rating/models/entities/fixture_performance_ratings_entity.dart';
 import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_entry_status.dart';
@@ -262,4 +263,11 @@ class Storage {
             totalVoters,
             myRating,
           );
+
+  void clearTeamFeedArticles() => _cache.clearTeamFeedArticles();
+
+  void addTeamFeedArticles(List<ArticleVm> articles) =>
+      _cache.addTeamFeedArticles(articles);
+
+  List<ArticleVm> getTeamFeedArticles() => _cache.getTeamFeedArticles();
 }

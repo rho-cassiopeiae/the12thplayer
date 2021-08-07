@@ -164,7 +164,10 @@ class _$Injector extends Injector {
   @override
   void configureFeed() {
     final KiwiContainer container = KiwiContainer();
-    container.registerSingleton((c) => FeedService());
+    container.registerSingleton<IFeedApiService>(
+        (c) => FeedApiService(c<ServerConnector>(), c<SubscriptionTracker>()));
+    container.registerSingleton(
+        (c) => FeedService(c<Storage>(), c<IFeedApiService>()));
     container.registerSingleton((c) => FeedBloc(c<FeedService>()));
   }
 }

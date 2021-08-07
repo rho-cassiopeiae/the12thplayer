@@ -1,5 +1,7 @@
 import 'package:kiwi/kiwi.dart';
 
+import '../../feed/interfaces/ifeed_api_service.dart';
+import '../../feed/services/feed_api_service.dart';
 import '../../feed/bloc/feed_bloc.dart';
 import '../../feed/services/feed_service.dart';
 import '../../fixture/livescore/performance_rating/bloc/performance_rating_bloc.dart';
@@ -154,6 +156,7 @@ abstract class Injector {
   @Register.singleton(TeamBloc)
   void configureTeam();
 
+  @Register.singleton(IFeedApiService, from: FeedApiService)
   @Register.singleton(FeedService)
   @Register.singleton(FeedBloc)
   void configureFeed();

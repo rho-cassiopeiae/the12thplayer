@@ -1,3 +1,4 @@
+import '../../feed/models/vm/article_vm.dart';
 import '../../fixture/livescore/discussion/models/vm/discussion_entry_vm.dart';
 import '../../team/models/entities/team_entity.dart';
 import '../../account/models/entities/account_entity.dart';
@@ -17,11 +18,7 @@ class Cache {
 
   void addDiscussionEntries(List<DiscussionEntryVm> entries) {
     entries.removeWhere(
-      (entry) =>
-          _discussionEntries.indexWhere(
-            (e) => e.id == entry.id,
-          ) >=
-          0,
+      (entry) => _discussionEntries.indexWhere((e) => e.id == entry.id) >= 0,
     );
 
     _discussionEntries.insertAll(0, entries);
@@ -37,4 +34,20 @@ class Cache {
   }
 
   List<DiscussionEntryVm> getDiscussionEntries() => _discussionEntries;
+
+  final List<ArticleVm> _articles = [];
+
+  void clearTeamFeedArticles() => _articles.clear();
+
+  void addTeamFeedArticles(List<ArticleVm> articles) {
+    articles.removeWhere(
+      (article) =>
+          _articles.indexWhere((a) => a.postedAt == article.postedAt) >= 0,
+    );
+
+    _articles.insertAll(0, articles);
+    _articles.sort((a1, a2) => a2.postedAt.compareTo(a1.postedAt));
+  }
+
+  List<ArticleVm> getTeamFeedArticles() => _articles;
 }
