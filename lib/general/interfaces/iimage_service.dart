@@ -14,4 +14,6 @@ abstract class IImageService {
   );
 
   Future<void> invalidateCachedProfileImage(String username);
+
+  Future<File> downloadImage(String url);
 }

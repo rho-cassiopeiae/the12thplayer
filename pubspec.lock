@@ -232,6 +232,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  direct_select_flutter:
+    dependency: "direct main"
+    description:
+      name: direct_select_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   dotted_border:
     dependency: "direct main"
     description:
@@ -688,6 +695,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  rect_getter:
+    dependency: transitive
+    description:
+      name: rect_getter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   rxdart:
     dependency: transitive
     description:
@@ -1072,7 +1086,7 @@ packages:
     source: hosted
     version: "3.1.0"
   youtube_player_flutter:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: youtube_player_flutter
       url: "https://pub.dartlang.org"

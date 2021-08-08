@@ -4,6 +4,10 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
+import 'feed/enums/article_type.dart';
+import 'feed/pages/article_type_selection_page.dart';
+import 'feed/pages/video_article_compose_page.dart';
+import 'feed/pages/youtube_video_page.dart';
 import 'account/pages/interrupted_confirmation_page.dart';
 import 'feed/pages/new_article_page.dart';
 import 'general/bloc/notification_actions.dart';
@@ -162,6 +166,22 @@ class Application extends StatelessWidgetInjected<NotificationBloc> {
             return MaterialPageRoute(
               builder: (_) => VideoPage(
                 videoId: settings.arguments as String,
+              ),
+            );
+          case ArticleTypeSelectionPage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => ArticleTypeSelectionPage(),
+            );
+          case VideoArticleComposePage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => VideoArticleComposePage(
+                type: settings.arguments as ArticleType,
+              ),
+            );
+          case YoutubeVideoPage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => YoutubeVideoPage(
+                videoUrl: settings.arguments as String,
               ),
             );
           case NewArticlePage.routeName:

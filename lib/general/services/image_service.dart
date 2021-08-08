@@ -132,4 +132,7 @@ class ImageService implements IImageService {
 
   Future<void> invalidateCachedProfileImage(String username) =>
       DefaultCacheManager().removeFile('$profileImageUrlPrefix/$username.png');
+
+  Future<File> downloadImage(String url) async =>
+      (await DefaultCacheManager().downloadFile(url)).file;
 }
