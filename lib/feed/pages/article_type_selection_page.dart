@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:direct_select_flutter/direct_select_item.dart';
 import 'package:direct_select_flutter/direct_select_list.dart';
 import 'package:direct_select_flutter/direct_select_container.dart';
-import 'package:the12thplayer/feed/pages/video_article_compose_page.dart';
 
+import 'video_article_compose_page.dart';
 import '../enums/article_type.dart';
 
 // @@NOTE: We mutate data but don't actually need to redraw, so using stateful widget is not necessary.

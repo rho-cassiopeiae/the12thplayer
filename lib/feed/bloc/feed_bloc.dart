@@ -13,8 +13,14 @@ class FeedBloc extends Bloc<FeedAction> {
           _subscribeToFeed(action);
         } else if (action is ProcessVideoUrl) {
           _processVideoUrl(action);
-        } else if (action is CreateNewArticle) {
-          _createNewArticle(action);
+        } else if (action is PostVideoArticle) {
+          _postVideoArticle(action);
+        } else if (action is SaveArticlePreview) {
+          _saveArticlePreview(action);
+        } else if (action is SaveArticle) {
+          _saveArticle(action);
+        } else if (action is PostArticle) {
+          _postArticle(action);
         }
       },
     );
@@ -37,7 +43,47 @@ class FeedBloc extends Bloc<FeedAction> {
     }
   }
 
-  void _createNewArticle(CreateNewArticle action) async {
-    await _feedService.createNewArticle(action.content);
+  void _postVideoArticle(PostVideoArticle action) async {
+    bool posted = await _feedService.postVideoArticle(
+      action.type,
+      action.title,
+      action.thumbnailBytes,
+      action.videoUrl,
+      action.summary,
+    );
+
+    if (posted) {
+      action.complete(PostArticleReady());
+    } else {
+      action.complete(PostArticleError());
+    }
+  }
+
+  void _saveArticlePreview(SaveArticlePreview action) async {
+    bool saved = await _feedService.saveArticlePreview(
+      action.title,
+      action.previewImageUrl,
+      action.summary,
+    );
+
+    if (saved) {
+      action.complete(SaveArticlePreviewReady());
+    } else {
+      action.complete(SaveArticlePreviewError());
+    }
+  }
+
+  void _saveArticle(SaveArticle action) {
+    _feedService.saveArticle(action.content);
+    action.complete(SaveArticleReady());
+  }
+
+  void _postArticle(PostArticle action) async {
+    bool posted = await _feedService.postArticle(action.content);
+    if (posted) {
+      action.complete(PostArticleReady());
+    } else {
+      action.complete(PostArticleError());
+    }
   }
 }

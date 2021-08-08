@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:either_option/either_option.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../enums/article_type.dart';
 import '../models/video_data.dart';
 import '../../general/interfaces/iimage_service.dart';
 import '../../general/services/notification_service.dart';
@@ -14,6 +18,11 @@ class FeedService {
   final NotificationService _notificationService;
   final IFeedApiService _feedApiService;
   final IImageService _imageService;
+
+  String _title;
+  String _previewImageUrl;
+  String _summary;
+  List<dynamic> _content;
 
   FeedService(
     this._storage,
@@ -79,7 +88,77 @@ class FeedService {
     return null;
   }
 
-  Future createNewArticle(String content) async {
-    print(content);
+  Future<bool> postVideoArticle(
+    ArticleType type,
+    String title,
+    Uint8List thumbnailBytes,
+    String videoUrl,
+    String summary,
+  ) async {
+    // @@TODO: Validation.
+    bool valid = true;
+    if (!valid) {
+      _notificationService.showMessage('Invalid input');
+      return false;
+    }
+
+    try {
+      var currentTeam = await _storage.loadCurrentTeam();
+
+      _notificationService.showMessage('Posted');
+
+      await _feedApiService.postVideoArticle(
+        currentTeam.id,
+        type,
+        title,
+        thumbnailBytes,
+        summary,
+        videoUrl,
+      );
+
+      return true;
+    } catch (error, stackTrace) {
+      print('===== $error =====');
+      print(stackTrace);
+
+      _notificationService.showMessage(error.toString());
+
+      return false;
+    }
+  }
+
+  Future<bool> saveArticlePreview(
+    String title,
+    String previewImageUrl,
+    String summary,
+  ) async {
+    // @@TODO: Validation.
+    bool valid = true;
+    if (valid) {
+      _title = title;
+      _previewImageUrl = previewImageUrl;
+      _summary = summary;
+    } else {
+      _notificationService.showMessage('Invalid input');
+    }
+
+    return valid;
+  }
+
+  void saveArticle(List<dynamic> content) {
+    _content = content;
+  }
+
+  Future<bool> postArticle(List<dynamic> content) async {
+    // @@TODO: Validation.
+    bool valid = true;
+    if (valid) {
+      var contentString = jsonEncode(content);
+      _notificationService.showMessage('Posted');
+    } else {
+      _notificationService.showMessage('Invalid input');
+    }
+
+    return valid;
   }
 }

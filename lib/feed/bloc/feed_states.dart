@@ -13,3 +13,17 @@ class ProcessVideoUrlReady extends ProcessVideoUrlState {
 }
 
 class ProcessVideoUrlError extends ProcessVideoUrlState {}
+
+abstract class SaveArticlePreviewState extends FeedState {}
+
+class SaveArticlePreviewReady extends SaveArticlePreviewState {}
+
+class SaveArticlePreviewError extends SaveArticlePreviewState {}
+
+class SaveArticleReady extends FeedState {}
+
+abstract class PostArticleState extends FeedState {}
+
+class PostArticleReady extends PostArticleState {}
+
+class PostArticleError extends PostArticleState {}

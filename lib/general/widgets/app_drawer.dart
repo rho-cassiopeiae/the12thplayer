@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../feed/pages/new_article_page.dart';
+import '../../feed/pages/article_type_selection_page.dart';
 import '../../account/pages/profile_page.dart';
 import '../../team/pages/team_squad_page.dart';
 import '../../fixture/calendar/pages/fixture_calendar_page.dart';
@@ -69,7 +69,7 @@ class AppDrawer extends StatelessWidgetInjected<AccountBloc> {
             ),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(
-                NewArticlePage.routeName,
+                ArticleTypeSelectionPage.routeName,
               );
             },
           ),

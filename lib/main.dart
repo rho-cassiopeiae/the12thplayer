@@ -9,7 +9,7 @@ import 'feed/pages/article_type_selection_page.dart';
 import 'feed/pages/video_article_compose_page.dart';
 import 'feed/pages/youtube_video_page.dart';
 import 'account/pages/interrupted_confirmation_page.dart';
-import 'feed/pages/new_article_page.dart';
+import 'feed/pages/article_compose_page.dart';
 import 'general/bloc/notification_actions.dart';
 import 'general/bloc/notification_bloc.dart';
 import 'general/extensions/kiwi_extension.dart';
@@ -184,9 +184,9 @@ class Application extends StatelessWidgetInjected<NotificationBloc> {
                 videoUrl: settings.arguments as String,
               ),
             );
-          case NewArticlePage.routeName:
+          case ArticleComposePage.routeName:
             return MaterialPageRoute(
-              builder: (_) => NewArticlePage(),
+              builder: (_) => ArticleComposePage(),
             );
           default:
             return null;

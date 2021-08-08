@@ -230,8 +230,17 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
           Icons.upload_rounded,
           color: Colors.white,
         ),
-        onPressed: () {
-          setState(() {});
+        onPressed: () async {
+          var action = PostVideoArticle(
+            type: widget.type,
+            title: _title,
+            thumbnailBytes: _thumbnailBytes,
+            videoUrl: _videoUrl,
+            summary: _summary,
+          );
+          _feedBloc.dispatchAction(action);
+
+          var state = await action.state;
         },
       ),
     );

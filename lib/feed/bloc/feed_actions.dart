@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 
+import '../enums/article_type.dart';
 import 'feed_states.dart';
 
 abstract class FeedAction {}
@@ -22,8 +24,47 @@ class ProcessVideoUrl extends FeedActionFutureState<ProcessVideoUrlState> {
   ProcessVideoUrl({@required this.url});
 }
 
-class CreateNewArticle extends FeedAction {
-  final String content;
+class PostVideoArticle extends FeedActionFutureState<PostArticleState> {
+  final ArticleType type;
+  final String title;
+  final Uint8List thumbnailBytes;
+  final String videoUrl;
+  final String summary;
 
-  CreateNewArticle({@required this.content});
+  PostVideoArticle({
+    @required this.type,
+    @required this.title,
+    @required this.thumbnailBytes,
+    @required this.videoUrl,
+    @required this.summary,
+  });
+}
+
+class SaveArticlePreview
+    extends FeedActionFutureState<SaveArticlePreviewState> {
+  final String title;
+  final String previewImageUrl;
+  final String summary;
+
+  SaveArticlePreview({
+    @required this.title,
+    @required this.previewImageUrl,
+    @required this.summary,
+  });
+}
+
+class SaveArticle extends FeedActionFutureState<SaveArticleReady> {
+  final List<dynamic> content;
+
+  SaveArticle({@required this.content});
+}
+
+class PostArticle extends FeedActionFutureState<PostArticleState> {
+  final ArticleType type;
+  final List<dynamic> content;
+
+  PostArticle({
+    @required this.type,
+    @required this.content,
+  });
 }

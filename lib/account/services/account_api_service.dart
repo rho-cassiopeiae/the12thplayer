@@ -134,19 +134,15 @@ class AccountApiService implements IAccountApiService {
 
   @override
   Future createProfile(String accessToken, String email) async {
-    var formData = FormData.fromMap(
-      {
-        'email': email,
-      },
-    );
-
     try {
       await _serverConnector.dio.put(
         '/api/profile',
         options: Options(
           headers: {'Authorization': 'Bearer $accessToken'},
         ),
-        data: formData,
+        data: <String, dynamic>{
+          'email': email,
+        },
       );
     } on DioError catch (error) {
       throw _wrapError(error);
