@@ -57,6 +57,10 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
         brightness: Brightness.dark,
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),

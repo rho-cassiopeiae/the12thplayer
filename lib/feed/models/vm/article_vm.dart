@@ -11,7 +11,15 @@ class ArticleVm {
   final String title;
   final String previewImageUrl;
   final String summary;
-  final List<dynamic> content;
+  final String content;
+
+  bool get isVideo =>
+      type == ArticleType.Video || type == ArticleType.Highlights;
+
+  bool get isYoutubeVideo =>
+      content.contains('youtube.com') || content.contains('youtu.be');
+
+  List<dynamic> get contentList => jsonDecode(content);
 
   ArticleVm.fromDto(ArticleDto article)
       : postedAt = DateTime.fromMillisecondsSinceEpoch(article.postedAt),
@@ -21,5 +29,5 @@ class ArticleVm {
         title = article.title,
         previewImageUrl = article.previewImageUrl,
         summary = article.summary,
-        content = jsonDecode(article.content);
+        content = article.content;
 }

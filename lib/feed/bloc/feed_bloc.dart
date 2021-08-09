@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'feed_states.dart';
 import 'feed_actions.dart';
 import '../services/feed_service.dart';
@@ -6,11 +8,19 @@ import '../../general/bloc/bloc.dart';
 class FeedBloc extends Bloc<FeedAction> {
   final FeedService _feedService;
 
+  StreamController<ArticlesState> _articlesStateChannel =
+      StreamController<ArticlesState>.broadcast();
+  Stream<ArticlesState> get articlesState$ => _articlesStateChannel.stream;
+
   FeedBloc(this._feedService) {
     actionChannel.stream.listen(
       (action) {
         if (action is SubscribeToFeed) {
           _subscribeToFeed(action);
+        } else if (action is UnsubscribeFromFeed) {
+          _unsubscribeFromFeed(action);
+        } else if (action is LoadArticle) {
+          _loadArticle(action);
         } else if (action is ProcessVideoUrl) {
           _processVideoUrl(action);
         } else if (action is PostVideoArticle) {
@@ -32,9 +42,35 @@ class FeedBloc extends Bloc<FeedAction> {
   void dispose({FeedAction cleanupAction}) {
     actionChannel.close();
     actionChannel = null;
+    _articlesStateChannel.close();
+    _articlesStateChannel = null;
   }
 
-  void _subscribeToFeed(SubscribeToFeed action) async {}
+  void _subscribeToFeed(SubscribeToFeed action) async {
+    await for (var update in _feedService.subscribeToFeed()) {
+      var state = update.fold(
+        (error) => ArticlesError(message: error.toString()),
+        (articles) => ArticlesReady(articles: articles),
+      );
+
+      _articlesStateChannel?.add(state);
+    }
+  }
+
+  void _unsubscribeFromFeed(UnsubscribeFromFeed action) {
+    _feedService.unsubscribeFromFeed();
+  }
+
+  void _loadArticle(LoadArticle action) async {
+    var result = await _feedService.loadArticle(action.postedAt);
+
+    var state = result.fold(
+      (error) => ArticleError(message: error.toString()),
+      (article) => ArticleReady(article: article),
+    );
+
+    action.complete(state);
+  }
 
   void _processVideoUrl(ProcessVideoUrl action) async {
     var videoData = await _feedService.processVideoUrl(action.url);

@@ -17,5 +17,5 @@ class ArticleDto {
         previewImageUrl =
             map.containsKey('previewImageUrl') ? map['previewImageUrl'] : null,
         summary = map.containsKey('summary') ? map['summary'] : null,
-        content = map['content'];
+        content = map.containsKey('content') ? map['content'] : null;
 }

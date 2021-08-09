@@ -4,6 +4,9 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:signalr_core/signalr_core.dart';
 
+import '../models/dto/article_dto.dart';
+import '../models/dto/requests/get_article_request_dto.dart';
+import '../models/dto/requests/unsubscribe_from_team_feed_request_dto.dart';
 import '../models/dto/requests/post_article_request_dto.dart';
 import '../enums/article_type.dart';
 import '../errors/feed_error.dart';
@@ -56,6 +59,8 @@ class FeedApiService implements IFeedApiService {
       }
     } else if (errorMessage.contains('[ValidationError]')) {
       return ValidationError();
+    } else if (errorMessage.contains('[FeedError]')) {
+      return FeedError(errorMessage.split('[FeedError] ').last);
     }
 
     print(ex);
@@ -142,6 +147,52 @@ class FeedApiService implements IFeedApiService {
       updatesChannel.close();
       _teamIdentifierToUpdatesChannel.remove(teamIdentifier);
 
+      throw _wrapHubException(ex);
+    }
+  }
+
+  @override
+  void unsubscribeFromTeamFeed(int teamId) async {
+    await _serverConnector.ensureConnected();
+
+    var teamIdentifier = 'team:$teamId';
+
+    _subscriptionTracker.removeSubscription(teamIdentifier);
+
+    var updatesChannel = _teamIdentifierToUpdatesChannel.remove(
+      teamIdentifier,
+    );
+    if (updatesChannel != null) {
+      updatesChannel.close();
+
+      await _connection.invoke(
+        'UnsubscribeFromTeamFeed',
+        args: [
+          UnsubscribeFromTeamFeedRequestDto(
+            teamId: teamId,
+          ),
+        ],
+      );
+    }
+  }
+
+  @override
+  Future<ArticleDto> getArticle(int teamId, DateTime postedAt) async {
+    await _serverConnector.ensureConnected();
+
+    try {
+      var result = await _connection.invoke(
+        'GetArticle',
+        args: [
+          GetArticleRequestDto(
+            teamId: teamId,
+            postedAt: postedAt,
+          ),
+        ],
+      );
+
+      return ArticleDto.fromMap(result['data']);
+    } on Exception catch (ex) {
       throw _wrapHubException(ex);
     }
   }

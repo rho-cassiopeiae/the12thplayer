@@ -55,6 +55,26 @@ class FeedService {
     }
   }
 
+  void unsubscribeFromFeed() async {
+    var currentTeam = await _storage.loadCurrentTeam();
+    _feedApiService.unsubscribeFromTeamFeed(currentTeam.id);
+  }
+
+  Future<Either<Error, ArticleVm>> loadArticle(DateTime postedAt) async {
+    try {
+      var currentTeam = await _storage.loadCurrentTeam();
+
+      var article = await _feedApiService.getArticle(currentTeam.id, postedAt);
+
+      return Right(ArticleVm.fromDto(article));
+    } catch (error, stackTrace) {
+      print('===== $error =====');
+      print(stackTrace);
+
+      return Left(Error(error.toString()));
+    }
+  }
+
   Future<VideoData> processVideoUrl(String url) async {
     if (url.contains('youtube.com') || url.contains('youtu.be')) {
       var videoId = YoutubePlayer.convertUrlToId(url);

@@ -52,6 +52,10 @@ class _ArticlePreviewComposePageState extends State<ArticlePreviewComposePage> {
         brightness: Brightness.dark,
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -137,9 +141,14 @@ class _ArticlePreviewComposePageState extends State<ArticlePreviewComposePage> {
                           size: 120,
                         ),
                       )
-                    : Image.network(
-                        _previewImageUrl,
-                        fit: BoxFit.cover,
+                    : Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            _previewImageUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
                       ),
               ),
             ),

@@ -1,7 +1,8 @@
+import 'package:direct_select_flutter/direct_select_container.dart';
 import 'package:flutter/material.dart';
 import 'package:direct_select_flutter/direct_select_item.dart';
 import 'package:direct_select_flutter/direct_select_list.dart';
-import 'package:direct_select_flutter/direct_select_container.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'article_preview_compose_page.dart';
 import 'video_article_compose_page.dart';
@@ -17,81 +18,80 @@ class ArticleTypeSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: appBar,
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF273469),
+        title: Text(
+          'The12thPlayer',
+          style: GoogleFonts.teko(
+            textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+            ),
+          ),
+        ),
+        brightness: Brightness.dark,
+        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: DirectSelectContainer(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            verticalDirection: VerticalDirection.down,
-            children: <Widget>[
-              SizedBox(height: 150.0),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      alignment: AlignmentDirectional.centerStart,
-                      margin: EdgeInsets.only(left: 4),
-                      child: Text('Select type'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Card(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 12),
-                                child: DirectSelectList<ArticleType>(
-                                  values: ArticleType.values,
-                                  itemBuilder: (value) =>
-                                      DirectSelectItem<ArticleType>(
-                                    itemHeight: 56,
-                                    value: value,
-                                    itemBuilder: (_, value) => Text(
-                                      value.getString(),
-                                    ),
-                                  ),
-                                  focusedItemDecoration: BoxDecoration(
-                                    border: BorderDirectional(
-                                      top: BorderSide(
-                                        width: 1,
-                                        color: Colors.black12,
-                                      ),
-                                      bottom: BorderSide(
-                                        width: 1,
-                                        color: Colors.black12,
-                                      ),
-                                    ),
-                                  ),
-                                  onItemSelectedListener: (value, _, __) {
-                                    _type = value;
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Icon(
-                                Icons.unfold_more,
-                                color: Colors.black38,
-                              ),
-                            )
-                          ],
+        child: Column(
+          children: [
+            Spacer(flex: 2),
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              elevation: 8,
+              child: Row(
+                children: [
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: DirectSelectList<ArticleType>(
+                      values: ArticleType.values,
+                      itemBuilder: (value) => DirectSelectItem<ArticleType>(
+                        itemHeight: 56,
+                        value: value,
+                        itemBuilder: (_, value) => Text(
+                          value.getString(),
+                          style: GoogleFonts.exo2(fontSize: 20),
                         ),
                       ),
+                      focusedItemDecoration: BoxDecoration(
+                        border: BorderDirectional(
+                          top: BorderSide(
+                            width: 1,
+                            color: Colors.black12,
+                          ),
+                          bottom: BorderSide(
+                            width: 1,
+                            color: Colors.black12,
+                          ),
+                        ),
+                      ),
+                      onItemSelectedListener: (value, _, __) {
+                        _type = value;
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                  Icon(
+                    Icons.unfold_more,
+                    color: Colors.black38,
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+            Spacer(flex: 3),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_forward_ios),
+        backgroundColor: const Color(0xFF273469),
+        child: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.white,
+        ),
         onPressed: () {
           assert(_type != null);
           if (_type == ArticleType.Highlights || _type == ArticleType.Video) {

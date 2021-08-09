@@ -45,7 +45,7 @@ class Cache {
           _articles.indexWhere((a) => a.postedAt == article.postedAt) >= 0,
     );
 
-    _articles.insertAll(0, articles);
+    _articles.addAll(articles);
     _articles.sort((a1, a2) => a2.postedAt.compareTo(a1.postedAt));
   }
 

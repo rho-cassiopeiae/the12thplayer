@@ -18,6 +18,14 @@ abstract class FeedActionFutureState<TState extends FeedState>
 
 class SubscribeToFeed extends FeedAction {}
 
+class UnsubscribeFromFeed extends FeedAction {}
+
+class LoadArticle extends FeedActionFutureState<ArticleState> {
+  final DateTime postedAt;
+
+  LoadArticle({@required this.postedAt});
+}
+
 class ProcessVideoUrl extends FeedActionFutureState<ProcessVideoUrlState> {
   final String url;
 

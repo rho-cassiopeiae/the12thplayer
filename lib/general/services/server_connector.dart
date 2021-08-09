@@ -84,6 +84,12 @@ class ServerConnector {
         Tuple2(enums.MessageType.DiscussionUpdate, args),
       ),
     );
+    _connection.on(
+      'UpdateTeamFeed',
+      (args) => _messageChannel.add(
+        Tuple2(enums.MessageType.FeedUpdate, args),
+      ),
+    );
 
     await _connection.start();
 

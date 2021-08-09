@@ -1,10 +1,15 @@
 import 'dart:typed_data';
 
+import '../models/dto/article_dto.dart';
 import '../enums/article_type.dart';
 import '../models/dto/team_feed_update_dto.dart';
 
 abstract class IFeedApiService {
   Future<Stream<TeamFeedUpdateDto>> subscribeToTeamFeed(int teamId);
+
+  void unsubscribeFromTeamFeed(int teamId);
+
+  Future<ArticleDto> getArticle(int teamId, DateTime postedAt);
 
   Future postVideoArticle(
     int teamId,
