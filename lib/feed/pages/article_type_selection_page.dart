@@ -3,6 +3,7 @@ import 'package:direct_select_flutter/direct_select_item.dart';
 import 'package:direct_select_flutter/direct_select_list.dart';
 import 'package:direct_select_flutter/direct_select_container.dart';
 
+import 'article_preview_compose_page.dart';
 import 'video_article_compose_page.dart';
 import '../enums/article_type.dart';
 
@@ -11,7 +12,7 @@ import '../enums/article_type.dart';
 class ArticleTypeSelectionPage extends StatelessWidget {
   static const routeName = '/feed/article-type';
 
-  ArticleType _type;
+  ArticleType _type = ArticleType.News;
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +97,11 @@ class ArticleTypeSelectionPage extends StatelessWidget {
           if (_type == ArticleType.Highlights || _type == ArticleType.Video) {
             Navigator.of(context).pushNamed(
               VideoArticleComposePage.routeName,
+              arguments: _type,
+            );
+          } else {
+            Navigator.of(context).pushNamed(
+              ArticlePreviewComposePage.routeName,
               arguments: _type,
             );
           }

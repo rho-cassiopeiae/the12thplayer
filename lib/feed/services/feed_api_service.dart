@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:signalr_core/signalr_core.dart';
 
+import '../models/dto/requests/post_article_request_dto.dart';
 import '../enums/article_type.dart';
 import '../errors/feed_error.dart';
 import '../../general/errors/connection_error.dart';
@@ -177,6 +178,36 @@ class FeedApiService implements IFeedApiService {
       );
     } on DioError catch (error) {
       throw _wrapError(error);
+    }
+  }
+
+  @override
+  Future postArticle(
+    int teamId,
+    ArticleType type,
+    String title,
+    String previewImageUrl,
+    String summary,
+    String content,
+  ) async {
+    await _serverConnector.ensureConnected();
+
+    try {
+      await _connection.invoke(
+        'PostArticle',
+        args: [
+          PostArticleRequestDto(
+            teamId: teamId,
+            type: type,
+            title: title,
+            previewImageUrl: previewImageUrl,
+            summary: summary,
+            content: content,
+          ),
+        ],
+      );
+    } on Exception catch (ex) {
+      throw _wrapHubException(ex);
     }
   }
 }

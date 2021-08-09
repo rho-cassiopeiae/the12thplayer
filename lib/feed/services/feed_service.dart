@@ -105,7 +105,9 @@ class FeedService {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      _notificationService.showMessage('Posted');
+      _notificationService.showMessage(
+        'The article has been submitted for review',
+      );
 
       await _feedApiService.postVideoArticle(
         currentTeam.id,
@@ -145,20 +147,55 @@ class FeedService {
     return valid;
   }
 
-  void saveArticle(List<dynamic> content) {
+  List<dynamic> loadArticleContent() => _content;
+
+  void saveArticleContent(List<dynamic> content) {
     _content = content;
   }
 
-  Future<bool> postArticle(List<dynamic> content) async {
+  void _clearArticleData() {
+    _title = null;
+    _previewImageUrl = null;
+    _summary = null;
+    _content = null;
+  }
+
+  Future<bool> postArticle(ArticleType type, List<dynamic> content) async {
     // @@TODO: Validation.
     bool valid = true;
-    if (valid) {
-      var contentString = jsonEncode(content);
-      _notificationService.showMessage('Posted');
-    } else {
+    if (!valid) {
       _notificationService.showMessage('Invalid input');
+      return false;
     }
 
-    return valid;
+    try {
+      var currentTeam = await _storage.loadCurrentTeam();
+
+      var contentString = jsonEncode(content);
+
+      _notificationService.showMessage(
+        'The article has been submitted for review',
+      );
+
+      await _feedApiService.postArticle(
+        currentTeam.id,
+        type,
+        _title,
+        _previewImageUrl,
+        _summary,
+        contentString,
+      );
+
+      _clearArticleData();
+
+      return true;
+    } catch (error, stackTrace) {
+      print('===== $error =====');
+      print(stackTrace);
+
+      _notificationService.showMessage(error.toString());
+
+      return false;
+    }
   }
 }

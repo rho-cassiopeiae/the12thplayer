@@ -20,7 +20,13 @@ class SaveArticlePreviewReady extends SaveArticlePreviewState {}
 
 class SaveArticlePreviewError extends SaveArticlePreviewState {}
 
-class SaveArticleReady extends FeedState {}
+class ArticleContentReady extends FeedState {
+  final List<dynamic> content;
+
+  ArticleContentReady({@required this.content});
+}
+
+class SaveArticleContentReady extends FeedState {}
 
 abstract class PostArticleState extends FeedState {}
 

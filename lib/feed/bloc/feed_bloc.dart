@@ -17,8 +17,10 @@ class FeedBloc extends Bloc<FeedAction> {
           _postVideoArticle(action);
         } else if (action is SaveArticlePreview) {
           _saveArticlePreview(action);
-        } else if (action is SaveArticle) {
-          _saveArticle(action);
+        } else if (action is LoadArticleContent) {
+          _loadArticleContent(action);
+        } else if (action is SaveArticleContent) {
+          _saveArticleContent(action);
         } else if (action is PostArticle) {
           _postArticle(action);
         }
@@ -73,13 +75,22 @@ class FeedBloc extends Bloc<FeedAction> {
     }
   }
 
-  void _saveArticle(SaveArticle action) {
-    _feedService.saveArticle(action.content);
-    action.complete(SaveArticleReady());
+  void _loadArticleContent(LoadArticleContent action) {
+    List<dynamic> content = _feedService.loadArticleContent();
+    action.complete(ArticleContentReady(content: content));
+  }
+
+  void _saveArticleContent(SaveArticleContent action) {
+    _feedService.saveArticleContent(action.content);
+    action.complete(SaveArticleContentReady());
   }
 
   void _postArticle(PostArticle action) async {
-    bool posted = await _feedService.postArticle(action.content);
+    bool posted = await _feedService.postArticle(
+      action.type,
+      action.content,
+    );
+
     if (posted) {
       action.complete(PostArticleReady());
     } else {

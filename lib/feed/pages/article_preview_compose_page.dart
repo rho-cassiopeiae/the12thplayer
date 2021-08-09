@@ -1,43 +1,38 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/link_dialog.dart';
-import 'youtube_video_page.dart';
 import '../bloc/feed_actions.dart';
 import '../bloc/feed_bloc.dart';
 import '../bloc/feed_states.dart';
 import '../enums/article_type.dart';
 import '../../general/extensions/kiwi_extension.dart';
+import 'article_compose_page.dart';
 
-class VideoArticleComposePage extends StatefulWidget
+class ArticlePreviewComposePage extends StatefulWidget
     with DependencyResolver<FeedBloc> {
-  static const routeName = '/feed/video-article-compose';
+  static const routeName = '/feed/article-preview-compose';
 
   final ArticleType type;
 
-  const VideoArticleComposePage({
+  const ArticlePreviewComposePage({
     Key key,
     @required this.type,
   }) : super(key: key);
 
   @override
-  _VideoArticleComposePageState createState() =>
-      _VideoArticleComposePageState(resolve());
+  _ArticlePreviewComposePageState createState() =>
+      _ArticlePreviewComposePageState(resolve());
 }
 
-class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
+class _ArticlePreviewComposePageState extends State<ArticlePreviewComposePage> {
   final FeedBloc _feedBloc;
 
   String _title;
+  String _previewImageUrl;
   String _summary;
 
-  bool _isYoutubeVideo;
-  Uint8List _thumbnailBytes;
-  String _videoUrl;
-
-  _VideoArticleComposePageState(this._feedBloc);
+  _ArticlePreviewComposePageState(this._feedBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +107,7 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
               aspectRatio: 16 / 9,
               child: Container(
                 decoration: BoxDecoration(
-                  border: _thumbnailBytes == null
+                  border: _previewImageUrl == null
                       ? Border.all(
                           color: Colors.white,
                           width: 4,
@@ -122,7 +117,7 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                 ),
                 alignment: Alignment.center,
                 clipBehavior: Clip.antiAlias,
-                child: _thumbnailBytes == null
+                child: _previewImageUrl == null
                     ? InkWell(
                         onTap: () async {
                           var url = await showDialog<String>(
@@ -130,52 +125,21 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                             builder: (_) => const LinkDialog(),
                           );
 
-                          if (url == null) {
-                            return;
-                          }
-
-                          var action = ProcessVideoUrl(url: url);
-                          _feedBloc.dispatchAction(action);
-
-                          var state = await action.state;
-                          if (state is ProcessVideoUrlReady) {
+                          if (url != null) {
                             setState(() {
-                              _isYoutubeVideo = state.videoData.isYoutubeVideo;
-                              _thumbnailBytes = state.videoData.thumbnailBytes;
-                              _videoUrl = state.videoData.videoUrl;
+                              _previewImageUrl = url;
                             });
                           }
                         },
                         child: Icon(
-                          Icons.videocam,
+                          Icons.image,
                           color: Colors.white,
                           size: 120,
                         ),
                       )
-                    : Stack(
-                        alignment: Alignment.center,
-                        fit: StackFit.expand,
-                        children: [
-                          Image.memory(
-                            _thumbnailBytes,
-                            fit: BoxFit.cover,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (_isYoutubeVideo) {
-                                Navigator.of(context).pushNamed(
-                                  YoutubeVideoPage.routeName,
-                                  arguments: _videoUrl,
-                                );
-                              }
-                            },
-                            child: Icon(
-                              Icons.play_arrow,
-                              color: Colors.white54,
-                              size: 80,
-                            ),
-                          ),
-                        ],
+                    : Image.network(
+                        _previewImageUrl,
+                        fit: BoxFit.cover,
                       ),
               ),
             ),
@@ -228,22 +192,23 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
-          Icons.upload_rounded,
+          Icons.arrow_forward_ios,
           color: Colors.white,
         ),
         onPressed: () async {
-          var action = PostVideoArticle(
-            type: widget.type,
+          var action = SaveArticlePreview(
             title: _title,
-            thumbnailBytes: _thumbnailBytes,
-            videoUrl: _videoUrl,
+            previewImageUrl: _previewImageUrl,
             summary: _summary,
           );
           _feedBloc.dispatchAction(action);
 
           var state = await action.state;
-          if (state is PostArticleReady) {
-            Navigator.popUntil(context, (route) => route.isFirst);
+          if (state is SaveArticlePreviewReady) {
+            Navigator.of(context).pushNamed(
+              ArticleComposePage.routeName,
+              arguments: widget.type,
+            );
           }
         },
       ),

@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:tuple/tuple.dart';
 
+import 'feed/pages/article_preview_compose_page.dart';
 import 'feed/enums/article_type.dart';
 import 'feed/pages/article_type_selection_page.dart';
 import 'feed/pages/video_article_compose_page.dart';
@@ -184,9 +185,17 @@ class Application extends StatelessWidgetInjected<NotificationBloc> {
                 videoUrl: settings.arguments as String,
               ),
             );
+          case ArticlePreviewComposePage.routeName:
+            return MaterialPageRoute(
+              builder: (_) => ArticlePreviewComposePage(
+                type: settings.arguments as ArticleType,
+              ),
+            );
           case ArticleComposePage.routeName:
             return MaterialPageRoute(
-              builder: (_) => ArticleComposePage(),
+              builder: (_) => ArticleComposePage(
+                type: settings.arguments as ArticleType,
+              ),
             );
           default:
             return null;

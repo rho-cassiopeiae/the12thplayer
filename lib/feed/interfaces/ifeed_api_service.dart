@@ -14,4 +14,13 @@ abstract class IFeedApiService {
     String summary,
     String content,
   );
+
+  Future postArticle(
+    int teamId,
+    ArticleType type,
+    String title,
+    String previewImageUrl,
+    String summary,
+    String content,
+  );
 }

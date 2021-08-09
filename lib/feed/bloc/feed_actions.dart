@@ -53,10 +53,13 @@ class SaveArticlePreview
   });
 }
 
-class SaveArticle extends FeedActionFutureState<SaveArticleReady> {
+class LoadArticleContent extends FeedActionFutureState<ArticleContentReady> {}
+
+class SaveArticleContent
+    extends FeedActionFutureState<SaveArticleContentReady> {
   final List<dynamic> content;
 
-  SaveArticle({@required this.content});
+  SaveArticleContent({@required this.content});
 }
 
 class PostArticle extends FeedActionFutureState<PostArticleState> {
