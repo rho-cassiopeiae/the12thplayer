@@ -244,7 +244,7 @@ class _FeedPageState extends State<FeedPage> {
                     ),
                     Positioned(
                       top: 30,
-                      left: 16,
+                      left: 12,
                       child: Card(
                         color: const Color(0xff2b2d42),
                         elevation: 3,

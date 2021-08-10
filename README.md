@@ -3,19 +3,20 @@
 **The12thPlayer** mobile app written in Flutter. The goal of the application is to bring football fans closer together by providing a friendly, feature-rich platform where they can interact with each other in many different ways. The app does all the usual football app things like live match events, lineups, and stats, but its main focus is on fans discussing football with other fellow fans. In particular, you can chat about a game in a discussion room, watch post-match fan video reactions and post your own, rate players' and managers' performances, follow other users' live commentary feeds (maybe even create your own if you are up to it), and more.
 
 <p float="left">
-  <img src="https://user-images.githubusercontent.com/84779039/124240120-03f0a780-db4d-11eb-9d1c-0a66f70e0dd3.gif" width="24%" />
-  <img src="https://user-images.githubusercontent.com/84779039/124250863-dbba7600-db57-11eb-8af8-89496d032f5a.gif" width="24%" />
-  <img src="https://user-images.githubusercontent.com/84779039/124250885-e1b05700-db57-11eb-9db7-eb5b3281ab3c.gif" width="24%" />
-  <img src="https://user-images.githubusercontent.com/84779039/124250859-da894900-db57-11eb-9b16-84f7dddb57b7.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/lineup.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/events-stats.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/feed.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/ratings.gif" width="24%" />
 </p>
 
 <details>
   <summary>More gifs</summary>
 
 <p float="left">
-  <img src="https://user-images.githubusercontent.com/84779039/124250869-de1cd000-db57-11eb-9ff9-d6a6cbf2bd1d.gif" width="24%" />
-  <img src="https://user-images.githubusercontent.com/84779039/124250850-d826ef00-db57-11eb-9cae-c0771e366260.gif" width="24%" />
-  <img src="https://user-images.githubusercontent.com/84779039/124250907-e5dc7480-db57-11eb-84f3-6d23aede8d11.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/discussion.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/player.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/live-commentary.gif" width="24%" />
+  <img src="https://raw.githubusercontent.com/rho-cassiopeiae/the12thplayer/dev/.github/images/video.gif" width="24%" />
 </p>
 </details>
 
@@ -37,9 +38,9 @@ For the server side of the application go to [this](https://github.com/rho-cassi
 - ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Live match discussions.
 - ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Live commentary feeds.
 - ![#55ff55](https://via.placeholder.com/15/55ff55/000000?text=+) Fan video reactions.
-- ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) User rating system — _In Progress_.
+- ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) User reputation system — _In Progress_.
 - ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) News feed — _In Progress_.
-- ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) User blogs — _Planned_.
+- ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) User blogs — _In Progress_.
 - ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Match predictions — _Planned_.
 - ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Rating players' attributes FIFA-style — _Planned_.
 - ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) Forum — _Planned_.
