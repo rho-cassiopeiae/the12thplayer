@@ -60,6 +60,34 @@ class FeedService {
     _feedApiService.unsubscribeFromTeamFeed(currentTeam.id);
   }
 
+  Future<List<ArticleVm>> loadMoreArticles() async {
+    try {
+      var currentTeam = await _storage.loadCurrentTeam();
+
+      var articles = _storage.getTeamFeedArticles();
+      DateTime postedBefore =
+          articles.isNotEmpty ? articles.last.postedAt : null;
+
+      var articleDtos = await _feedApiService.getTeamFeedArticlesPostedBefore(
+        currentTeam.id,
+        postedBefore,
+      );
+
+      _storage.addTeamFeedArticles(
+        articleDtos.map((article) => ArticleVm.fromDto(article)).toList(),
+      );
+
+      return _storage.getTeamFeedArticles();
+    } catch (error, stackTrace) {
+      print('===== $error =====');
+      print(stackTrace);
+
+      _notificationService.showMessage(error.toString());
+
+      return null;
+    }
+  }
+
   Future<Either<Error, ArticleVm>> loadArticle(DateTime postedAt) async {
     try {
       var currentTeam = await _storage.loadCurrentTeam();

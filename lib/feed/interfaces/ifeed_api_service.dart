@@ -9,6 +9,11 @@ abstract class IFeedApiService {
 
   void unsubscribeFromTeamFeed(int teamId);
 
+  Future<Iterable<ArticleDto>> getTeamFeedArticlesPostedBefore(
+    int teamId,
+    DateTime postedBefore,
+  );
+
   Future<ArticleDto> getArticle(int teamId, DateTime postedAt);
 
   Future postVideoArticle(

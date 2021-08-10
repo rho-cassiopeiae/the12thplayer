@@ -51,6 +51,8 @@ class ArticlesError extends ArticlesState {
   ArticlesError({@required this.message});
 }
 
+class LoadMoreArticlesReady extends FeedState {}
+
 abstract class ArticleState extends FeedState {}
 
 class ArticleReady extends ArticleState {

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:signalr_core/signalr_core.dart';
 
+import '../models/dto/requests/get_team_feed_articles_posted_before_request_dto.dart';
 import '../models/dto/article_dto.dart';
 import '../models/dto/requests/get_article_request_dto.dart';
 import '../models/dto/requests/unsubscribe_from_team_feed_request_dto.dart';
@@ -173,6 +174,32 @@ class FeedApiService implements IFeedApiService {
           ),
         ],
       );
+    }
+  }
+
+  @override
+  Future<Iterable<ArticleDto>> getTeamFeedArticlesPostedBefore(
+    int teamId,
+    DateTime postedBefore,
+  ) async {
+    await _serverConnector.ensureConnected();
+
+    try {
+      var result = await _connection.invoke(
+        'GetTeamFeedArticlesPostedBefore',
+        args: [
+          GetTeamFeedArticlesPostedBeforeRequestDto(
+            teamId: teamId,
+            postedBefore: postedBefore,
+          ),
+        ],
+      );
+
+      return (result['data'] as List<dynamic>).map(
+        (articleMap) => ArticleDto.fromMap(articleMap),
+      );
+    } on Exception catch (ex) {
+      throw _wrapHubException(ex);
     }
   }
 

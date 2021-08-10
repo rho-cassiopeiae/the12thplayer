@@ -19,6 +19,8 @@ class FeedBloc extends Bloc<FeedAction> {
           _subscribeToFeed(action);
         } else if (action is UnsubscribeFromFeed) {
           _unsubscribeFromFeed(action);
+        } else if (action is LoadMoreArticles) {
+          _loadMoreArticles(action);
         } else if (action is LoadArticle) {
           _loadArticle(action);
         } else if (action is ProcessVideoUrl) {
@@ -59,6 +61,14 @@ class FeedBloc extends Bloc<FeedAction> {
 
   void _unsubscribeFromFeed(UnsubscribeFromFeed action) {
     _feedService.unsubscribeFromFeed();
+  }
+
+  void _loadMoreArticles(LoadMoreArticles action) async {
+    var articles = await _feedService.loadMoreArticles();
+    if (articles != null) {
+      _articlesStateChannel.add(ArticlesReady(articles: articles));
+    }
+    action.complete(LoadMoreArticlesReady());
   }
 
   void _loadArticle(LoadArticle action) async {

@@ -20,6 +20,8 @@ class SubscribeToFeed extends FeedAction {}
 
 class UnsubscribeFromFeed extends FeedAction {}
 
+class LoadMoreArticles extends FeedActionFutureState<LoadMoreArticlesReady> {}
+
 class LoadArticle extends FeedActionFutureState<ArticleState> {
   final DateTime postedAt;
 
