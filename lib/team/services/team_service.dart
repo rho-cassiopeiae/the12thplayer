@@ -1,26 +1,27 @@
 import 'dart:math';
 
-import 'package:either_option/either_option.dart';
-
-import '../models/entities/team_entity.dart';
-import '../models/vm/team_vm.dart';
+import '../../general/services/notification_service.dart';
 import '../../general/errors/connection_error.dart';
 import '../../general/errors/server_error.dart';
 import '../../general/utils/policy.dart';
-import '../models/vm/fixture_performance_rating_vm.dart';
+import '../models/vm/fixture_player_rating_vm.dart';
 import '../models/vm/team_squad_vm.dart';
-import '../../general/errors/error.dart';
 import '../../general/persistence/storage.dart';
 import '../interfaces/iteam_api_service.dart';
 
 class TeamService {
   final Storage _storage;
   final ITeamApiService _teamApiService;
+  final NotificationService _notificationService;
 
-  Policy _apiPolicy;
+  Policy _policy;
 
-  TeamService(this._storage, this._teamApiService) {
-    _apiPolicy = PolicyBuilder().on<ConnectionError>(
+  TeamService(
+    this._storage,
+    this._teamApiService,
+    this._notificationService,
+  ) {
+    _policy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -41,104 +42,62 @@ class TeamService {
     ).build();
   }
 
-  Future<bool> checkSomeTeamSelected() async {
-    var currentTeam = await _storage.loadCurrentTeam();
-    return currentTeam != null;
-  }
-
-  Future<Either<Error, List<TeamVm>>> loadTeamsWithCommunities() async {
-    try {
-      var teams = await _apiPolicy.execute(
-        () => _teamApiService.getTeamsWithCommunities(),
-      );
-
-      return Right(teams.map((team) => TeamVm.fromDto(team)).toList());
-    } catch (error, stackTrace) {
-      print('===== $error =====');
-      print(stackTrace);
-
-      return Left(Error(error.toString()));
-    }
-  }
-
-  Future selectTeam(int teamId, String teamName, String teamLogoUrl) async {
-    await _storage.selectTeam(
-      TeamEntity(
-        id: teamId,
-        name: teamName,
-        logoUrl: teamLogoUrl,
-      ),
-    );
-  }
-
-  Future<Either<Error, TeamSquadVm>> loadTeamSquad() async {
+  Future<TeamSquadVm> loadTeamSquad() async {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var teamSquad = await _apiPolicy.execute(
+      var teamSquad = await _policy.execute(
         () => _teamApiService.getTeamSquad(currentTeam.id),
       );
 
-      return Right(TeamSquadVm.fromDto(teamSquad));
-    } catch (error, stackTrace) {
-      print('===== $error =====');
-      print(stackTrace);
-
-      return Left(Error(error.toString()));
+      return TeamSquadVm.fromDto(teamSquad);
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
+      return null;
     }
   }
 
-  Future<Either<Error, List<FixturePerformanceRatingVm>>>
-      loadPlayerPerformanceRatings(
+  Future<List<FixturePlayerRatingVm>> loadPlayerRatings(
     int playerId,
   ) async {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var performanceRatings = await _apiPolicy.execute(
-        () => _teamApiService.getTeamPlayerPerformanceRatings(
+      var playerRatings = await _policy.execute(
+        () => _teamApiService.getTeamPlayerRatings(
           currentTeam.id,
           playerId,
         ),
       );
 
-      return Right(
-        performanceRatings
-            .map((rating) => FixturePerformanceRatingVm.fromDto(rating))
-            .toList(),
-      );
-    } catch (error, stackTrace) {
-      print('===== $error =====');
-      print(stackTrace);
-
-      return Left(Error(error.toString()));
+      return playerRatings
+          .map((rating) => FixturePlayerRatingVm.fromDto(rating))
+          .toList();
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
+      return null;
     }
   }
 
-  Future<Either<Error, List<FixturePerformanceRatingVm>>>
-      loadManagerPerformanceRatings(
+  Future<List<FixturePlayerRatingVm>> loadManagerRatings(
     int managerId,
   ) async {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var performanceRatings = await _apiPolicy.execute(
-        () => _teamApiService.getTeamManagerPerformanceRatings(
+      var managerRatings = await _policy.execute(
+        () => _teamApiService.getTeamManagerRatings(
           currentTeam.id,
           managerId,
         ),
       );
 
-      return Right(
-        performanceRatings
-            .map((rating) => FixturePerformanceRatingVm.fromDto(rating))
-            .toList(),
-      );
-    } catch (error, stackTrace) {
-      print('===== $error =====');
-      print(stackTrace);
-
-      return Left(Error(error.toString()));
+      return managerRatings
+          .map((rating) => FixturePlayerRatingVm.fromDto(rating))
+          .toList();
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
+      return null;
     }
   }
 }

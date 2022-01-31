@@ -23,23 +23,23 @@ class PlayerDummy extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Positioned(
-          top: 0,
-          width: radius * 2,
-          height: radius * 2,
+          top: 0.0,
+          width: radius * 2.0,
+          height: radius * 2.0,
           child: Card(
             color: color,
-            elevation: 30,
+            elevation: 30.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(radius)),
             ),
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                player.number?.toString() ?? '',
+                player.number.toString(),
                 style: GoogleFonts.lexendMega(
                   textStyle: TextStyle(
                     color: fontColor,
-                    fontSize: radius - 6,
+                    fontSize: radius - 6.0,
                   ),
                 ),
               ),
@@ -47,10 +47,10 @@ class PlayerDummy extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 0,
+          bottom: 0.0,
           child: Card(
-            color: Color.fromRGBO(238, 241, 246, 1.0),
-            elevation: 30,
+            color: const Color.fromRGBO(238, 241, 246, 1.0),
+            elevation: 30.0,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
@@ -58,19 +58,17 @@ class PlayerDummy extends StatelessWidget {
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: 84,
-                  maxHeight: 15,
-                  minHeight: 15,
+                  maxWidth: 84.0,
+                  maxHeight: 15.0,
+                  minHeight: 15.0,
                 ),
                 child: FittedBox(
                   child: Text(
-                    player.name
-                        .split(' ')
-                        .last, // @@TODO: Find a better way to shorten a name.
+                    player.displayName,
                     style: GoogleFonts.exo2(
                       textStyle: TextStyle(
                         color: Colors.black87,
-                        fontSize: 16,
+                        fontSize: 16.0,
                       ),
                     ),
                   ),

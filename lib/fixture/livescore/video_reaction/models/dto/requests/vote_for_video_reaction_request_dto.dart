@@ -1,18 +1,16 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../enums/video_reaction_vote_action.dart';
-
 class VoteForVideoReactionRequestDto {
   final int fixtureId;
   final int teamId;
   final int authorId;
-  final VideoReactionVoteAction voteAction;
+  final int userVote;
 
   VoteForVideoReactionRequestDto({
     @required this.fixtureId,
     @required this.teamId,
     @required this.authorId,
-    @required this.voteAction,
+    @required this.userVote,
   });
 
   Map<String, dynamic> toJson() {
@@ -21,7 +19,7 @@ class VoteForVideoReactionRequestDto {
     map['fixtureId'] = fixtureId;
     map['teamId'] = teamId;
     map['authorId'] = authorId;
-    map['voteAction'] = voteAction.toInt();
+    map['userVote'] = userVote;
 
     return map;
   }

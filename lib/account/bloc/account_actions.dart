@@ -1,23 +1,16 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 
 import 'account_states.dart';
+import '../../general/bloc/mixins.dart';
 
 abstract class AccountAction {}
 
-abstract class AccountActionFutureState<TState extends AccountState>
-    extends AccountAction {
-  final Completer<TState> _stateReady = Completer<TState>();
-  Future<TState> get state => _stateReady.future;
+abstract class AccountActionAwaitable<T extends AccountState>
+    extends AccountAction with AwaitableState<T> {}
 
-  void complete(TState state) => _stateReady.complete(state);
-}
+class LoadAccount extends AccountActionAwaitable<LoadAccountState> {}
 
-class LoadAccount extends AccountActionFutureState<AccountState> {}
-
-class SignUp extends AccountActionFutureState<AuthState> {
+class SignUp extends AccountActionAwaitable<AuthenticateState> {
   final String email;
   final String username;
   final String password;
@@ -29,20 +22,17 @@ class SignUp extends AccountActionFutureState<AuthState> {
   });
 }
 
-class ConfirmEmail extends AccountActionFutureState<AuthState> {
+class ConfirmEmail extends AccountActionAwaitable<AuthenticateState> {
+  final String email;
   final String confirmationCode;
 
-  ConfirmEmail({@required this.confirmationCode});
+  ConfirmEmail({
+    @required this.email,
+    @required this.confirmationCode,
+  });
 }
 
-class ResumeInterruptedConfirmation
-    extends AccountActionFutureState<AuthState> {
-  final String password;
-
-  ResumeInterruptedConfirmation({@required this.password});
-}
-
-class SignIn extends AccountActionFutureState<AuthState> {
+class SignIn extends AccountActionAwaitable<AuthenticateState> {
   final String email;
   final String password;
 
@@ -50,11 +40,4 @@ class SignIn extends AccountActionFutureState<AuthState> {
     @required this.email,
     @required this.password,
   });
-}
-
-class UpdateProfileImage
-    extends AccountActionFutureState<UpdateProfileImageState> {
-  final File imageFile;
-
-  UpdateProfileImage({@required this.imageFile});
 }

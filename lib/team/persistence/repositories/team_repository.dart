@@ -29,14 +29,4 @@ class TeamRepository implements ITeamRepository {
 
     return rows.isNotEmpty ? TeamEntity.fromMap(rows.first) : null;
   }
-
-  Future selectTeam(TeamEntity team) async {
-    await _dbConfigurator.ensureOpen();
-
-    await _db.insert(
-      TeamTable.tableName,
-      team.toMap(true),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
 }

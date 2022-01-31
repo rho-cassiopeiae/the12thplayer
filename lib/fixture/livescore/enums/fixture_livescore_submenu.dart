@@ -3,7 +3,6 @@ enum FixtureLivescoreSubmenu {
   Events,
   Stats,
   Discussions,
-  LiveCommentaryFeeds,
-  PerformanceRatings,
+  PlayerRatings,
   VideoReactions,
 }

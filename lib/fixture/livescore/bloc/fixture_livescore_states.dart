@@ -4,16 +4,16 @@ import '../models/vm/fixture_full_vm.dart';
 
 abstract class FixtureLivescoreState {}
 
-class FixtureLoading extends FixtureLivescoreState {}
+abstract class LoadFixtureState extends FixtureLivescoreState {}
 
-class FixtureReady extends FixtureLivescoreState {
+class FixtureLoading extends LoadFixtureState {}
+
+class FixtureReady extends LoadFixtureState {
   final FixtureFullVm fixture;
+  final bool shouldSubscribe;
 
-  FixtureReady({@required this.fixture});
-}
-
-class FixtureError extends FixtureLivescoreState {
-  final String message;
-
-  FixtureError({@required this.message});
+  FixtureReady({
+    @required this.fixture,
+    this.shouldSubscribe,
+  });
 }

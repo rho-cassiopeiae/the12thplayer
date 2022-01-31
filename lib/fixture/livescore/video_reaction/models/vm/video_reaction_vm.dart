@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../enums/video_reaction_vote_action.dart';
 import '../dto/video_reaction_dto.dart';
 
 class VideoReactionVm {
@@ -9,8 +8,7 @@ class VideoReactionVm {
   final String authorUsername;
   final int rating;
   final String videoId;
-  final String thumbnailUrl;
-  final VideoReactionVoteAction voteAction;
+  final int userVote;
 
   VideoReactionVm._(
     this.authorId,
@@ -18,8 +16,7 @@ class VideoReactionVm {
     this.authorUsername,
     this.rating,
     this.videoId,
-    this.thumbnailUrl,
-    this.voteAction,
+    this.userVote,
   );
 
   VideoReactionVm.fromDto(VideoReactionDto reaction)
@@ -28,23 +25,18 @@ class VideoReactionVm {
         authorUsername = reaction.authorUsername,
         rating = reaction.rating,
         videoId = reaction.videoId,
-        thumbnailUrl = reaction.thumbnailUrl,
-        voteAction = VideoReactionVoteActionExtension.fromInt(
-          reaction.voteAction,
-        );
+        userVote = reaction.userVote;
 
   VideoReactionVm copyWith({
     @required int rating,
-    @required VideoReactionVoteAction voteAction,
-  }) {
-    return VideoReactionVm._(
-      authorId,
-      title,
-      authorUsername,
-      rating,
-      videoId,
-      thumbnailUrl,
-      voteAction,
-    );
-  }
+    @required int userVote,
+  }) =>
+      VideoReactionVm._(
+        authorId,
+        title,
+        authorUsername,
+        rating,
+        videoId,
+        userVote,
+      );
 }

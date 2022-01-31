@@ -53,6 +53,8 @@ dependencies:
   direct_select_flutter: ^1.1.1
   youtube_player_flutter: ^8.0.0
   pull_to_refresh: ^2.0.0
+  ulid: ^2.0.0
+  rxdart: ^0.27.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -82,11 +84,15 @@ flutter:
     - assets/images/match.png
     - assets/images/post-match.png
     - assets/images/bell.gif
+    - assets/images/player-card.png
 
   fonts:
     - family: Football
       fonts:
         - asset: assets/fonts/Football.ttf
+    - family: Fifa
+      fonts:
+        - asset: assets/fonts/Fifa.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

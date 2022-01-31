@@ -6,13 +6,13 @@ class GetVideoReactionsForFixtureRequestDto {
   final int fixtureId;
   final int teamId;
   final VideoReactionFilter filter;
-  final int start;
+  final int page;
 
   GetVideoReactionsForFixtureRequestDto({
     @required this.fixtureId,
     @required this.teamId,
     @required this.filter,
-    @required this.start,
+    @required this.page,
   });
 
   Map<String, dynamic> toJson() {
@@ -21,7 +21,7 @@ class GetVideoReactionsForFixtureRequestDto {
     map['fixtureId'] = fixtureId;
     map['teamId'] = teamId;
     map['filter'] = filter.index;
-    map['start'] = start;
+    map['page'] = page;
 
     return map;
   }

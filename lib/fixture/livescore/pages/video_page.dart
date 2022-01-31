@@ -6,7 +6,7 @@ import '../video_reaction/bloc/video_reaction_states.dart';
 import '../widgets/video_player.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 
-class VideoPage extends StatelessWidgetInjected<VideoReactionBloc> {
+class VideoPage extends StatelessWidgetWith<VideoReactionBloc> {
   static const routeName = '/fixture/livescore/video';
 
   final String videoId;
@@ -14,7 +14,7 @@ class VideoPage extends StatelessWidgetInjected<VideoReactionBloc> {
   VideoPage({@required this.videoId});
 
   @override
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     VideoReactionBloc videoReactionBloc,
   ) {
@@ -32,7 +32,7 @@ class VideoPage extends StatelessWidgetInjected<VideoReactionBloc> {
           if (state is VideoQualityUrlsLoading ||
               state is VideoQualityUrlsError) {
             return AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 16.0 / 9.0,
               child: Container(
                 color: Colors.black87,
                 alignment: Alignment.center,

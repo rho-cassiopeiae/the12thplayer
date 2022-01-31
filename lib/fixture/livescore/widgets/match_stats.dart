@@ -14,6 +14,13 @@ class MatchStats {
     @required this.theme,
   });
 
+  Color _computeBorderColor(Color color) {
+    var luminance =
+        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255.0;
+
+    return luminance > 0.5 ? Colors.black : Colors.white;
+  }
+
   List<Widget> build() {
     var homeColor = fixture.colors.homeTeam;
     if (homeColor == null) {
@@ -29,24 +36,27 @@ class MatchStats {
           : theme.accentColor;
     }
 
+    var borderColorHome = _computeBorderColor(homeColor);
+    var borderColorAway = _computeBorderColor(awayColor);
+
     var stats = fixture.stats.stats;
 
     return [
       SliverToBoxAdapter(
         child: Container(
-          height: 50,
+          height: 50.0,
           decoration: BoxDecoration(
             color: _color,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
             ),
             boxShadow: [
               BoxShadow(
                 color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
-                offset: Offset(0, 2),
+                offset: Offset(0.0, 2.0),
               ),
             ],
           ),
@@ -56,7 +66,7 @@ class MatchStats {
             style: GoogleFonts.exo2(
               textStyle: TextStyle(
                 color: theme.primaryColorDark,
-                fontSize: 20,
+                fontSize: 20.0,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -64,10 +74,22 @@ class MatchStats {
         ),
       ),
       SliverFixedExtentList(
-        itemExtent: 64,
+        itemExtent: 64.0,
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             var stat = stats[index];
+            bool drawBorder;
+            if (stat.homeTeamValue == 0 && stat.awayTeamValue == 0) {
+              drawBorder = true;
+            } else if (stat.homeTeamValue == 0) {
+              drawBorder = borderColorAway == Colors.black;
+            } else if (stat.awayTeamValue == 0) {
+              drawBorder = borderColorHome == Colors.black;
+            } else {
+              drawBorder = !(borderColorHome == Colors.white &&
+                  borderColorAway == Colors.white);
+            }
+
             return Container(
               decoration: BoxDecoration(
                 color: _color,
@@ -76,7 +98,7 @@ class MatchStats {
                     color: _color,
                     blurRadius: 0.0,
                     spreadRadius: 0.0,
-                    offset: Offset(0, 2),
+                    offset: Offset(0.0, 2.0),
                   ),
                 ],
               ),
@@ -98,17 +120,20 @@ class MatchStats {
                       children: [
                         Text(
                           stat.name,
-                          style: GoogleFonts.exo2(fontSize: 16),
+                          style: GoogleFonts.exo2(fontSize: 16.0),
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 8.0),
                         Container(
-                          height: 18,
+                          height: 18.0,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                            border: Border.all(
-                              width: 2,
-                              color: Colors.black87,
-                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12.0)),
+                            border: drawBorder
+                                ? Border.all(
+                                    width: 2.0,
+                                    color: Colors.black87,
+                                  )
+                                : null,
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: Row(
@@ -119,13 +144,13 @@ class MatchStats {
                                   decoration: BoxDecoration(
                                     color: homeColor,
                                     borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12),
+                                      topLeft: Radius.circular(12.0),
+                                      bottomLeft: Radius.circular(12.0),
                                       topRight: stat.awayTeamValue == 0
-                                          ? Radius.circular(12)
+                                          ? Radius.circular(12.0)
                                           : Radius.zero,
                                       bottomRight: stat.awayTeamValue == 0
-                                          ? Radius.circular(12)
+                                          ? Radius.circular(12.0)
                                           : Radius.zero,
                                     ),
                                   ),
@@ -137,13 +162,13 @@ class MatchStats {
                                   decoration: BoxDecoration(
                                     color: awayColor,
                                     borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(12),
-                                      bottomRight: Radius.circular(12),
+                                      topRight: Radius.circular(12.0),
+                                      bottomRight: Radius.circular(12.0),
                                       topLeft: stat.homeTeamValue == 0
-                                          ? Radius.circular(12)
+                                          ? Radius.circular(12.0)
                                           : Radius.zero,
                                       bottomLeft: stat.homeTeamValue == 0
-                                          ? Radius.circular(12)
+                                          ? Radius.circular(12.0)
                                           : Radius.zero,
                                     ),
                                   ),
@@ -172,7 +197,7 @@ class MatchStats {
       ),
       SliverToBoxAdapter(
         child: Container(
-          height: 24,
+          height: 24.0,
           decoration: BoxDecoration(
             color: _color,
             boxShadow: [
@@ -180,7 +205,7 @@ class MatchStats {
                 color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
-                offset: Offset(0, 2),
+                offset: Offset(0.0, 2.0),
               ),
             ],
           ),

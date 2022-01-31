@@ -1,15 +1,10 @@
-import '../../feed/models/vm/article_vm.dart';
-import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_repository.dart';
-import '../../fixture/livescore/performance_rating/models/entities/fixture_performance_ratings_entity.dart';
-import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_entry_status.dart';
-import '../../fixture/livescore/live_commentary_recording/enums/live_commentary_recording_status.dart';
-import '../../fixture/livescore/live_commentary_recording/models/entities/live_commentary_recording_entry_entity.dart';
+import '../../match_predictions/models/vm/active_season_round_with_fixtures_vm.dart';
+import '../../feed/models/vm/article_comments_vm.dart';
+import '../../feed/models/vm/feed_articles_vm.dart';
+import '../../fixture/livescore/video_reaction/models/vm/fixture_video_reactions_vm.dart';
+import '../../fixture/livescore/player_rating/interfaces/iplayer_rating_repository.dart';
+import '../../fixture/livescore/player_rating/models/entities/fixture_player_ratings_entity.dart';
 import '../../fixture/livescore/discussion/models/vm/discussion_entry_vm.dart';
-import '../../fixture/livescore/live_commentary_recording/interfaces/ilive_commentary_recording_repository.dart';
-import '../../fixture/livescore/live_commentary_recording/models/entities/live_commentary_recording_entity.dart';
-import '../../fixture/livescore/live_commentary_feed/models/entities/live_commentary_feed_entry_entity.dart';
-import '../../fixture/livescore/live_commentary_feed/models/entities/live_commentary_feed_entity.dart';
-import '../../fixture/livescore/live_commentary_feed/interfaces/ilive_commentary_feed_repository.dart';
 import '../../fixture/livescore/interfaces/ifixture_repository.dart';
 import '../../fixture/calendar/interfaces/ifixture_calendar_repository.dart';
 import '../../fixture/common/models/entities/fixture_entity.dart';
@@ -25,9 +20,7 @@ class Storage {
   final ITeamRepository _teamRepository;
   final IFixtureCalendarRepository _fixtureCalendarRepository;
   final IFixtureRepository _fixtureRepository;
-  final ILiveCommentaryFeedRepository _liveCommentaryFeedRepository;
-  final ILiveCommentaryRecordingRepository _liveCommentaryRecordingRepository;
-  final IPerformanceRatingRepository _performanceRatingRepository;
+  final IPlayerRatingRepository _playerRatingRepository;
 
   Storage(
     this._cache,
@@ -35,9 +28,7 @@ class Storage {
     this._teamRepository,
     this._fixtureCalendarRepository,
     this._fixtureRepository,
-    this._liveCommentaryFeedRepository,
-    this._liveCommentaryRecordingRepository,
-    this._performanceRatingRepository,
+    this._playerRatingRepository,
   );
 
   Future<AccountEntity> loadAccount() async {
@@ -67,26 +58,19 @@ class Storage {
     return team;
   }
 
-  Future selectTeam(TeamEntity team) async {
-    await _teamRepository.selectTeam(team);
-    _cache.saveCurrentTeam(team);
-  }
-
   Future<Iterable<FixtureEntity>> loadFixturesForTeamInBetween(
     int teamId,
     DateTime startTime,
     DateTime endTime,
-  ) {
-    return _fixtureCalendarRepository.loadFixturesForTeamInBetween(
-      teamId,
-      startTime,
-      endTime,
-    );
-  }
+  ) =>
+      _fixtureCalendarRepository.loadFixturesForTeamInBetween(
+        teamId,
+        startTime,
+        endTime,
+      );
 
-  Future saveFixtures(Iterable<FixtureEntity> fixtures) {
-    return _fixtureCalendarRepository.saveFixtures(fixtures);
-  }
+  Future saveFixtures(Iterable<FixtureEntity> fixtures) =>
+      _fixtureCalendarRepository.saveFixtures(fixtures);
 
   Future<FixtureEntity> loadFixtureForTeam(int fixtureId, int teamId) =>
       _fixtureRepository.loadFixtureForTeam(fixtureId, teamId);
@@ -94,28 +78,8 @@ class Storage {
   Future updateFixture(FixtureEntity fixture) =>
       _fixtureRepository.updateFixture(fixture);
 
-  Future<FixtureEntity> updateFixtureFromLivescore(
-    FixtureEntity fixture,
-  ) =>
+  Future<FixtureEntity> updateFixtureFromLivescore(FixtureEntity fixture) =>
       _fixtureRepository.updateFixtureFromLivescore(fixture);
-
-  Future<LiveCommentaryFeedEntity> loadLiveCommentaryFeed(
-    int fixtureId,
-    int teamId,
-    int authorId,
-  ) {
-    return _liveCommentaryFeedRepository.loadLiveCommentaryFeed(
-      fixtureId,
-      teamId,
-      authorId,
-    );
-  }
-
-  Future addLiveCommentaryFeedEntries(
-    Iterable<LiveCommentaryFeedEntryEntity> entries,
-  ) {
-    return _liveCommentaryFeedRepository.addLiveCommentaryFeedEntries(entries);
-  }
 
   void clearDiscussionEntries() => _cache.clearDiscussionEntries();
 
@@ -125,149 +89,68 @@ class Storage {
   List<DiscussionEntryVm> getDiscussionEntries() =>
       _cache.getDiscussionEntries();
 
-  Future<LiveCommentaryRecordingEntity> loadLiveCommentaryRecordingOfFixture(
-    int fixtureId,
-    int teamId,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .loadLiveCommentaryRecordingOfFixture(
-      fixtureId,
-      teamId,
-    );
-  }
-
-  Future renameLiveCommentaryRecordingOfFixture(
-    int fixtureId,
-    int teamId,
-    String name,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .renameLiveCommentaryRecordingOfFixture(
-      fixtureId,
-      teamId,
-      name,
-    );
-  }
-
-  Future<LiveCommentaryRecordingEntity>
-      loadLiveCommentaryRecordingNameAndStatus(
-    int fixtureId,
-    int teamId,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .loadLiveCommentaryRecordingNameAndStatus(
-      fixtureId,
-      teamId,
-    );
-  }
-
-  Future updateLiveCommentaryRecordingStatus(
-    int fixtureId,
-    int teamId,
-    LiveCommentaryRecordingStatus status,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .updateLiveCommentaryRecordingStatus(
-      fixtureId,
-      teamId,
-      status,
-    );
-  }
-
-  Future addLiveCommentaryRecordingEntry(
-    LiveCommentaryRecordingEntryEntity entry,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .addLiveCommentaryRecordingEntry(entry);
-  }
-
-  Future<Iterable<LiveCommentaryRecordingEntryEntity>>
-      loadLiveCommentaryRecordingEntries(
-    int fixtureId,
-    int teamId,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .loadLiveCommentaryRecordingEntries(
-      fixtureId,
-      teamId,
-    );
-  }
-
-  Future updateLiveCommentaryRecordingEntry(
-    LiveCommentaryRecordingEntryEntity entry,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .updateLiveCommentaryRecordingEntry(entry);
-  }
-
-  Future<LiveCommentaryRecordingEntryStatus>
-      loadPrevLiveCommentaryRecordingEntryStatus(
-    int fixtureId,
-    int teamId,
-    int currentEntryPostedAt,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .loadPrevLiveCommentaryRecordingEntryStatus(
-      fixtureId,
-      teamId,
-      currentEntryPostedAt,
-    );
-  }
-
-  Future<Iterable<LiveCommentaryRecordingEntryEntity>>
-      loadNotPublishedLiveCommentaryRecordingEntries(
-    int fixtureId,
-    int teamId,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .loadNotPublishedLiveCommentaryRecordingEntries(fixtureId, teamId);
-  }
-
-  Future updateLiveCommentaryRecordingEntries(
-    Iterable<LiveCommentaryRecordingEntryEntity> entries,
-  ) {
-    return _liveCommentaryRecordingRepository
-        .updateLiveCommentaryRecordingEntries(entries);
-  }
-
-  Future<FixturePerformanceRatingsEntity> loadPerformanceRatingsForFixture(
+  Future<FixturePlayerRatingsEntity> loadPlayerRatingsForFixture(
     int fixtureId,
     int teamId,
   ) =>
-      _performanceRatingRepository.loadPerformanceRatingsForFixture(
+      _playerRatingRepository.loadPlayerRatingsForFixture(
         fixtureId,
         teamId,
       );
 
-  Future savePerformanceRatingsForFixture(
-    FixturePerformanceRatingsEntity fixturePerformanceRatings,
+  Future savePlayerRatingsForFixture(
+    FixturePlayerRatingsEntity fixturePlayerRatings,
   ) =>
-      _performanceRatingRepository
-          .savePerformanceRatingsForFixture(fixturePerformanceRatings);
+      _playerRatingRepository.savePlayerRatingsForFixture(fixturePlayerRatings);
 
-  Future<FixturePerformanceRatingsEntity>
-      updatePerformanceRatingForFixtureParticipant(
+  Future<FixturePlayerRatingsEntity> updatePlayerRating(
     int fixtureId,
     int teamId,
-    String participantIdentifier,
+    String participantKey,
     int totalRating,
     int totalVoters,
-    double myRating,
+    double userRating,
   ) =>
-          _performanceRatingRepository
-              .updatePerformanceRatingForFixtureParticipant(
-            fixtureId,
-            teamId,
-            participantIdentifier,
-            totalRating,
-            totalVoters,
-            myRating,
-          );
+      _playerRatingRepository.updatePlayerRating(
+        fixtureId,
+        teamId,
+        participantKey,
+        totalRating,
+        totalVoters,
+        userRating,
+      );
 
-  void clearTeamFeedArticles() => _cache.clearTeamFeedArticles();
+  void setVideoReactions(FixtureVideoReactionsVm fixtureVideoReactions) =>
+      _cache.setVideoReactions(fixtureVideoReactions);
 
-  void addTeamFeedArticles(List<ArticleVm> articles) =>
-      _cache.addTeamFeedArticles(articles);
+  void addVideoReactions(FixtureVideoReactionsVm fixtureVideoReactions) =>
+      _cache.addVideoReactions(fixtureVideoReactions);
 
-  List<ArticleVm> getTeamFeedArticles() => _cache.getTeamFeedArticles();
+  FixtureVideoReactionsVm getVideoReactions() => _cache.getVideoReactions();
+
+  void setFeedArticles(FeedArticlesVm feedArticles) =>
+      _cache.setFeedArticles(feedArticles);
+
+  void addFeedArticles(FeedArticlesVm feedArticles) =>
+      _cache.addFeedArticles(feedArticles);
+
+  FeedArticlesVm getFeedArticles() => _cache.getFeedArticles();
+
+  void setArticleComments(ArticleCommentsVm articleComments) =>
+      _cache.setArticleComments(articleComments);
+
+  ArticleCommentsVm getArticleComments() => _cache.getArticleComments();
+
+  void setActiveSeasonRound(ActiveSeasonRoundWithFixturesVm seasonRound) =>
+      _cache.setActiveSeasonRound(seasonRound);
+
+  ActiveSeasonRoundWithFixturesVm getActiveSeasonRound() =>
+      _cache.getActiveSeasonRound();
+
+  void clearDraftPredictions() => _cache.clearDraftPredictions();
+
+  void addDraftPrediction(int fixtureId, String score) =>
+      _cache.addDraftPrediction(fixtureId, score);
+
+  Map<int, String> getDraftPredictions() => _cache.getDraftPredictions();
 }

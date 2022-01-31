@@ -1,63 +1,26 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/vm/team_vm.dart';
-import '../models/vm/fixture_performance_rating_vm.dart';
+import '../models/vm/fixture_player_rating_vm.dart';
 import '../models/vm/team_squad_vm.dart';
 
 abstract class TeamState {}
 
-class CheckSomeTeamSelectedResult extends TeamState {
-  final bool selected;
+abstract class LoadTeamSquadState extends TeamState {}
 
-  CheckSomeTeamSelectedResult({@required this.selected});
-}
+class TeamSquadLoading extends LoadTeamSquadState {}
 
-abstract class TeamsWithCommunitiesState extends TeamState {}
-
-class TeamsWithCommunitiesLoading extends TeamsWithCommunitiesState {}
-
-class TeamsWithCommunitiesReady extends TeamsWithCommunitiesState {
-  final List<TeamVm> teams;
-
-  TeamsWithCommunitiesReady({@required this.teams});
-}
-
-class TeamsWithCommunitiesError extends TeamsWithCommunitiesState {
-  final String message;
-
-  TeamsWithCommunitiesError({@required this.message});
-}
-
-class SelectTeamReady extends TeamState {}
-
-abstract class TeamSquadState extends TeamState {}
-
-class TeamSquadLoading extends TeamSquadState {}
-
-class TeamSquadReady extends TeamSquadState {
+class TeamSquadReady extends LoadTeamSquadState {
   final TeamSquadVm teamSquad;
 
   TeamSquadReady({@required this.teamSquad});
 }
 
-class TeamSquadError extends TeamSquadState {
-  final String message;
+abstract class LoadTeamMemberState extends TeamState {}
 
-  TeamSquadError({@required this.message});
-}
+class TeamMemberLoading extends LoadTeamMemberState {}
 
-abstract class TeamMemberState extends TeamState {}
+class TeamMemberReady extends LoadTeamMemberState {
+  final List<FixturePlayerRatingVm> ratings;
 
-class TeamMemberLoading extends TeamMemberState {}
-
-class TeamMemberReady extends TeamMemberState {
-  final List<FixturePerformanceRatingVm> performanceRatings;
-
-  TeamMemberReady({@required this.performanceRatings});
-}
-
-class TeamMemberError extends TeamMemberState {
-  final String message;
-
-  TeamMemberError({@required this.message});
+  TeamMemberReady({@required this.ratings});
 }

@@ -1,284 +1,200 @@
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
 
-extension KiwiExtension on KiwiContainer {
-  static final Map<String, Object> _identifierToInstance = {};
+final Map<String, Object> _identifierToInstance = {};
 
-  TDependency resolveInstance<TDependency>(
-    String dependencyInstanceIdentifier,
-  ) {
-    if (!_identifierToInstance.containsKey(dependencyInstanceIdentifier)) {
-      _identifierToInstance[dependencyInstanceIdentifier] =
-          resolve<TDependency>();
+TDependency _resolve<TDependency>(String dependencyInstanceIdentifier) {
+  TDependency instance;
+  if (dependencyInstanceIdentifier == null ||
+      !_identifierToInstance.containsKey(dependencyInstanceIdentifier)) {
+    instance = KiwiContainer().resolve<TDependency>();
+    if (dependencyInstanceIdentifier != null) {
+      _identifierToInstance[dependencyInstanceIdentifier] = instance;
     }
-
-    return _identifierToInstance[dependencyInstanceIdentifier] as TDependency;
+  } else {
+    instance =
+        _identifierToInstance[dependencyInstanceIdentifier] as TDependency;
   }
+
+  return instance;
+}
+
+void _dispose(String dependencyInstanceIdentifier) {
+  _identifierToInstance.remove(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver<TDependency> {
   TDependency resolve([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency>()
-          : KiwiContainer().resolveInstance<TDependency>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver2<TDependency1, TDependency2> {
   TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency1>()
-          : KiwiContainer().resolveInstance<TDependency1>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency1>(dependencyInstanceIdentifier);
 
   TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency2>()
-          : KiwiContainer().resolveInstance<TDependency2>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency2>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver3<TDependency1, TDependency2, TDependency3> {
   TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency1>()
-          : KiwiContainer().resolveInstance<TDependency1>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency1>(dependencyInstanceIdentifier);
 
   TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency2>()
-          : KiwiContainer().resolveInstance<TDependency2>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency2>(dependencyInstanceIdentifier);
 
   TDependency3 resolve3([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency3>()
-          : KiwiContainer().resolveInstance<TDependency3>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency3>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver4<TDependency1, TDependency2, TDependency3,
     TDependency4> {
   TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency1>()
-          : KiwiContainer().resolveInstance<TDependency1>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency1>(dependencyInstanceIdentifier);
 
   TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency2>()
-          : KiwiContainer().resolveInstance<TDependency2>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency2>(dependencyInstanceIdentifier);
 
   TDependency3 resolve3([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency3>()
-          : KiwiContainer().resolveInstance<TDependency3>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency3>(dependencyInstanceIdentifier);
 
   TDependency4 resolve4([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency4>()
-          : KiwiContainer().resolveInstance<TDependency4>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency4>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver5<TDependency1, TDependency2, TDependency3,
     TDependency4, TDependency5> {
   TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency1>()
-          : KiwiContainer().resolveInstance<TDependency1>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency1>(dependencyInstanceIdentifier);
 
   TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency2>()
-          : KiwiContainer().resolveInstance<TDependency2>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency2>(dependencyInstanceIdentifier);
 
   TDependency3 resolve3([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency3>()
-          : KiwiContainer().resolveInstance<TDependency3>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency3>(dependencyInstanceIdentifier);
 
   TDependency4 resolve4([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency4>()
-          : KiwiContainer().resolveInstance<TDependency4>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency4>(dependencyInstanceIdentifier);
 
   TDependency5 resolve5([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency5>()
-          : KiwiContainer().resolveInstance<TDependency5>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency5>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver6<TDependency1, TDependency2, TDependency3,
     TDependency4, TDependency5, TDependency6> {
   TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency1>()
-          : KiwiContainer().resolveInstance<TDependency1>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency1>(dependencyInstanceIdentifier);
 
   TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency2>()
-          : KiwiContainer().resolveInstance<TDependency2>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency2>(dependencyInstanceIdentifier);
 
   TDependency3 resolve3([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency3>()
-          : KiwiContainer().resolveInstance<TDependency3>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency3>(dependencyInstanceIdentifier);
 
   TDependency4 resolve4([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency4>()
-          : KiwiContainer().resolveInstance<TDependency4>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency4>(dependencyInstanceIdentifier);
 
   TDependency5 resolve5([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency5>()
-          : KiwiContainer().resolveInstance<TDependency5>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency5>(dependencyInstanceIdentifier);
 
   TDependency6 resolve6([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency6>()
-          : KiwiContainer().resolveInstance<TDependency6>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency6>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
 mixin DependencyResolver7<TDependency1, TDependency2, TDependency3,
     TDependency4, TDependency5, TDependency6, TDependency7> {
   TDependency1 resolve1([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency1>()
-          : KiwiContainer().resolveInstance<TDependency1>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency1>(dependencyInstanceIdentifier);
 
   TDependency2 resolve2([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency2>()
-          : KiwiContainer().resolveInstance<TDependency2>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency2>(dependencyInstanceIdentifier);
 
   TDependency3 resolve3([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency3>()
-          : KiwiContainer().resolveInstance<TDependency3>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency3>(dependencyInstanceIdentifier);
 
   TDependency4 resolve4([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency4>()
-          : KiwiContainer().resolveInstance<TDependency4>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency4>(dependencyInstanceIdentifier);
 
   TDependency5 resolve5([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency5>()
-          : KiwiContainer().resolveInstance<TDependency5>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency5>(dependencyInstanceIdentifier);
 
   TDependency6 resolve6([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency6>()
-          : KiwiContainer().resolveInstance<TDependency6>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency6>(dependencyInstanceIdentifier);
 
   TDependency7 resolve7([String dependencyInstanceIdentifier]) =>
-      dependencyInstanceIdentifier == null
-          ? KiwiContainer().resolve<TDependency7>()
-          : KiwiContainer().resolveInstance<TDependency7>(
-              dependencyInstanceIdentifier,
-            );
+      _resolve<TDependency7>(dependencyInstanceIdentifier);
+
+  void disposeOfDependencyInstance(String dependencyInstanceIdentifier) =>
+      _dispose(dependencyInstanceIdentifier);
 }
 
-abstract class StatelessWidgetInjected<TDependency> extends StatelessWidget
+abstract class StatelessWidgetWith<TDependency> extends StatelessWidget
     with DependencyResolver<TDependency> {
   final String _dependencyInstanceIdentifier;
 
-  StatelessWidgetInjected([this._dependencyInstanceIdentifier]);
+  StatelessWidgetWith([this._dependencyInstanceIdentifier]);
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(context, resolve(_dependencyInstanceIdentifier));
+    return buildWith(context, resolve(_dependencyInstanceIdentifier));
   }
 
-  Widget buildInjected(BuildContext context, TDependency service);
+  Widget buildWith(BuildContext context, TDependency service);
 }
 
-abstract class StatelessWidgetInjected2<TDependency1, TDependency2>
+abstract class StatelessWidgetWith2<TDependency1, TDependency2>
     extends StatelessWidget
     with DependencyResolver2<TDependency1, TDependency2> {
   final String _dependencyInstanceIdentifier1;
   final String _dependencyInstanceIdentifier2;
 
-  StatelessWidgetInjected2([
+  StatelessWidgetWith2([
     this._dependencyInstanceIdentifier1,
     this._dependencyInstanceIdentifier2,
   ]);
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(
+    return buildWith(
       context,
       resolve1(_dependencyInstanceIdentifier1),
       resolve2(_dependencyInstanceIdentifier2),
     );
   }
 
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     TDependency1 service1,
     TDependency2 service2,
   );
 }
 
-abstract class StatelessWidgetInjected3<TDependency1, TDependency2,
-        TDependency3> extends StatelessWidget
+abstract class StatelessWidgetWith3<TDependency1, TDependency2, TDependency3>
+    extends StatelessWidget
     with DependencyResolver3<TDependency1, TDependency2, TDependency3> {
   final String _dependencyInstanceIdentifier1;
   final String _dependencyInstanceIdentifier2;
   final String _dependencyInstanceIdentifier3;
 
-  StatelessWidgetInjected3([
+  StatelessWidgetWith3([
     this._dependencyInstanceIdentifier1,
     this._dependencyInstanceIdentifier2,
     this._dependencyInstanceIdentifier3,
@@ -286,7 +202,7 @@ abstract class StatelessWidgetInjected3<TDependency1, TDependency2,
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(
+    return buildWith(
       context,
       resolve1(_dependencyInstanceIdentifier1),
       resolve2(_dependencyInstanceIdentifier2),
@@ -294,7 +210,7 @@ abstract class StatelessWidgetInjected3<TDependency1, TDependency2,
     );
   }
 
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     TDependency1 service1,
     TDependency2 service2,
@@ -302,8 +218,8 @@ abstract class StatelessWidgetInjected3<TDependency1, TDependency2,
   );
 }
 
-abstract class StatelessWidgetInjected4<TDependency1, TDependency2,
-        TDependency3, TDependency4> extends StatelessWidget
+abstract class StatelessWidgetWith4<TDependency1, TDependency2, TDependency3,
+        TDependency4> extends StatelessWidget
     with
         DependencyResolver4<TDependency1, TDependency2, TDependency3,
             TDependency4> {
@@ -312,7 +228,7 @@ abstract class StatelessWidgetInjected4<TDependency1, TDependency2,
   final String _dependencyInstanceIdentifier3;
   final String _dependencyInstanceIdentifier4;
 
-  StatelessWidgetInjected4([
+  StatelessWidgetWith4([
     this._dependencyInstanceIdentifier1,
     this._dependencyInstanceIdentifier2,
     this._dependencyInstanceIdentifier3,
@@ -321,7 +237,7 @@ abstract class StatelessWidgetInjected4<TDependency1, TDependency2,
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(
+    return buildWith(
       context,
       resolve1(_dependencyInstanceIdentifier1),
       resolve2(_dependencyInstanceIdentifier2),
@@ -330,7 +246,7 @@ abstract class StatelessWidgetInjected4<TDependency1, TDependency2,
     );
   }
 
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     TDependency1 service1,
     TDependency2 service2,
@@ -339,8 +255,8 @@ abstract class StatelessWidgetInjected4<TDependency1, TDependency2,
   );
 }
 
-abstract class StatelessWidgetInjected5<TDependency1, TDependency2,
-        TDependency3, TDependency4, TDependency5> extends StatelessWidget
+abstract class StatelessWidgetWith5<TDependency1, TDependency2, TDependency3,
+        TDependency4, TDependency5> extends StatelessWidget
     with
         DependencyResolver5<TDependency1, TDependency2, TDependency3,
             TDependency4, TDependency5> {
@@ -350,7 +266,7 @@ abstract class StatelessWidgetInjected5<TDependency1, TDependency2,
   final String _dependencyInstanceIdentifier4;
   final String _dependencyInstanceIdentifier5;
 
-  StatelessWidgetInjected5([
+  StatelessWidgetWith5([
     this._dependencyInstanceIdentifier1,
     this._dependencyInstanceIdentifier2,
     this._dependencyInstanceIdentifier3,
@@ -360,7 +276,7 @@ abstract class StatelessWidgetInjected5<TDependency1, TDependency2,
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(
+    return buildWith(
       context,
       resolve1(_dependencyInstanceIdentifier1),
       resolve2(_dependencyInstanceIdentifier2),
@@ -370,7 +286,7 @@ abstract class StatelessWidgetInjected5<TDependency1, TDependency2,
     );
   }
 
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     TDependency1 service1,
     TDependency2 service2,
@@ -380,13 +296,8 @@ abstract class StatelessWidgetInjected5<TDependency1, TDependency2,
   );
 }
 
-abstract class StatelessWidgetInjected6<
-        TDependency1,
-        TDependency2,
-        TDependency3,
-        TDependency4,
-        TDependency5,
-        TDependency6> extends StatelessWidget
+abstract class StatelessWidgetWith6<TDependency1, TDependency2, TDependency3,
+        TDependency4, TDependency5, TDependency6> extends StatelessWidget
     with
         DependencyResolver6<TDependency1, TDependency2, TDependency3,
             TDependency4, TDependency5, TDependency6> {
@@ -397,7 +308,7 @@ abstract class StatelessWidgetInjected6<
   final String _dependencyInstanceIdentifier5;
   final String _dependencyInstanceIdentifier6;
 
-  StatelessWidgetInjected6([
+  StatelessWidgetWith6([
     this._dependencyInstanceIdentifier1,
     this._dependencyInstanceIdentifier2,
     this._dependencyInstanceIdentifier3,
@@ -408,7 +319,7 @@ abstract class StatelessWidgetInjected6<
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(
+    return buildWith(
       context,
       resolve1(_dependencyInstanceIdentifier1),
       resolve2(_dependencyInstanceIdentifier2),
@@ -419,7 +330,7 @@ abstract class StatelessWidgetInjected6<
     );
   }
 
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     TDependency1 service1,
     TDependency2 service2,
@@ -430,7 +341,7 @@ abstract class StatelessWidgetInjected6<
   );
 }
 
-abstract class StatelessWidgetInjected7<
+abstract class StatelessWidgetWith7<
         TDependency1,
         TDependency2,
         TDependency3,
@@ -449,7 +360,7 @@ abstract class StatelessWidgetInjected7<
   final String _dependencyInstanceIdentifier6;
   final String _dependencyInstanceIdentifier7;
 
-  StatelessWidgetInjected7([
+  StatelessWidgetWith7([
     this._dependencyInstanceIdentifier1,
     this._dependencyInstanceIdentifier2,
     this._dependencyInstanceIdentifier3,
@@ -461,7 +372,7 @@ abstract class StatelessWidgetInjected7<
 
   @override
   Widget build(BuildContext context) {
-    return buildInjected(
+    return buildWith(
       context,
       resolve1(_dependencyInstanceIdentifier1),
       resolve2(_dependencyInstanceIdentifier2),
@@ -473,7 +384,7 @@ abstract class StatelessWidgetInjected7<
     );
   }
 
-  Widget buildInjected(
+  Widget buildWith(
     BuildContext context,
     TDependency1 service1,
     TDependency2 service2,

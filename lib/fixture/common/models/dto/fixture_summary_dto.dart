@@ -22,7 +22,17 @@ class FixtureSummaryDto {
         status = map['status'],
         gameTime = GameTimeDto.fromMap(map['gameTime']),
         score = ScoreDto.fromMap(map['score']),
-        season = SeasonDto.fromMap(map['season']),
-        opponentTeam = TeamDto.fromMap(map['opponentTeam']),
-        venue = VenueDto.fromMap(map['venue']);
+        season = SeasonDto(
+          leagueName: map['leagueName'],
+          leagueLogoUrl: map['leagueLogoUrl'],
+        ),
+        opponentTeam = TeamDto(
+          id: map['opponentTeamId'],
+          name: map['opponentTeamName'],
+          logoUrl: map['opponentTeamLogoUrl'],
+        ),
+        venue = VenueDto(
+          name: map['venueName'],
+          imageUrl: map['venueImageUrl'],
+        );
 }

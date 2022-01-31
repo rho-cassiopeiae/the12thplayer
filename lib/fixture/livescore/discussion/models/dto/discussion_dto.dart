@@ -1,10 +1,10 @@
 class DiscussionDto {
-  final String identifier;
+  final String id;
   final String name;
-  final bool isActive;
+  final bool active;
 
   DiscussionDto.fromMap(Map<String, dynamic> map)
-      : identifier = map['identifier'],
+      : id = map['id'],
         name = map['name'],
-        isActive = map['isActive'];
+        active = map['active'];
 }

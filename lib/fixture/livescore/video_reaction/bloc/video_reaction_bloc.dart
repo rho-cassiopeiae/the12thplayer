@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:rxdart/rxdart.dart';
+
 import 'video_reaction_actions.dart';
 import 'video_reaction_states.dart';
 import '../services/video_reaction_service.dart';
@@ -7,6 +9,9 @@ import '../../../../general/bloc/bloc.dart';
 
 class VideoReactionBloc extends Bloc<VideoReactionAction> {
   final VideoReactionService _videoReactionService;
+
+  BehaviorSubject<VoteForVideoReaction> _voteActionChannel =
+      BehaviorSubject<VoteForVideoReaction>();
 
   StreamController<LoadVideoReactionsState> _videoReactionsStateChannel =
       StreamController<LoadVideoReactionsState>.broadcast();
@@ -18,56 +23,52 @@ class VideoReactionBloc extends Bloc<VideoReactionAction> {
       if (action is LoadVideoReactions) {
         _loadVideoReactions(action);
       } else if (action is VoteForVideoReaction) {
-        _voteForVideoReaction(action);
+        _voteActionChannel.add(action);
       } else if (action is PostVideoReaction) {
         _postVideoReaction(action);
       } else if (action is GetVideoQualityUrls) {
         _getVideoQualityUrls(action);
       }
     });
+
+    _voteActionChannel
+        .debounceTime(Duration(seconds: 1))
+        .listen((action) => _voteForVideoReaction(action));
   }
 
   @override
   void dispose({cleanupAction}) {
-    _videoReactionsStateChannel.close();
-    _videoReactionsStateChannel = null;
     actionChannel.close();
     actionChannel = null;
+    _voteActionChannel.close();
+    _voteActionChannel = null;
+    _videoReactionsStateChannel.close();
+    _videoReactionsStateChannel = null;
   }
 
   void _loadVideoReactions(LoadVideoReactions action) async {
-    var result = await _videoReactionService.loadVideoReactions(
+    var fixtureVideoReactions = await _videoReactionService.loadVideoReactions(
       action.fixtureId,
       action.filter,
-      action.start,
+      action.page,
     );
 
-    var state = result.fold(
-      (error) => VideoReactionsError(message: error.toString()),
-      (fixtureVideoReactions) => VideoReactionsReady(
-        fixtureVideoReactions: fixtureVideoReactions,
-      ),
-    );
-
-    _videoReactionsStateChannel?.add(state);
+    _videoReactionsStateChannel?.add(VideoReactionsReady(
+      fixtureVideoReactions: fixtureVideoReactions,
+    ));
   }
 
   void _voteForVideoReaction(VoteForVideoReaction action) async {
-    await for (var result in _videoReactionService.voteForVideoReaction(
+    var fixtureVideoReactions =
+        await _videoReactionService.voteForVideoReaction(
       action.fixtureId,
       action.authorId,
-      action.voteAction,
-      action.fixtureVideoReactions,
-    )) {
-      var state = result.fold(
-        (error) => VideoReactionsError(message: error.toString()),
-        (fixtureVideoReactions) => VideoReactionsReady(
-          fixtureVideoReactions: fixtureVideoReactions,
-        ),
-      );
+      action.userVote,
+    );
 
-      _videoReactionsStateChannel?.add(state);
-    }
+    _videoReactionsStateChannel?.add(VideoReactionsReady(
+      fixtureVideoReactions: fixtureVideoReactions,
+    ));
   }
 
   void _postVideoReaction(PostVideoReaction action) async {
@@ -87,7 +88,7 @@ class VideoReactionBloc extends Bloc<VideoReactionAction> {
     );
 
     var state = result.fold(
-      (error) => VideoQualityUrlsError(message: error.toString()),
+      (error) => VideoQualityUrlsError(),
       (qualityToUrl) => VideoQualityUrlsReady(qualityToUrl: qualityToUrl),
     );
 

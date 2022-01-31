@@ -21,9 +21,7 @@ class _$Injector extends Injector {
         c<ITeamRepository>(),
         c<IFixtureCalendarRepository>(),
         c<IFixtureRepository>(),
-        c<ILiveCommentaryFeedRepository>(),
-        c<ILiveCommentaryRecordingRepository>(),
-        c<IPerformanceRatingRepository>()));
+        c<IPlayerRatingRepository>()));
     container.registerSingleton((c) => NotificationService());
     container
         .registerSingleton((c) => NotificationBloc(c<NotificationService>()));
@@ -32,7 +30,8 @@ class _$Injector extends Injector {
   @override
   void configureImage() {
     final KiwiContainer container = KiwiContainer();
-    container.registerSingleton<IImageService>((c) => ImageService());
+    container.registerSingleton<IImageService>(
+        (c) => ImageService(c<IVimeoApiService>()));
     container.registerSingleton((c) => ImageBloc(c<IImageService>()));
   }
 
@@ -43,8 +42,11 @@ class _$Injector extends Injector {
         (c) => AccountApiService(c<ServerConnector>()));
     container.registerSingleton<IAccountRepository>(
         (c) => AccountRepository(c<DbConfigurator>()));
-    container.registerSingleton((c) => AccountService(c<Storage>(),
-        c<ServerConnector>(), c<IAccountApiService>(), c<IImageService>()));
+    container.registerSingleton((c) => AccountService(
+        c<Storage>(),
+        c<ServerConnector>(),
+        c<IAccountApiService>(),
+        c<NotificationService>()));
     container.registerSingleton((c) => AccountBloc(c<AccountService>()));
   }
 
@@ -78,59 +80,32 @@ class _$Injector extends Injector {
   }
 
   @override
-  void configureLiveCommentaryFeed() {
-    final KiwiContainer container = KiwiContainer();
-    container.registerSingleton<ILiveCommentaryFeedApiService>((c) =>
-        LiveCommentaryFeedApiService(
-            c<ServerConnector>(), c<SubscriptionTracker>()));
-    container.registerSingleton<ILiveCommentaryFeedRepository>(
-        (c) => LiveCommentaryFeedRepository(c<DbConfigurator>()));
-    container.registerSingleton((c) => LiveCommentaryFeedService(
-        c<Storage>(), c<ILiveCommentaryFeedApiService>(), c<AccountService>()));
-    container.registerFactory(
-        (c) => LiveCommentaryFeedBloc(c<LiveCommentaryFeedService>()));
-  }
-
-  @override
-  void configureLiveCommentaryRecording() {
-    final KiwiContainer container = KiwiContainer();
-    container.registerSingleton<ILiveCommentaryRecordingApiService>(
-        (c) => LiveCommentaryRecordingApiService(c<ServerConnector>()));
-    container.registerSingleton<ILiveCommentaryRecordingRepository>(
-        (c) => LiveCommentaryRecordingRepository(c<DbConfigurator>()));
-    container.registerSingleton((c) => LiveCommentaryRecordingService(
-        c<Storage>(),
-        c<ILiveCommentaryRecordingApiService>(),
-        c<IImageService>(),
-        c<AccountService>()));
-    container.registerFactory((c) =>
-        LiveCommentaryRecordingBloc(c<LiveCommentaryRecordingService>()));
-  }
-
-  @override
   void configureDiscussion() {
     final KiwiContainer container = KiwiContainer();
     container.registerSingleton<IDiscussionApiService>((c) =>
         DiscussionApiService(c<ServerConnector>(), c<SubscriptionTracker>()));
     container.registerSingleton((c) => DiscussionService(
-        c<Storage>(), c<IDiscussionApiService>(), c<AccountService>()));
+        c<Storage>(),
+        c<IDiscussionApiService>(),
+        c<AccountService>(),
+        c<NotificationService>()));
     container.registerFactory((c) => DiscussionBloc(c<DiscussionService>()));
   }
 
   @override
-  void configurePerformanceRating() {
+  void configurePlayerRating() {
     final KiwiContainer container = KiwiContainer();
-    container.registerSingleton<IPerformanceRatingApiService>(
-        (c) => PerformanceRatingApiService(c<ServerConnector>()));
-    container.registerSingleton<IPerformanceRatingRepository>(
-        (c) => PerformanceRatingRepository(c<DbConfigurator>()));
-    container.registerSingleton((c) => PerformanceRatingService(
+    container.registerSingleton<IPlayerRatingApiService>(
+        (c) => PlayerRatingApiService(c<ServerConnector>()));
+    container.registerSingleton<IPlayerRatingRepository>(
+        (c) => PlayerRatingRepository(c<DbConfigurator>()));
+    container.registerSingleton((c) => PlayerRatingService(
         c<Storage>(),
         c<AccountService>(),
-        c<IPerformanceRatingApiService>(),
+        c<IPlayerRatingApiService>(),
         c<NotificationService>()));
-    container.registerSingleton(
-        (c) => PerformanceRatingBloc(c<PerformanceRatingService>()));
+    container
+        .registerSingleton((c) => PlayerRatingBloc(c<PlayerRatingService>()));
   }
 
   @override
@@ -138,7 +113,8 @@ class _$Injector extends Injector {
     final KiwiContainer container = KiwiContainer();
     container.registerSingleton<IVideoReactionApiService>(
         (c) => VideoReactionApiService(c<ServerConnector>()));
-    container.registerSingleton<IVimeoApiService>((c) => VimeoApiService());
+    container.registerSingleton<IVimeoApiService>(
+        (c) => VimeoApiService(c<ServerConnector>()));
     container.registerSingleton((c) => VideoReactionService(
         c<Storage>(),
         c<IVideoReactionApiService>(),
@@ -156,8 +132,8 @@ class _$Injector extends Injector {
         (c) => TeamApiService(c<ServerConnector>()));
     container.registerSingleton<ITeamRepository>(
         (c) => TeamRepository(c<DbConfigurator>()));
-    container.registerSingleton(
-        (c) => TeamService(c<Storage>(), c<ITeamApiService>()));
+    container.registerSingleton((c) => TeamService(
+        c<Storage>(), c<ITeamApiService>(), c<NotificationService>()));
     container.registerSingleton((c) => TeamBloc(c<TeamService>()));
   }
 
@@ -165,9 +141,28 @@ class _$Injector extends Injector {
   void configureFeed() {
     final KiwiContainer container = KiwiContainer();
     container.registerSingleton<IFeedApiService>(
-        (c) => FeedApiService(c<ServerConnector>(), c<SubscriptionTracker>()));
-    container.registerSingleton((c) => FeedService(c<Storage>(),
-        c<NotificationService>(), c<IFeedApiService>(), c<IImageService>()));
+        (c) => FeedApiService(c<ServerConnector>()));
+    container.registerSingleton((c) => FeedService(
+        c<Storage>(),
+        c<NotificationService>(),
+        c<IFeedApiService>(),
+        c<AccountService>(),
+        c<IImageService>()));
     container.registerSingleton((c) => FeedBloc(c<FeedService>()));
+    container.registerFactory((c) => CommentBloc(c<FeedService>()));
+  }
+
+  @override
+  void configureMatchPredictions() {
+    final KiwiContainer container = KiwiContainer();
+    container.registerSingleton<IMatchPredictionsApiService>(
+        (c) => MatchPredictionsApiService(c<ServerConnector>()));
+    container.registerSingleton((c) => MatchPredictionsService(
+        c<Storage>(),
+        c<IMatchPredictionsApiService>(),
+        c<AccountService>(),
+        c<NotificationService>()));
+    container.registerSingleton(
+        (c) => MatchPredictionsBloc(c<MatchPredictionsService>()));
   }
 }

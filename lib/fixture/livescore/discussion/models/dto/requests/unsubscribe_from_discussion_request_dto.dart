@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 class UnsubscribeFromDiscussionRequestDto {
   final int fixtureId;
   final int teamId;
-  final String discussionIdentifier;
+  final String discussionId;
 
   UnsubscribeFromDiscussionRequestDto({
     @required this.fixtureId,
     @required this.teamId,
-    @required this.discussionIdentifier,
+    @required this.discussionId,
   });
 
   Map<String, dynamic> toJson() {
@@ -16,7 +16,7 @@ class UnsubscribeFromDiscussionRequestDto {
 
     map['fixtureId'] = fixtureId;
     map['teamId'] = teamId;
-    map['discussionIdentifier'] = discussionIdentifier;
+    map['discussionId'] = discussionId;
 
     return map;
   }

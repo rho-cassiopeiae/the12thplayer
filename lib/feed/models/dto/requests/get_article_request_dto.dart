@@ -1,19 +1,14 @@
 import 'package:flutter/foundation.dart';
 
 class GetArticleRequestDto {
-  final int teamId;
-  final DateTime postedAt;
+  final int articleId;
 
-  GetArticleRequestDto({
-    @required this.teamId,
-    @required this.postedAt,
-  });
+  GetArticleRequestDto({@required this.articleId});
 
   Map<String, dynamic> toJson() {
     var map = Map<String, dynamic>();
 
-    map['teamId'] = teamId;
-    map['postedAt'] = postedAt.millisecondsSinceEpoch;
+    map['articleId'] = articleId;
 
     return map;
   }

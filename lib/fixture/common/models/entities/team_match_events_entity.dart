@@ -6,23 +6,21 @@ class TeamMatchEventsEntity {
 
   TeamMatchEventsEntity.fromMap(Map<String, dynamic> map)
       : teamId = map['teamId'],
-        events = map['events'] == null
-            ? null
-            : (map['events'] as List<dynamic>)
-                .map((eventMap) => MatchEventEntity.fromMap(eventMap))
-                .toList();
+        events = (map['events'] as List)
+            .map((eventMap) => MatchEventEntity.fromMap(eventMap))
+            .toList();
 
   TeamMatchEventsEntity.fromDto(TeamMatchEventsDto events)
       : teamId = events.teamId,
         events = events.events
-            ?.map((event) => MatchEventEntity.fromDto(event))
-            ?.toList();
+            .map((event) => MatchEventEntity.fromDto(event))
+            .toList();
 
   Map<String, dynamic> toJson() {
     var map = Map<String, dynamic>();
 
     map['teamId'] = teamId;
-    map['events'] = events?.map((event) => event.toJson())?.toList();
+    map['events'] = events.map((event) => event.toJson()).toList();
 
     return map;
   }

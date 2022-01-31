@@ -16,5 +16,5 @@ abstract class IFixtureApiService {
     int teamId,
   );
 
-  void unsubscribeFromFixture(int fixtureId, int teamId);
+  Future unsubscribeFromFixture(int fixtureId, int teamId);
 }

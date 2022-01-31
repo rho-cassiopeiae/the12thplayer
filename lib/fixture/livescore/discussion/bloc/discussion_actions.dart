@@ -1,18 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
+import '../../../../general/bloc/mixins.dart';
 import 'discussion_states.dart';
 
 abstract class DiscussionAction {}
 
-abstract class DiscussionActionFutureState<TState extends DiscussionState>
-    extends DiscussionAction {
-  final Completer<TState> _stateReady = Completer<TState>();
-  Future<TState> get state => _stateReady.future;
-
-  void complete(TState state) => _stateReady.complete(state);
-}
+abstract class DiscussionActionAwaitable<T extends DiscussionState>
+    extends DiscussionAction with AwaitableState<T> {}
 
 class LoadDiscussions extends DiscussionAction {
   final int fixtureId;
@@ -22,46 +16,46 @@ class LoadDiscussions extends DiscussionAction {
 
 class LoadDiscussion extends DiscussionAction {
   final int fixtureId;
-  final String discussionIdentifier;
+  final String discussionId;
 
   LoadDiscussion({
     @required this.fixtureId,
-    @required this.discussionIdentifier,
+    @required this.discussionId,
   });
 }
 
 class LoadMoreDiscussionEntries
-    extends DiscussionActionFutureState<LoadDiscussionState> {
+    extends DiscussionActionAwaitable<DiscussionReady> {
   final int fixtureId;
-  final String discussionIdentifier;
+  final String discussionId;
   final String lastReceivedEntryId;
 
   LoadMoreDiscussionEntries({
     @required this.fixtureId,
-    @required this.discussionIdentifier,
+    @required this.discussionId,
     @required this.lastReceivedEntryId,
   });
 }
 
 class UnsubscribeFromDiscussion extends DiscussionAction {
   final int fixtureId;
-  final String discussionIdentifier;
+  final String discussionId;
 
   UnsubscribeFromDiscussion({
     @required this.fixtureId,
-    @required this.discussionIdentifier,
+    @required this.discussionId,
   });
 }
 
 class PostDiscussionEntry
-    extends DiscussionActionFutureState<PostDiscussionEntryState> {
+    extends DiscussionActionAwaitable<PostDiscussionEntryState> {
   final int fixtureId;
-  final String discussionIdentifier;
+  final String discussionId;
   final String body;
 
   PostDiscussionEntry({
     @required this.fixtureId,
-    @required this.discussionIdentifier,
+    @required this.discussionId,
     @required this.body,
   });
 }

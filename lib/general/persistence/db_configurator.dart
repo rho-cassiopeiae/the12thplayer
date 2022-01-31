@@ -3,11 +3,7 @@ import 'dart:async';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../fixture/livescore/performance_rating/persistence/tables/fixture_performance_ratings_table.dart';
-import '../../fixture/livescore/live_commentary_feed/persistence/tables/live_commentary_feed_entry_table.dart';
-import '../../fixture/livescore/live_commentary_feed/persistence/tables/live_commentary_feed_table.dart';
-import '../../fixture/livescore/live_commentary_recording/persistence/tables/live_commentary_recording_entry_table.dart';
-import '../../fixture/livescore/live_commentary_recording/persistence/tables/live_commentary_recording_table.dart';
+import '../../fixture/livescore/player_rating/persistence/tables/fixture_player_ratings_table.dart';
 import '../../fixture/common/persistence/tables/fixture_table.dart';
 import '../../team/persistence/tables/team_table.dart';
 import '../../account/persistence/tables/account_table.dart';
@@ -60,15 +56,17 @@ class DbConfigurator {
 
       await txn.execute(TeamTable.createTableCommand);
 
+      await txn.insert(TeamTable.tableName, {
+        TeamTable.id: 62,
+        TeamTable.name: 'Rangers',
+        TeamTable.logoUrl:
+            'https://cdn.sportmonks.com/images/soccer/teams/30/62.png',
+        TeamTable.currentlySelected: 1
+      });
+
       await txn.execute(FixtureTable.createTableCommand);
 
-      await txn.execute(LiveCommentaryRecordingTable.createTableCommand);
-      await txn.execute(LiveCommentaryRecordingEntryTable.createTableCommand);
-
-      await txn.execute(LiveCommentaryFeedTable.createTableCommand);
-      await txn.execute(LiveCommentaryFeedEntryTable.createTableCommand);
-
-      await txn.execute(FixturePerformanceRatingsTable.createTableCommand);
+      await txn.execute(FixturePlayerRatingsTable.createTableCommand);
     });
   }
 }

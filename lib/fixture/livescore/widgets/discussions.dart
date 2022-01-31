@@ -7,46 +7,45 @@ import '../discussion/bloc/discussion_actions.dart';
 import '../discussion/bloc/discussion_bloc.dart';
 import '../discussion/models/vm/discussion_vm.dart';
 import '../discussion/pages/discussion_page.dart';
-import '../models/vm/fixture_full_vm.dart';
 
 class Discussions {
-  final FixtureFullVm fixture;
+  final int fixtureId;
   final ThemeData theme;
   final DiscussionBloc discussionBloc;
 
   final Color _color = const Color.fromRGBO(238, 241, 246, 1.0);
 
   Discussions({
-    @required this.fixture,
+    @required this.fixtureId,
     @required this.theme,
     @required this.discussionBloc,
-  });
+  }) {
+    _loadDiscussions();
+  }
 
   void _loadDiscussions() {
     discussionBloc.dispatchAction(
-      LoadDiscussions(fixtureId: fixture.id),
+      LoadDiscussions(fixtureId: fixtureId),
     );
   }
 
   List<Widget> build({@required BuildContext context}) {
-    _loadDiscussions();
-
     return [
       SliverToBoxAdapter(
         child: Container(
-          height: 50,
+          height: 50.0,
           decoration: BoxDecoration(
             color: _color,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
             ),
             boxShadow: [
               BoxShadow(
                 color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
-                offset: Offset(0, 2),
+                offset: Offset(0.0, 2.0),
               ),
             ],
           ),
@@ -59,7 +58,7 @@ class Discussions {
                 style: GoogleFonts.exo2(
                   textStyle: TextStyle(
                     color: theme.primaryColorDark,
-                    fontSize: 20,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -93,7 +92,7 @@ class Discussions {
               (state as DiscussionsReady).fixtureDiscussions.discussions;
 
           return SliverFixedExtentList(
-            itemExtent: 130,
+            itemExtent: 130.0,
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 var discussion = discussions[index];
@@ -105,13 +104,13 @@ class Discussions {
                         color: _color,
                         blurRadius: 0.0,
                         spreadRadius: 0.0,
-                        offset: Offset(0, 2),
+                        offset: Offset(0.0, 2.0),
                       ),
                     ],
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
+                    horizontal: 16.0,
+                    vertical: 6.0,
                   ),
                   child: _buildDiscussion(context, discussion, index),
                 );
@@ -133,15 +132,6 @@ class Discussions {
                 color: _color,
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (state is DiscussionsError) {
-            return SliverFillRemaining(
-              hasScrollBody: false,
-              child: Container(
-                color: _color,
-                alignment: Alignment.center,
-                child: Text(state.message),
               ),
             );
           }
@@ -167,20 +157,20 @@ class Discussions {
         onTap: () async {
           await Navigator.of(context).pushNamed(
             DiscussionPage.routeName,
-            arguments: Tuple2(fixture.id, discussion.identifier),
+            arguments: Tuple2(fixtureId, discussion.id),
           );
 
           _loadDiscussions();
         },
         child: Card(
           color: _getDiscussionColor(discussion),
-          elevation: 5,
+          elevation: 5.0,
           shape: RoundedRectangleBorder(
             side: BorderSide(
               color: Colors.grey[200],
-              width: 4,
+              width: 4.0,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -190,15 +180,15 @@ class Discussions {
                 Text(
                   '${discussion.name[0].toUpperCase()}${discussion.name.substring(1)} discussion',
                   style: GoogleFonts.girassol(
-                    fontSize: 22,
+                    fontSize: 22.0,
                     color: Colors.white,
                   ),
                 ),
                 Spacer(flex: 2),
                 Text(
-                  discussion.isActive ? 'active' : 'inactive',
+                  discussion.active ? 'active' : 'inactive',
                   style: GoogleFonts.courgette(
-                    fontSize: 18,
+                    fontSize: 18.0,
                     color: Colors.white,
                   ),
                 ),

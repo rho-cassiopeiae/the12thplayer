@@ -19,12 +19,12 @@ class BenchPlayerDummy extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Positioned(
-          top: 0,
-          width: radius * 2,
-          height: radius * 2,
+          top: 0.0,
+          width: radius * 2.0,
+          height: radius * 2.0,
           child: Card(
             color: Colors.deepOrangeAccent,
-            elevation: 30,
+            elevation: 30.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(radius)),
             ),
@@ -36,22 +36,22 @@ class BenchPlayerDummy extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 22,
+          top: 22.0,
           child: Text(
-            player.number?.toString() ?? '',
+            player.number.toString(),
             style: GoogleFonts.lexendMega(
               textStyle: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 20.0,
               ),
             ),
           ),
         ),
         Positioned(
-          bottom: 0,
+          bottom: 0.0,
           child: Card(
-            color: Color.fromRGBO(238, 241, 246, 1.0),
-            elevation: 30,
+            color: const Color.fromRGBO(238, 241, 246, 1.0),
+            elevation: 30.0,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
@@ -59,17 +59,17 @@ class BenchPlayerDummy extends StatelessWidget {
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: 84,
-                  maxHeight: 15,
-                  minHeight: 15,
+                  maxWidth: 84.0,
+                  maxHeight: 15.0,
+                  minHeight: 15.0,
                 ),
                 child: FittedBox(
                   child: Text(
-                    player.name.split(' ').last,
+                    player.displayName,
                     style: GoogleFonts.exo2(
                       textStyle: TextStyle(
                         color: Colors.black87,
-                        fontSize: 16,
+                        fontSize: 16.0,
                       ),
                     ),
                   ),

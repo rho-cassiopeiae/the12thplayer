@@ -1,11 +1,13 @@
 import 'video_reaction_dto.dart';
 
 class FixtureVideoReactionsDto {
-  final int fixtureId;
-  final Iterable<VideoReactionDto> reactions;
+  final int page;
+  final int totalPages;
+  final Iterable<VideoReactionDto> videoReactions;
 
   FixtureVideoReactionsDto.fromMap(Map<String, dynamic> map)
-      : fixtureId = map['fixtureId'],
-        reactions = (map['reactions'] as List<dynamic>)
+      : page = map['page'],
+        totalPages = map['totalPages'],
+        videoReactions = (map['videoReactions'] as List)
             .map((reactionMap) => VideoReactionDto.fromMap(reactionMap));
 }

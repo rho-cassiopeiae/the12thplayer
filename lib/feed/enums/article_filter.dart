@@ -1,0 +1,4 @@
+enum ArticleFilter {
+  Newest,
+  BestOfToday,
+}

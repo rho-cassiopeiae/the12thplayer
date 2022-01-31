@@ -4,10 +4,8 @@ class TeamMatchEventsDto {
 
   TeamMatchEventsDto.fromMap(Map<String, dynamic> map)
       : teamId = map['teamId'],
-        events = map['events'] == null
-            ? null
-            : (map['events'] as List<dynamic>)
-                .map((eventMap) => MatchEventDto.fromMap(eventMap));
+        events = (map['events'] as List)
+            .map((eventMap) => MatchEventDto.fromMap(eventMap));
 }
 
 class MatchEventDto {

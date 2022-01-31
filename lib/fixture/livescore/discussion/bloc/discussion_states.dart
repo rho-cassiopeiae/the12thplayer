@@ -15,11 +15,7 @@ class DiscussionsReady extends LoadDiscussionsState {
   DiscussionsReady({@required this.fixtureDiscussions});
 }
 
-class DiscussionsError extends LoadDiscussionsState {
-  final String message;
-
-  DiscussionsError({@required this.message});
-}
+class DiscussionsError extends LoadDiscussionsState {}
 
 abstract class LoadDiscussionState extends DiscussionState {}
 
@@ -31,18 +27,10 @@ class DiscussionReady extends LoadDiscussionState {
   DiscussionReady({@required this.entries});
 }
 
-class DiscussionError extends LoadDiscussionState {
-  final String message;
-
-  DiscussionError({@required this.message});
-}
+class DiscussionError extends LoadDiscussionState {}
 
 abstract class PostDiscussionEntryState extends DiscussionState {}
 
-class PostDiscussionEntryError extends PostDiscussionEntryState {
-  final String message;
+class DiscussionEntryPostingFailed extends PostDiscussionEntryState {}
 
-  PostDiscussionEntryError({@required this.message});
-}
-
-class PostDiscussionEntryReady extends PostDiscussionEntryState {}
+class DiscussionEntryPostingSucceeded extends PostDiscussionEntryState {}

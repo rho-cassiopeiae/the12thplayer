@@ -110,18 +110,18 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
 
-    var action = UpdateProfileImage(imageFile: croppedFile);
-    _accountBloc.dispatchAction(action);
+    // var action = UpdateProfileImage(imageFile: croppedFile);
+    // _accountBloc.dispatchAction(action);
 
-    var state = await action.state;
-    if (state is UpdateProfileImageError) {
-      var snackBar = SnackBar(
-        content: Text(state.message),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      setState(() {});
-    }
+    // var state = await action.state;
+    // if (state is UpdateProfileImageFailed) {
+    //   var snackBar = SnackBar(
+    //     content: Text(state.message),
+    //   );
+    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    // } else {
+    //   setState(() {});
+    // }
   }
 
   @override
@@ -153,15 +153,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 alignment: Alignment.topCenter,
                 heightFactor: 0.7,
                 child: FutureBuilder<ImageState>(
-                  initialData: ImageLoading(),
+                  initialData: ProfileImageLoading(),
                   future: action.state,
                   builder: (context, snapshot) {
                     var state = snapshot.data;
-                    if (state is ImageLoading) {
+                    if (state is ProfileImageLoading) {
                       return Center(child: CircularProgressIndicator());
                     }
 
-                    var imageFile = (state as ImageReady).imageFile;
+                    var imageFile = (state as ProfileImageReady).imageFile;
                     return InkWell(
                       child: Container(
                         decoration: BoxDecoration(

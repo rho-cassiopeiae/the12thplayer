@@ -54,19 +54,18 @@ class FixtureCalendarRepository implements IFixtureCalendarRepository {
   Future saveFixtures(Iterable<FixtureEntity> fixtures) async {
     await _dbConfigurator.ensureOpen();
 
-    // @@TODO: StringBuffer.
-    var s = '(';
+    var buffer = StringBuffer();
     for (int i = 0; i < fixtures.length; ++i) {
-      s += i == 0 ? '?' : ', ?';
+      buffer.write(i == 0 ? '?' : ', ?');
     }
-    s += ')';
 
     await _db.transaction(
       (txn) async {
         List<Map<String, dynamic>> rows = await txn.query(
           FixtureTable.tableName,
           columns: [FixtureTable.id],
-          where: '${FixtureTable.teamId} = ? AND ${FixtureTable.id} IN $s',
+          where:
+              '${FixtureTable.teamId} = ? AND ${FixtureTable.id} IN ($buffer)',
           whereArgs: [
             fixtures.first.teamId,
             ...fixtures.map((fixture) => fixture.id),

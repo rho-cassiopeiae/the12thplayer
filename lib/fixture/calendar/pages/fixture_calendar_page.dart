@@ -32,7 +32,10 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
   @override
   void initState() {
     super.initState();
-    _fixtureCalendarBloc.dispatchAction(LoadFixtures(page: _currentPage));
+
+    _fixtureCalendarBloc.dispatchAction(
+      LoadFixtureCalendar(page: _currentPage),
+    );
     _pageController = PageController(initialPage: _currentPage);
   }
 
@@ -46,25 +49,23 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(
-          top: 24,
+          top: 24.0,
         ),
         child: Column(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 60.0,
+              height: 60.0,
               child: Image.network(
                 team.logoUrl,
                 fit: BoxFit.scaleDown,
               ),
             ),
-            SizedBox(height: 12),
+            SizedBox(height: 12.0),
             AutoSizeText(
               team.name,
               style: GoogleFonts.exo2(
-                textStyle: TextStyle(
-                  fontSize: 16,
-                ),
+                fontSize: 16.0,
               ),
               textAlign: TextAlign.center,
               maxLines: team.name.split(' ').length == 1 ? 1 : 2,
@@ -80,22 +81,18 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Text(
-        fixture.isPostponed || fixture.isPaused
+        fixture.isCompleted || fixture.isPostponed || fixture.isPaused
             ? fixture.status
             : fixture.isLive
                 ? 'LIVE'
-                : fixture.isCompleted
-                    ? fixture.completedStatus
-                    : '',
+                : '',
         style: GoogleFonts.lexendMega(
-          textStyle: TextStyle(
-            fontSize: 16,
-            color: fixture.isLive
-                ? Colors.red[400]
-                : fixture.isPostponed
-                    ? Colors.deepPurple[400]
-                    : null,
-          ),
+          fontSize: 16.0,
+          color: fixture.isLive
+              ? Colors.red[400]
+              : fixture.isPostponed
+                  ? Colors.deepPurple[400]
+                  : null,
         ),
       ),
     );
@@ -110,10 +107,8 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
         title: Text(
           'The 12th Player',
           style: GoogleFonts.teko(
-            textStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-            ),
+            color: Colors.white,
+            fontSize: 30.0,
           ),
         ),
         brightness: Brightness.dark,
@@ -124,7 +119,7 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
       body: PageView.builder(
         controller: _pageController,
         onPageChanged: (page) => _fixtureCalendarBloc.dispatchAction(
-          LoadFixtures(page: page),
+          LoadFixtureCalendar(page: page),
         ),
         itemBuilder: (context, index) {
           return CustomScrollView(
@@ -153,9 +148,9 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                           );
                         },
                       ),
-                      StreamBuilder<FixtureCalendarState>(
+                      StreamBuilder<LoadFixtureCalendarState>(
                         initialData: FixtureCalendarLoading(),
-                        stream: _fixtureCalendarBloc.state$,
+                        stream: _fixtureCalendarBloc.fixtureCalendarState$,
                         builder: (context, snapshot) {
                           var state = snapshot.data;
                           if (state is FixtureCalendarLoading ||
@@ -172,17 +167,13 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                               Text(
                                 fixtureCalendar.year,
                                 style: GoogleFonts.lexendMega(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                  color: Colors.white,
                                 ),
                               ),
                               Text(
                                 fixtureCalendar.month,
                                 style: GoogleFonts.lexendMega(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
@@ -206,9 +197,9 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                   ),
                 ),
               ),
-              StreamBuilder<FixtureCalendarState>(
+              StreamBuilder<LoadFixtureCalendarState>(
                 initialData: FixtureCalendarLoading(),
-                stream: _fixtureCalendarBloc.state$,
+                stream: _fixtureCalendarBloc.fixtureCalendarState$,
                 builder: (context, snapshot) {
                   var state = snapshot.data;
                   if (state is FixtureCalendarLoading) {
@@ -235,54 +226,53 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         var fixture = fixtures[index];
-
                         return Stack(
                           children: [
                             Positioned(
-                              top: 20,
-                              bottom: 30,
-                              left: 40,
-                              right: 40,
+                              top: 20.0,
+                              bottom: 30.0,
+                              left: 40.0,
+                              right: 40.0,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.3),
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
+                                    Radius.circular(20.0),
                                   ),
                                 ),
                               ),
                             ),
                             Positioned(
-                              top: 10,
-                              bottom: 40,
-                              left: 30,
-                              right: 30,
+                              top: 10.0,
+                              bottom: 40.0,
+                              left: 30.0,
+                              right: 30.0,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.6),
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
+                                    Radius.circular(20.0),
                                   ),
                                 ),
                               ),
                             ),
                             Positioned(
-                              top: 0,
-                              bottom: 50,
-                              left: 20,
-                              right: 20,
+                              top: 0.0,
+                              bottom: 50.0,
+                              left: 20.0,
+                              right: 20.0,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(20),
+                                    Radius.circular(20.0),
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
+                                        horizontal: 16.0,
                                       ),
                                       child: Row(
                                         crossAxisAlignment:
@@ -293,7 +283,7 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                              top: 4,
+                                              top: 4.0,
                                             ),
                                             child: Column(
                                               children: [
@@ -302,18 +292,14 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                                                     'EEE, d MMM h:mm a',
                                                   ).format(fixture.startTime),
                                                   style: GoogleFonts.teko(
-                                                    textStyle: TextStyle(
-                                                      fontSize: 20,
-                                                    ),
+                                                    fontSize: 20.0,
                                                   ),
                                                 ),
-                                                SizedBox(height: 6),
+                                                SizedBox(height: 6.0),
                                                 Text(
                                                   fixture.scoreString,
                                                   style: GoogleFonts.lexendMega(
-                                                    textStyle: TextStyle(
-                                                      fontSize: 26,
-                                                    ),
+                                                    fontSize: 26.0,
                                                   ),
                                                 ),
                                                 if (!fixture.isUpcoming ||
@@ -328,26 +314,26 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 14),
+                                    SizedBox(height: 14.0),
                                     Container(
                                       width: double.infinity,
-                                      height: 1,
+                                      height: 1.0,
                                       color: Colors.black12,
                                     ),
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                          left: 40,
-                                          right: 30,
+                                          left: 40.0,
+                                          right: 30.0,
                                         ),
                                         child: Row(
                                           children: [
                                             if (fixture.league.logoUrl != null)
                                               Container(
-                                                width: 35,
-                                                height: 35,
+                                                width: 35.0,
+                                                height: 35.0,
                                                 margin: const EdgeInsets.only(
-                                                  right: 8,
+                                                  right: 8.0,
                                                 ),
                                                 child: Image.network(
                                                   fixture.league.logoUrl,
@@ -358,14 +344,12 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                                               Text(
                                                 fixture.league.name,
                                                 style: GoogleFonts.exo2(
-                                                  textStyle: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
+                                                  fontSize: 14.0,
                                                 ),
                                               ),
                                             Spacer(),
                                             ElevatedButton(
-                                              child: Text('Details'),
+                                              child: Text('Fanzone'),
                                               onPressed: () {
                                                 Navigator.of(context).pushNamed(
                                                   FixtureLivescorePage
@@ -379,7 +363,7 @@ class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.all(
-                                                      Radius.circular(16),
+                                                      Radius.circular(16.0),
                                                     ),
                                                   ),
                                                 ),

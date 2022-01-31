@@ -1,11 +1,6 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../bloc/feed_states.dart';
 import '../enums/article_type.dart';
@@ -51,7 +46,7 @@ class _ArticleComposePageState extends State<ArticleComposePage> {
 
     action.state.then((state) {
       if (!_disposed) {
-        var content = state.content;
+        var content = (state as ArticleContentReady).content;
         QuillController controller;
         if (content != null) {
           controller = QuillController(
@@ -85,21 +80,21 @@ class _ArticleComposePageState extends State<ArticleComposePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF398AE5),
         title: Text(
-          'The12thPlayer',
+          'The 12th Player',
           style: GoogleFonts.teko(
             textStyle: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: 30.0,
             ),
           ),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: _controller == null
-              ? null
+              ? () => Navigator.of(context).pop()
               : () async {
                   var action = SaveArticleContent(
                     content: _controller.document.toDelta().toJson(),
@@ -127,7 +122,7 @@ class _ArticleComposePageState extends State<ArticleComposePage> {
                     _feedBloc.dispatchAction(action);
 
                     var state = await action.state;
-                    if (state is PostArticleReady) {
+                    if (state is ArticlePostingSucceeded) {
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
@@ -136,9 +131,7 @@ class _ArticleComposePageState extends State<ArticleComposePage> {
       ),
       body: _controller != null
           ? _buildEditor(context)
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+          : Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -149,7 +142,7 @@ class _ArticleComposePageState extends State<ArticleComposePage> {
           Expanded(
             child: Container(
               color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
               child: QuillEditor(
                 controller: _controller,
                 scrollController: _scrollController,
@@ -171,10 +164,5 @@ class _ArticleComposePageState extends State<ArticleComposePage> {
         ],
       ),
     );
-  }
-
-  Future<String> _onImagePickCallback(File file) async {
-    var dir = await getApplicationDocumentsDirectory();
-    return (await file.copy('${dir.path}/${basename(file.path)}')).path;
   }
 }

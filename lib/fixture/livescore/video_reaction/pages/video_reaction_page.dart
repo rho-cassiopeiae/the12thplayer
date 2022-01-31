@@ -48,26 +48,26 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF398AE5),
         title: Text(
-          'The12thPlayer',
+          'The 12th Player',
           style: GoogleFonts.teko(
             textStyle: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: 30.0,
             ),
           ),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           children: [
-            SizedBox(height: 24),
+            SizedBox(height: 24.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              children: [
                 Text(
                   'Title',
                   style: GoogleFonts.openSans(
@@ -82,14 +82,14 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                     color: const Color(0xFF6CA8F1),
                     border: Border.all(
                       color: Colors.white,
-                      width: 4,
+                      width: 4.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 6.0,
-                        offset: const Offset(0, 2),
+                        offset: const Offset(0.0, 2.0),
                       ),
                     ],
                   ),
@@ -109,14 +109,14 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 16.0),
             AspectRatio(
-              aspectRatio: 1,
+              aspectRatio: 1.0,
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Colors.white,
-                    width: 4,
+                    width: 4.0,
                   ),
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -127,7 +127,7 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                       context: context,
                       builder: (context) => Dialog(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -136,7 +136,7 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                                 onPressed: () => Navigator.of(context)
                                     .pop(ImageSource.gallery),
                               ),
-                              SizedBox(height: 12),
+                              SizedBox(height: 12.0),
                               ElevatedButton(
                                 child: Text('Camera'),
                                 onPressed: () => Navigator.of(context)
@@ -152,22 +152,25 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
                       return;
                     }
 
-                    var pickedFile = await imagePicker.pickVideo(
-                      source: source,
-                      maxDuration: Duration(minutes: 5), // @@TODO: Config.
-                    );
+                    try {
+                      var pickedFile = await imagePicker.pickVideo(
+                        source: source,
+                        preferredCameraDevice: CameraDevice.front,
+                        maxDuration: Duration(minutes: 5), // @@TODO: Config.
+                      );
 
-                    if (pickedFile != null) {
-                      _videoBytes = await pickedFile.readAsBytes();
-                      setState(() {
-                        _fileName = basename(pickedFile.path);
-                      });
-                    }
+                      if (pickedFile != null) {
+                        _videoBytes = await pickedFile.readAsBytes();
+                        setState(() {
+                          _fileName = basename(pickedFile.path);
+                        });
+                      }
+                    } catch (_) {}
                   },
                   child: Icon(
                     Icons.videocam,
                     color: _videoBytes == null ? Colors.white : Colors.orange,
-                    size: 120,
+                    size: 120.0,
                   ),
                 ),
               ),
@@ -175,30 +178,28 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
           ],
         ),
       ),
-      floatingActionButton: Builder(
-        builder: (context) => FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          child: Icon(
-            Icons.upload_rounded,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _videoReactionBloc.dispatchAction(
-              PostVideoReaction(
-                fixtureId: widget.fixtureId,
-                title: _title,
-                videoBytes: _videoBytes,
-                fileName: _fileName,
-              ),
-            );
-
-            setState(() {
-              _title = null;
-              _videoBytes = null;
-              _fileName = null;
-            });
-          },
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.upload_rounded,
+          color: Colors.white,
         ),
+        onPressed: () {
+          _videoReactionBloc.dispatchAction(
+            PostVideoReaction(
+              fixtureId: widget.fixtureId,
+              title: _title,
+              videoBytes: _videoBytes,
+              fileName: _fileName,
+            ),
+          );
+
+          setState(() {
+            _title = null;
+            _videoBytes = null;
+            _fileName = null;
+          });
+        },
       ),
     );
   }

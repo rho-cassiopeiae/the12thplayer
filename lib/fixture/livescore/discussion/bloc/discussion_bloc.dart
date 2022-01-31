@@ -55,9 +55,10 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
     var result = await _discussionService.loadDiscussions(action.fixtureId);
 
     var state = result.fold(
-      (error) => DiscussionsError(message: error.toString()),
-      (fixtureDiscussions) =>
-          DiscussionsReady(fixtureDiscussions: fixtureDiscussions),
+      (error) => DiscussionsError(),
+      (fixtureDiscussions) => DiscussionsReady(
+        fixtureDiscussions: fixtureDiscussions,
+      ),
     );
 
     _discussionsStateChannel?.add(state);
@@ -66,10 +67,10 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
   void _loadDiscussion(LoadDiscussion action) async {
     await for (var update in _discussionService.loadDiscussion(
       action.fixtureId,
-      action.discussionIdentifier,
+      action.discussionId,
     )) {
       var state = update.fold(
-        (error) => DiscussionError(message: error.toString()),
+        (error) => DiscussionError(),
         (entries) => DiscussionReady(entries: entries),
       );
 
@@ -78,16 +79,13 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
   }
 
   void _loadMoreDiscussionEntries(LoadMoreDiscussionEntries action) async {
-    var result = await _discussionService.loadMoreDiscussionEntries(
+    var entries = await _discussionService.loadMoreDiscussionEntries(
       action.fixtureId,
-      action.discussionIdentifier,
+      action.discussionId,
       action.lastReceivedEntryId,
     );
 
-    var state = result.fold(
-      (error) => DiscussionError(message: error.toString()),
-      (entries) => DiscussionReady(entries: entries),
-    );
+    var state = DiscussionReady(entries: entries);
 
     action.complete(state);
     _discussionStateChannel?.add(state);
@@ -96,7 +94,7 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
   void _unsubscribeFromDiscussion(UnsubscribeFromDiscussion action) {
     _discussionService.unsubscribeFromDiscussion(
       action.fixtureId,
-      action.discussionIdentifier,
+      action.discussionId,
     );
   }
 
@@ -104,15 +102,15 @@ class DiscussionBloc extends Bloc<DiscussionAction> {
     // @@TODO: Validation.
     var result = await _discussionService.postDiscussionEntry(
       action.fixtureId,
-      action.discussionIdentifier,
+      action.discussionId,
       action.body,
     );
 
-    var error = result.getOrElse(null);
-    if (error != null) {
-      action.complete(PostDiscussionEntryError(message: error.toString()));
-    } else {
-      action.complete(PostDiscussionEntryReady());
-    }
+    var state = result.fold(
+      () => DiscussionEntryPostingSucceeded(),
+      (error) => DiscussionEntryPostingFailed(),
+    );
+
+    action.complete(state);
   }
 }

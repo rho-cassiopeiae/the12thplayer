@@ -14,12 +14,8 @@ class AccountBloc extends Bloc<AccountAction> {
         _signUp(action);
       } else if (action is ConfirmEmail) {
         _confirmEmail(action);
-      } else if (action is ResumeInterruptedConfirmation) {
-        _resumeInterruptedConfirmation(action);
       } else if (action is SignIn) {
         _signIn(action);
-      } else if (action is UpdateProfileImage) {
-        _updateProfileImage(action);
       }
     });
   }
@@ -31,8 +27,9 @@ class AccountBloc extends Bloc<AccountAction> {
   }
 
   void _loadAccount(LoadAccount action) async {
-    var account = await _accountService.loadAccount();
-    var state = account.fold(
+    var result = await _accountService.loadAccount();
+
+    var state = result.fold(
       (error) => AccountError(),
       (account) => AccountReady(account: account),
     );
@@ -49,8 +46,8 @@ class AccountBloc extends Bloc<AccountAction> {
     );
 
     var state = result.fold(
-      (error) => AuthError(message: error.toString()),
-      (account) => AuthSuccess(account: account),
+      () => AuthenticationSucceeded(),
+      (error) => AuthenticationFailed(),
     );
 
     action.complete(state);
@@ -58,27 +55,14 @@ class AccountBloc extends Bloc<AccountAction> {
 
   void _confirmEmail(ConfirmEmail action) async {
     // @@TODO: Validation.
-    var result = await _accountService.confirmEmail(action.confirmationCode);
-
-    var state = result.fold(
-      (error) => AuthError(message: error.toString()),
-      (account) => AuthSuccess(account: account),
-    );
-
-    action.complete(state);
-  }
-
-  void _resumeInterruptedConfirmation(
-    ResumeInterruptedConfirmation action,
-  ) async {
-    // @@TODO: Validation.
-    var result = await _accountService.resumeInterruptedConfirmation(
-      action.password,
+    var result = await _accountService.confirmEmail(
+      action.email,
+      action.confirmationCode,
     );
 
     var state = result.fold(
-      (error) => AuthError(message: error.toString()),
-      (account) => AuthSuccess(account: account),
+      () => AuthenticationSucceeded(),
+      (error) => AuthenticationFailed(),
     );
 
     action.complete(state);
@@ -89,19 +73,8 @@ class AccountBloc extends Bloc<AccountAction> {
     var result = await _accountService.signIn(action.email, action.password);
 
     var state = result.fold(
-      (error) => AuthError(message: error.toString()),
-      (account) => AuthSuccess(account: account),
-    );
-
-    action.complete(state);
-  }
-
-  void _updateProfileImage(UpdateProfileImage action) async {
-    var result = await _accountService.updateProfileImage(action.imageFile);
-
-    var state = result.fold(
-      () => UpdateProfileImageReady(),
-      (error) => UpdateProfileImageError(message: error.toString()),
+      () => AuthenticationSucceeded(),
+      (error) => AuthenticationFailed(),
     );
 
     action.complete(state);

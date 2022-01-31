@@ -5,6 +5,7 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:signalr_core/signalr_core.dart';
 import 'package:tuple/tuple.dart';
 
+import '../errors/connection_error.dart';
 import 'subscription_tracker.dart';
 import '../enums/message_type.dart' as enums;
 import '../models/dto/requests/add_to_groups_request_dto.dart';
@@ -12,18 +13,33 @@ import '../models/dto/requests/add_to_groups_request_dto.dart';
 class ServerConnector {
   final SubscriptionTracker _subscriptionTracker;
 
-  HubConnection _connection;
-  Dio _dio;
-  Dio _dioIdentity;
+  HubConnection _livescoreConnection;
+  Completer _livescoreConnected;
 
-  Completer _connected;
+  HubConnection _feedConnection;
+  Completer _feedConnected;
+
+  Dio _dioIdentity;
+  Dio _dioProfile;
+  Dio _dioLivescore;
+  Dio _dioFeed;
+  Dio _dioVimeo;
+  Dio _dioVimeoPlayer;
+  Dio _dioMatchPredictions;
 
   String _accessToken;
   String _refreshToken;
 
-  HubConnection get connection => _connection;
-  Dio get dio => _dio;
+  HubConnection get livescoreConnection => _livescoreConnection;
+  HubConnection get feedConnection => _feedConnection;
+
   Dio get dioIdentity => _dioIdentity;
+  Dio get dioProfile => _dioProfile;
+  Dio get dioLivescore => _dioLivescore;
+  Dio get dioFeed => _dioFeed;
+  Dio get dioVimeo => _dioVimeo;
+  Dio get dioVimeoPlayer => _dioVimeoPlayer;
+  Dio get dioMatchPredictions => _dioMatchPredictions;
 
   String get accessToken => _accessToken;
   String get refreshToken => _refreshToken;
@@ -37,90 +53,147 @@ class ServerConnector {
       _messageChannel.stream;
 
   ServerConnector(this._subscriptionTracker) {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: FlutterConfig.get('WEBSERVER_API_HOST'),
-      ),
-    );
     _dioIdentity = Dio(
       BaseOptions(
-        baseUrl: FlutterConfig.get('IDENTITY_API_HOST'),
+        baseUrl: FlutterConfig.get('IDENTITY_API_BASE_URL'),
+      ),
+    );
+    _dioProfile = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('PROFILE_API_BASE_URL'),
+      ),
+    );
+    _dioLivescore = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('LIVESCORE_API_BASE_URL'),
+      ),
+    );
+    _dioFeed = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('FEED_API_BASE_URL'),
+      ),
+    );
+    _dioVimeo = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('VIMEO_API_BASE_URL'),
+      ),
+    );
+    _dioVimeoPlayer = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('VIMEO_PLAYER_API_BASE_URL'),
+      ),
+    );
+    _dioMatchPredictions = Dio(
+      BaseOptions(
+        baseUrl: FlutterConfig.get('MATCH_PREDICTIONS_API_BASE_URL'),
       ),
     );
   }
 
-  Future _connect() async {
-    _connection = HubConnectionBuilder()
+  Future _connectToLivescore() async {
+    _livescoreConnection = HubConnectionBuilder()
         .withUrl(
-          '${FlutterConfig.get('WEBSERVER_API_HOST')}/fanzone',
+          '${FlutterConfig.get('LIVESCORE_API_BASE_URL')}/livescore/fanzone',
           HttpConnectionOptions(
             transport: HttpTransportType.webSockets,
             skipNegotiation: true,
             accessTokenFactory:
                 _accessToken != null ? () => Future.value(_accessToken) : null,
-            logging: (level, message) => print('[$level] $message'),
+            logging: (level, message) => print(
+              '[livescore] [$level] $message',
+            ), // @@TODO: Proper logging.
           ),
         )
         .build();
 
-    _connection.keepAliveIntervalInMilliseconds = 90 * 1000;
-    _connection.serverTimeoutInMilliseconds = 180 * 1000;
+    _livescoreConnection.keepAliveIntervalInMilliseconds = 90 * 1000;
+    _livescoreConnection.serverTimeoutInMilliseconds = 180 * 1000;
 
-    _connection.on(
+    _livescoreConnection.on(
       'UpdateFixtureLivescore',
       (args) => _messageChannel.add(
-        Tuple2(enums.MessageType.LivescoreUpdate, args),
+        Tuple2(enums.MessageType.FixtureLivescoreUpdate, args),
       ),
     );
-    _connection.on(
-      'UpdateLiveCommentaryFeed',
+    _livescoreConnection.on(
+      'UpdateFixtureDiscussion',
       (args) => _messageChannel.add(
-        Tuple2(enums.MessageType.LiveCommentaryFeedUpdate, args),
-      ),
-    );
-    _connection.on(
-      'UpdateDiscussion',
-      (args) => _messageChannel.add(
-        Tuple2(enums.MessageType.DiscussionUpdate, args),
-      ),
-    );
-    _connection.on(
-      'UpdateTeamFeed',
-      (args) => _messageChannel.add(
-        Tuple2(enums.MessageType.FeedUpdate, args),
+        Tuple2(enums.MessageType.FixtureDiscussionUpdate, args),
       ),
     );
 
-    await _connection.start();
+    await _livescoreConnection.start();
 
-    var subscriptions = _subscriptionTracker.subscriptions;
-    if (subscriptions.isNotEmpty) {
-      await _connection.invoke(
-        'AddToGroups',
-        args: [
-          AddToGroupsRequestDto(groups: subscriptions),
-        ],
-      );
-    }
+    // var subscriptions = _subscriptionTracker.subscriptions;
+    // if (subscriptions.isNotEmpty) {
+    //   await _livescoreConnection.invoke(
+    //     'AddToGroups',
+    //     args: [
+    //       AddToGroupsRequestDto(groups: subscriptions),
+    //     ],
+    //   );
+    // }
   }
 
-  Future ensureConnected() async {
-    if (_connected == null) {
-      _connected = Completer();
+  Future ensureLivescoreConnected() async {
+    if (_livescoreConnected == null) {
+      _livescoreConnected = Completer();
       try {
-        await _connect();
-        _connected.complete(null);
+        await _connectToLivescore();
+        _livescoreConnected.complete(null);
 
         return;
-      } catch (error) {
-        _connected.completeError(error);
-        _connected = null;
+      } catch (_) {
+        var error = ConnectionError();
+        _livescoreConnected.completeError(error);
+        _livescoreConnected = null;
 
-        rethrow;
+        throw error;
       }
     }
 
-    await _connected.future;
+    await _livescoreConnected.future;
+  }
+
+  Future _connectToFeed() async {
+    _feedConnection = HubConnectionBuilder()
+        .withUrl(
+          '${FlutterConfig.get('FEED_API_BASE_URL')}/feed/hub',
+          HttpConnectionOptions(
+            transport: HttpTransportType.webSockets,
+            skipNegotiation: true,
+            accessTokenFactory:
+                _accessToken != null ? () => Future.value(_accessToken) : null,
+            logging: (level, message) =>
+                print('[feed] [$level] $message'), // @@TODO: Proper logging.
+          ),
+        )
+        .build();
+
+    _feedConnection.keepAliveIntervalInMilliseconds = 90 * 1000;
+    _feedConnection.serverTimeoutInMilliseconds = 180 * 1000;
+
+    await _feedConnection.start();
+  }
+
+  Future ensureFeedConnected() async {
+    if (_feedConnected == null) {
+      _feedConnected = Completer();
+      try {
+        await _connectToFeed();
+        _feedConnected.complete(null);
+
+        return;
+      } catch (_) {
+        var error = ConnectionError();
+        _feedConnected.completeError(error);
+        _feedConnected = null;
+
+        throw error;
+      }
+    }
+
+    await _feedConnected.future;
   }
 
   void setTokens(String accessToken, String refreshToken) {
@@ -128,15 +201,36 @@ class ServerConnector {
     _refreshToken = refreshToken;
   }
 
-  Future setTokensAndAbortConnection(
+  Future setTokensAndRestartConnections(
     String accessToken,
     String refreshToken,
   ) async {
     setTokens(accessToken, refreshToken);
-    if (_connection != null) {
-      await _connection.stop();
-      _connection = null;
-      _connected = null;
+
+    if (_livescoreConnection != null) {
+      try {
+        await _livescoreConnection.stop();
+      } catch (error) {
+        print(error); // @@TODO: Log properly.
+      }
+
+      _livescoreConnection = null;
+      _livescoreConnected = null;
+
+      await ensureLivescoreConnected();
+    }
+
+    if (_feedConnection != null) {
+      try {
+        await _feedConnection.stop();
+      } catch (error) {
+        print(error); // @@TODO: Log properly.
+      }
+
+      _feedConnection = null;
+      _feedConnected = null;
+
+      await ensureFeedConnected();
     }
   }
 }

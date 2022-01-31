@@ -1,26 +1,30 @@
+import 'package:flutter/foundation.dart';
+
 import '../dto/fixture_video_reactions_dto.dart';
 import 'video_reaction_vm.dart';
 
 class FixtureVideoReactionsVm {
-  final int fixtureId;
-  final List<VideoReactionVm> reactions;
+  final int page;
+  final int totalPages;
+  final List<VideoReactionVm> videoReactions;
 
-  FixtureVideoReactionsVm._(
-    this.fixtureId,
-    this.reactions,
-  );
+  FixtureVideoReactionsVm({
+    @required this.page,
+    @required this.totalPages,
+    @required this.videoReactions,
+  });
 
   FixtureVideoReactionsVm.fromDto(
     FixtureVideoReactionsDto fixtureVideoReactions,
-  )   : fixtureId = fixtureVideoReactions.fixtureId,
-        reactions = fixtureVideoReactions.reactions
+  )   : page = fixtureVideoReactions.page,
+        totalPages = fixtureVideoReactions.totalPages,
+        videoReactions = fixtureVideoReactions.videoReactions
             .map((reaction) => VideoReactionVm.fromDto(reaction))
             .toList();
 
-  FixtureVideoReactionsVm copy() {
-    return FixtureVideoReactionsVm._(
-      fixtureId,
-      List<VideoReactionVm>.from(reactions),
-    );
-  }
+  FixtureVideoReactionsVm copy() => FixtureVideoReactionsVm(
+        page: page,
+        totalPages: totalPages,
+        videoReactions: videoReactions.toList(),
+      );
 }

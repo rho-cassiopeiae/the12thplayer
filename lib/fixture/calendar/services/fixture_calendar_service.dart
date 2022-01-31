@@ -18,13 +18,13 @@ class FixtureCalendarService {
   final Storage _storage;
   final IFixtureApiService _fixtureApiService;
 
-  Policy _apiPolicy;
+  Policy _policy;
 
   FixtureCalendarService(
     this._storage,
     this._fixtureApiService,
   ) {
-    _apiPolicy = PolicyBuilder().on<ConnectionError>(
+    _policy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -45,7 +45,7 @@ class FixtureCalendarService {
     ).build();
   }
 
-  Stream<Either<Error, FixtureCalendarVm>> loadFixtures(
+  Stream<Either<Error, FixtureCalendarVm>> loadFixtureCalendar(
     int page,
   ) async* {
     try {
@@ -67,8 +67,8 @@ class FixtureCalendarService {
         lastDay,
       );
 
-      int lastResultTime = firstDay.millisecondsSinceEpoch - 1;
-      if (fixtureEntities.length > 0) {
+      int startFrom = firstDay.millisecondsSinceEpoch - 1;
+      if (fixtureEntities.isNotEmpty) {
         var fixtureVms = fixtureEntities
             .map((fixture) => FixtureSummaryVm.fromEntity(currentTeam, fixture))
             .toList();
@@ -88,7 +88,7 @@ class FixtureCalendarService {
 
         if (lastFinishedFixture != null) {
           if (lastFinishedFixture != fixtureEntities.last) {
-            lastResultTime = lastFinishedFixture.startTime;
+            startFrom = lastFinishedFixture.startTime;
           } else {
             // @@NOTE: Last finished fixture is the final fixture of the month,
             // meaning, all fixtures of the month have already been fetched and we
@@ -98,10 +98,10 @@ class FixtureCalendarService {
         }
       }
 
-      var fixtureDtos = await _apiPolicy.execute(
+      var fixtureDtos = await _policy.execute(
         () => _fixtureApiService.getFixturesForTeamInBetween(
           currentTeam.id,
-          lastResultTime,
+          startFrom,
           lastDay.millisecondsSinceEpoch,
         ),
       );
@@ -131,10 +131,7 @@ class FixtureCalendarService {
           fixtures: fixtureVms,
         ),
       );
-    } catch (error, stackTrace) {
-      print('========== $error ==========');
-      print(stackTrace);
-
+    } catch (error) {
       yield Left(Error(error.toString()));
     }
   }

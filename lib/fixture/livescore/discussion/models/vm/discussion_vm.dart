@@ -1,12 +1,12 @@
 import '../dto/discussion_dto.dart';
 
 class DiscussionVm {
-  final String identifier;
+  final String id;
   final String name;
-  final bool isActive;
+  final bool active;
 
   DiscussionVm.fromDto(DiscussionDto discussion)
-      : identifier = discussion.identifier,
+      : id = discussion.id,
         name = discussion.name,
-        isActive = discussion.isActive;
+        active = discussion.active;
 }

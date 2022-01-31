@@ -6,10 +6,11 @@ enum ArticleType {
   Highlights,
   BlogPost,
   Video,
+  Other,
 }
 
 extension ArticleTypeExtension on ArticleType {
-  String getString() {
+  String get name {
     switch (this) {
       case ArticleType.News:
         return 'News';
@@ -25,6 +26,8 @@ extension ArticleTypeExtension on ArticleType {
         return 'Blog Post';
       case ArticleType.Video:
         return 'Video';
+      case ArticleType.Other:
+        return 'Other';
     }
 
     return null;

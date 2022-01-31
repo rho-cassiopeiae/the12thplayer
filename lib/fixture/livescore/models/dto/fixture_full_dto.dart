@@ -13,13 +13,13 @@ class FixtureFullDto extends FixtureSummaryDto {
 
   FixtureFullDto.fromMap(Map<String, dynamic> map)
       : refereeName = map['refereeName'],
-        colors = (map['colors'] as List<dynamic>)
+        colors = (map['colors'] as List)
             .map((colorMap) => TeamColorDto.fromMap(colorMap)),
-        lineups = (map['lineups'] as List<dynamic>)
+        lineups = (map['lineups'] as List)
             .map((lineupMap) => TeamLineupDto.fromMap(lineupMap)),
-        events = (map['events'] as List<dynamic>)
+        events = (map['events'] as List)
             .map((eventsMap) => TeamMatchEventsDto.fromMap(eventsMap)),
-        stats = (map['stats'] as List<dynamic>)
+        stats = (map['stats'] as List)
             .map((statsMap) => TeamStatsDto.fromMap(statsMap)),
         super.fromMap(map);
 

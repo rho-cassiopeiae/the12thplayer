@@ -8,14 +8,15 @@ import 'fixture_calendar_actions.dart';
 class FixtureCalendarBloc extends Bloc<FixtureCalendarAction> {
   final FixtureCalendarService _fixtureCalendarService;
 
-  StreamController<FixtureCalendarState> _stateChannel =
-      StreamController<FixtureCalendarState>.broadcast();
-  Stream<FixtureCalendarState> get state$ => _stateChannel.stream;
+  StreamController<LoadFixtureCalendarState> _fixtureCalendarStateChannel =
+      StreamController<LoadFixtureCalendarState>.broadcast();
+  Stream<LoadFixtureCalendarState> get fixtureCalendarState$ =>
+      _fixtureCalendarStateChannel.stream;
 
   FixtureCalendarBloc(this._fixtureCalendarService) {
     actionChannel.stream.listen((action) {
-      if (action is LoadFixtures) {
-        _loadFixtures(action);
+      if (action is LoadFixtureCalendar) {
+        _loadFixtureCalendar(action);
       }
     });
   }
@@ -24,12 +25,12 @@ class FixtureCalendarBloc extends Bloc<FixtureCalendarAction> {
   void dispose({FixtureCalendarAction cleanupAction}) {
     actionChannel.close();
     actionChannel = null;
-    _stateChannel.close();
-    _stateChannel = null;
+    _fixtureCalendarStateChannel.close();
+    _fixtureCalendarStateChannel = null;
   }
 
-  void _loadFixtures(LoadFixtures action) async {
-    await for (var result in _fixtureCalendarService.loadFixtures(
+  void _loadFixtureCalendar(LoadFixtureCalendar action) async {
+    await for (var result in _fixtureCalendarService.loadFixtureCalendar(
       action.page,
     )) {
       var state = result.fold(
@@ -39,7 +40,7 @@ class FixtureCalendarBloc extends Bloc<FixtureCalendarAction> {
         ),
       );
 
-      _stateChannel?.add(state);
+      _fixtureCalendarStateChannel?.add(state);
     }
   }
 }

@@ -10,11 +10,11 @@ import '../../general/extensions/kiwi_extension.dart';
 class ArticlePage extends StatefulWidget with DependencyResolver<FeedBloc> {
   static const routeName = '/feed/article';
 
-  final DateTime postedAt;
+  final int articleId;
 
   const ArticlePage({
     Key key,
-    @required this.postedAt,
+    @required this.articleId,
   }) : super(key: key);
 
   @override
@@ -29,8 +29,6 @@ class _ArticlePageState extends State<ArticlePage> {
   FocusNode _focusNode;
   ScrollController _scrollController;
 
-  String _errorMessage;
-
   _ArticlePageState(this._feedBloc);
 
   @override
@@ -41,7 +39,7 @@ class _ArticlePageState extends State<ArticlePage> {
     _focusNode = FocusNode();
     _scrollController = ScrollController();
 
-    var action = LoadArticle(postedAt: widget.postedAt);
+    var action = LoadArticle(articleId: widget.articleId);
     _feedBloc.dispatchAction(action);
 
     action.state.then((state) {
@@ -49,22 +47,14 @@ class _ArticlePageState extends State<ArticlePage> {
         return;
       }
 
-      if (state is ArticleError) {
+      if (state is ArticleReady) {
         setState(() {
-          _errorMessage = state.message;
+          _controller = QuillController(
+            document: Document.fromJson(state.article.contentList),
+            selection: const TextSelection.collapsed(offset: 0),
+          );
         });
-
-        return;
       }
-
-      var article = (state as ArticleReady).article;
-
-      setState(() {
-        _controller = QuillController(
-          document: Document.fromJson(article.contentList),
-          selection: const TextSelection.collapsed(offset: 0),
-        );
-      });
     });
   }
 
@@ -79,12 +69,6 @@ class _ArticlePageState extends State<ArticlePage> {
   }
 
   Widget _buildBody() {
-    if (_errorMessage != null) {
-      return Center(
-        child: Text(_errorMessage),
-      );
-    }
-
     if (_controller == null) {
       return Center(
         child: CircularProgressIndicator(),
@@ -94,7 +78,7 @@ class _ArticlePageState extends State<ArticlePage> {
     return SafeArea(
       child: Container(
         color: Colors.white,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
         child: QuillEditor(
           controller: _controller,
           scrollController: _scrollController,
@@ -116,17 +100,17 @@ class _ArticlePageState extends State<ArticlePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF273469),
         title: Text(
-          'The12thPlayer',
+          'The 12th Player',
           style: GoogleFonts.teko(
             textStyle: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: 30.0,
             ),
           ),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).pop(),

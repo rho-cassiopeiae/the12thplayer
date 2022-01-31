@@ -1,21 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
+import '../../../general/bloc/mixins.dart';
 import 'fixture_livescore_states.dart';
 
 abstract class FixtureLivescoreAction {}
 
-abstract class FixtureLivescoreActionFutureState<
-    TState extends FixtureLivescoreState> extends FixtureLivescoreAction {
-  final Completer<TState> _stateReady = Completer<TState>();
-  Future<TState> get state => _stateReady.future;
+abstract class FixtureLivescoreActionAwaitable<T extends FixtureLivescoreState>
+    extends FixtureLivescoreAction with AwaitableState<T> {}
 
-  void complete(TState state) => _stateReady.complete(state);
-}
-
-class LoadFixture
-    extends FixtureLivescoreActionFutureState<FixtureLivescoreState> {
+class LoadFixture extends FixtureLivescoreActionAwaitable<LoadFixtureState> {
   final int fixtureId;
 
   LoadFixture({@required this.fixtureId});

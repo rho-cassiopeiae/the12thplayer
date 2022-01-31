@@ -1,9 +1,10 @@
-import 'confirm_email_response_dto.dart';
-
-class SignInResponseDto extends ConfirmEmailResponseDto {
+class SignInResponseDto {
   final String username;
+  final String accessToken;
+  final String refreshToken;
 
   SignInResponseDto.fromJson(Map<String, dynamic> map)
       : username = map['username'],
-        super.fromJson(map);
+        accessToken = map['accessToken'],
+        refreshToken = map['refreshToken'];
 }

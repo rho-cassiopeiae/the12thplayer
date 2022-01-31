@@ -16,12 +16,12 @@ class DiscussionPage extends StatefulWidget
   static const routeName = '/fixture/livescore/discussion';
 
   final int fixtureId;
-  final String discussionIdentifier;
+  final String discussionId;
 
   const DiscussionPage({
     Key key,
     @required this.fixtureId,
-    @required this.discussionIdentifier,
+    @required this.discussionId,
   }) : super(key: key);
 
   @override
@@ -41,15 +41,19 @@ class _DiscussionPageState extends State<DiscussionPage> {
 
   String _body;
 
-  _DiscussionPageState(this._discussionBloc, this._imageBloc);
+  _DiscussionPageState(
+    this._discussionBloc,
+    this._imageBloc,
+  );
 
   @override
   void initState() {
     super.initState();
+
     _discussionBloc.dispatchAction(
       LoadDiscussion(
         fixtureId: widget.fixtureId,
-        discussionIdentifier: widget.discussionIdentifier,
+        discussionId: widget.discussionId,
       ),
     );
   }
@@ -65,7 +69,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
     _discussionBloc.dispose(
       cleanupAction: UnsubscribeFromDiscussion(
         fixtureId: widget.fixtureId,
-        discussionIdentifier: widget.discussionIdentifier,
+        discussionId: widget.discussionId,
       ),
     );
 
@@ -87,13 +91,13 @@ class _DiscussionPageState extends State<DiscussionPage> {
           style: GoogleFonts.teko(
             textStyle: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: 30.0,
             ),
           ),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.0,
       ),
       body: SnappingSheet(
         snappingSheetController: _sheetController,
@@ -103,7 +107,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
             snappingCurve: Curves.elasticOut,
             snappingDuration: Duration(milliseconds: 500),
           ),
-          SnapPosition(positionPixel: 100),
+          SnapPosition(positionPixel: 100.0),
         ],
         onSnapEnd: () {
           if (_sheetController.currentSnapPosition ==
@@ -124,7 +128,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                 if (state is DiscussionLoading) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is DiscussionError) {
-                  return Center(child: Text(state.message));
+                  return SizedBox.shrink();
                 }
 
                 var entries = (state as DiscussionReady).entries;
@@ -149,7 +153,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
 
                     var action = LoadMoreDiscussionEntries(
                       fixtureId: widget.fixtureId,
-                      discussionIdentifier: widget.discussionIdentifier,
+                      discussionId: widget.discussionId,
                       lastReceivedEntryId: entries.first.id,
                     );
                     _discussionBloc.dispatchAction(action);
@@ -178,7 +182,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                               children: [
                                 TableRow(
                                   children: [
-                                    Container(height: 40),
+                                    Container(height: 40.0),
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Card(
@@ -186,7 +190,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                         elevation: 5.0,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
-                                            Radius.circular(12),
+                                            Radius.circular(12.0),
                                           ),
                                         ),
                                         child: Padding(
@@ -197,7 +201,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                           child: Text(
                                             entry.username,
                                             style: GoogleFonts.patuaOne(
-                                              fontSize: 20,
+                                              fontSize: 20.0,
                                               color: Colors.white,
                                             ),
                                           ),
@@ -219,12 +223,13 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                         ),
                                       ),
                                       clipBehavior: Clip.antiAlias,
-                                      child: FutureBuilder<ImageState>(
-                                        initialData: ImageLoading(),
+                                      child:
+                                          FutureBuilder<GetProfileImageState>(
+                                        initialData: ProfileImageLoading(),
                                         future: action.state,
                                         builder: (context, snapshot) {
                                           var state = snapshot.data;
-                                          if (state is ImageLoading) {
+                                          if (state is ProfileImageLoading) {
                                             return Image.asset(
                                               'assets/images/dummy_profile_image.png',
                                               fit: BoxFit.cover,
@@ -232,7 +237,8 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                           }
 
                                           var imageFile =
-                                              (state as ImageReady).imageFile;
+                                              (state as ProfileImageReady)
+                                                  .imageFile;
 
                                           return Image.file(
                                             imageFile,
@@ -257,7 +263,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                               width: 2.0,
                                             ),
                                             borderRadius: BorderRadius.all(
-                                              Radius.circular(12),
+                                              Radius.circular(12.0),
                                             ),
                                           ),
                                           child: Padding(
@@ -269,7 +275,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                               entry.body,
                                               style:
                                                   GoogleFonts.signikaNegative(
-                                                fontSize: 20,
+                                                fontSize: 20.0,
                                               ),
                                             ),
                                           ),
@@ -303,7 +309,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
             ),
           ],
         ),
-        grabbingHeight: 50,
+        grabbingHeight: 50.0,
         grabbing: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -320,7 +326,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
+            children: [
               Container(
                 width: 100.0,
                 height: 10.0,
@@ -332,7 +338,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
               ),
               Container(
                 height: 2.0,
-                margin: EdgeInsets.only(left: 20, right: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
                 color: Colors.grey[300],
               ),
             ],
@@ -342,7 +348,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
           heightBehavior: SnappingSheetHeight.fixed(),
           child: Container(
             color: Colors.white,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
                 Expanded(
@@ -360,7 +366,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
                       labelText: 'Share your thoughts',
                       labelStyle: GoogleFonts.exo2(
                         textStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 18.0,
                         ),
                       ),
                     ),
@@ -374,27 +380,28 @@ class _DiscussionPageState extends State<DiscussionPage> {
                     child: Icon(
                       Icons.upload_rounded,
                       color: Colors.white,
-                      size: 20,
+                      size: 20.0,
                     ),
                     mini: true,
                     onPressed: () async {
                       var action = PostDiscussionEntry(
                         fixtureId: widget.fixtureId,
-                        discussionIdentifier: widget.discussionIdentifier,
+                        discussionId: widget.discussionId,
                         body: _body,
                       );
                       _discussionBloc.dispatchAction(action);
 
-                      await action.state; // @@TODO: Handle error.
+                      var state = await action.state;
+                      if (state is DiscussionEntryPostingSucceeded) {
+                        _bodyController.clear();
+                        _body = null;
 
-                      _bodyController.clear();
-                      _body = null;
-
-                      if (_sheetController.currentSnapPosition !=
-                          _sheetController.snapPositions.first) {
-                        _sheetController.snapToPosition(
-                          _sheetController.snapPositions.first,
-                        );
+                        if (_sheetController.currentSnapPosition !=
+                            _sheetController.snapPositions.first) {
+                          _sheetController.snapToPosition(
+                            _sheetController.snapPositions.first,
+                          );
+                        }
                       }
                     },
                   ),

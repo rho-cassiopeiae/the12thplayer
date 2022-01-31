@@ -1,5 +1,4 @@
 enum AccountType {
-  GuestAccount,
-  UnconfirmedAccount,
-  ConfirmedAccount,
+  Guest,
+  User,
 }

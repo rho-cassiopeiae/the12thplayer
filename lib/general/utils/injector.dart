@@ -1,15 +1,20 @@
 import 'package:kiwi/kiwi.dart';
 
+import '../../match_predictions/bloc/match_predictions_bloc.dart';
+import '../../match_predictions/interfaces/imatch_predictions_api_service.dart';
+import '../../match_predictions/services/match_predictions_api_service.dart';
+import '../../match_predictions/services/match_predictions_service.dart';
+import '../../feed/bloc/comment_bloc.dart';
 import '../../feed/interfaces/ifeed_api_service.dart';
 import '../../feed/services/feed_api_service.dart';
 import '../../feed/bloc/feed_bloc.dart';
 import '../../feed/services/feed_service.dart';
-import '../../fixture/livescore/performance_rating/bloc/performance_rating_bloc.dart';
-import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_api_service.dart';
-import '../../fixture/livescore/performance_rating/interfaces/iperformance_rating_repository.dart';
-import '../../fixture/livescore/performance_rating/persistence/repositories/performance_rating_repository.dart';
-import '../../fixture/livescore/performance_rating/services/performance_rating_api_service.dart';
-import '../../fixture/livescore/performance_rating/services/performance_rating_service.dart';
+import '../../fixture/livescore/player_rating/bloc/player_rating_bloc.dart';
+import '../../fixture/livescore/player_rating/interfaces/iplayer_rating_api_service.dart';
+import '../../fixture/livescore/player_rating/interfaces/iplayer_rating_repository.dart';
+import '../../fixture/livescore/player_rating/persistence/repositories/player_rating_repository.dart';
+import '../../fixture/livescore/player_rating/services/player_rating_api_service.dart';
+import '../../fixture/livescore/player_rating/services/player_rating_service.dart';
 import '../bloc/notification_bloc.dart';
 import '../services/notification_service.dart';
 import '../../fixture/livescore/video_reaction/interfaces/ivimeo_api_service.dart';
@@ -27,19 +32,7 @@ import '../../fixture/livescore/discussion/bloc/discussion_bloc.dart';
 import '../../fixture/livescore/discussion/interfaces/idiscussion_api_service.dart';
 import '../../fixture/livescore/discussion/services/discussion_api_service.dart';
 import '../../fixture/livescore/discussion/services/discussion_service.dart';
-import '../../fixture/livescore/live_commentary_recording/bloc/live_commentary_recording_bloc.dart';
-import '../../fixture/livescore/live_commentary_recording/interfaces/ilive_commentary_recording_api_service.dart';
-import '../../fixture/livescore/live_commentary_recording/services/live_commentary_recording_api_service.dart';
-import '../../fixture/livescore/live_commentary_recording/services/live_commentary_recording_service.dart';
 import '../../general/bloc/image_bloc.dart';
-import '../../fixture/livescore/live_commentary_feed/bloc/live_commentary_feed_bloc.dart';
-import '../../fixture/livescore/live_commentary_feed/interfaces/ilive_commentary_feed_api_service.dart';
-import '../../fixture/livescore/live_commentary_feed/interfaces/ilive_commentary_feed_repository.dart';
-import '../../fixture/livescore/live_commentary_feed/persistence/repositories/live_commentary_feed_repository.dart';
-import '../../fixture/livescore/live_commentary_feed/services/live_commentary_feed_api_service.dart';
-import '../../fixture/livescore/live_commentary_feed/services/live_commentary_feed_service.dart';
-import '../../fixture/livescore/live_commentary_recording/interfaces/ilive_commentary_recording_repository.dart';
-import '../../fixture/livescore/live_commentary_recording/persistence/repositories/live_commentary_recording_repository.dart';
 import '../../fixture/livescore/bloc/fixture_livescore_bloc.dart';
 import '../../fixture/livescore/interfaces/ifixture_repository.dart';
 import '../../fixture/livescore/persistence/repositories/fixture_repository.dart';
@@ -103,29 +96,29 @@ abstract class Injector {
   @Register.factory(FixtureLivescoreBloc)
   void configureFixtureLivescore();
 
-  @Register.singleton(
-    ILiveCommentaryFeedApiService,
-    from: LiveCommentaryFeedApiService,
-  )
-  @Register.singleton(
-    ILiveCommentaryFeedRepository,
-    from: LiveCommentaryFeedRepository,
-  )
-  @Register.singleton(LiveCommentaryFeedService)
-  @Register.factory(LiveCommentaryFeedBloc)
-  void configureLiveCommentaryFeed();
+  // @Register.singleton(
+  //   ILiveCommentaryFeedApiService,
+  //   from: LiveCommentaryFeedApiService,
+  // )
+  // @Register.singleton(
+  //   ILiveCommentaryFeedRepository,
+  //   from: LiveCommentaryFeedRepository,
+  // )
+  // @Register.singleton(LiveCommentaryFeedService)
+  // @Register.factory(LiveCommentaryFeedBloc)
+  // void configureLiveCommentaryFeed();
 
-  @Register.singleton(
-    ILiveCommentaryRecordingApiService,
-    from: LiveCommentaryRecordingApiService,
-  )
-  @Register.singleton(
-    ILiveCommentaryRecordingRepository,
-    from: LiveCommentaryRecordingRepository,
-  )
-  @Register.singleton(LiveCommentaryRecordingService)
-  @Register.factory(LiveCommentaryRecordingBloc)
-  void configureLiveCommentaryRecording();
+  // @Register.singleton(
+  //   ILiveCommentaryRecordingApiService,
+  //   from: LiveCommentaryRecordingApiService,
+  // )
+  // @Register.singleton(
+  //   ILiveCommentaryRecordingRepository,
+  //   from: LiveCommentaryRecordingRepository,
+  // )
+  // @Register.singleton(LiveCommentaryRecordingService)
+  // @Register.factory(LiveCommentaryRecordingBloc)
+  // void configureLiveCommentaryRecording();
 
   @Register.singleton(IDiscussionApiService, from: DiscussionApiService)
   @Register.singleton(DiscussionService)
@@ -133,16 +126,16 @@ abstract class Injector {
   void configureDiscussion();
 
   @Register.singleton(
-    IPerformanceRatingApiService,
-    from: PerformanceRatingApiService,
+    IPlayerRatingApiService,
+    from: PlayerRatingApiService,
   )
   @Register.singleton(
-    IPerformanceRatingRepository,
-    from: PerformanceRatingRepository,
+    IPlayerRatingRepository,
+    from: PlayerRatingRepository,
   )
-  @Register.singleton(PerformanceRatingService)
-  @Register.singleton(PerformanceRatingBloc)
-  void configurePerformanceRating();
+  @Register.singleton(PlayerRatingService)
+  @Register.singleton(PlayerRatingBloc)
+  void configurePlayerRating();
 
   @Register.singleton(IVideoReactionApiService, from: VideoReactionApiService)
   @Register.singleton(IVimeoApiService, from: VimeoApiService)
@@ -159,7 +152,16 @@ abstract class Injector {
   @Register.singleton(IFeedApiService, from: FeedApiService)
   @Register.singleton(FeedService)
   @Register.singleton(FeedBloc)
+  @Register.factory(CommentBloc)
   void configureFeed();
+
+  @Register.singleton(
+    IMatchPredictionsApiService,
+    from: MatchPredictionsApiService,
+  )
+  @Register.singleton(MatchPredictionsService)
+  @Register.singleton(MatchPredictionsBloc)
+  void configureMatchPredictions();
 
   void configure() {
     configureGeneral();
@@ -168,13 +170,12 @@ abstract class Injector {
     configureFixtureCommon();
     configureFixtureCalendar();
     configureFixtureLivescore();
-    configureLiveCommentaryFeed();
-    configureLiveCommentaryRecording();
     configureDiscussion();
-    configurePerformanceRating();
+    configurePlayerRating();
     configureVideoReaction();
     configureTeam();
     configureFeed();
+    configureMatchPredictions();
   }
 }
 

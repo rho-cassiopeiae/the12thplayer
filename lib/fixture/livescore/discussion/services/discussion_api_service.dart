@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:signalr_core/signalr_core.dart';
 
-import '../models/dto/fixture_discussions_dto.dart';
+import '../models/dto/discussion_dto.dart';
+import '../../../../general/errors/server_error.dart';
+import '../../errors/livescore_error.dart';
 import '../models/dto/requests/get_discussions_for_fixture_request_dto.dart';
 import '../../../../general/services/subscription_tracker.dart';
 import '../../../../general/enums/message_type.dart' as enums;
@@ -14,7 +16,6 @@ import '../errors/discussion_error.dart';
 import '../interfaces/idiscussion_api_service.dart';
 import '../models/dto/fixture_discussion_update_dto.dart';
 import '../models/dto/requests/subscribe_to_discussion_request_dto.dart';
-import '../../../../general/errors/api_error.dart';
 import '../../../../general/errors/authentication_token_expired_error.dart';
 import '../../../../general/errors/forbidden_error.dart';
 import '../../../../general/errors/invalid_authentication_token_error.dart';
@@ -25,7 +26,7 @@ class DiscussionApiService implements IDiscussionApiService {
   final ServerConnector _serverConnector;
   final SubscriptionTracker _subscriptionTracker;
 
-  HubConnection get _connection => _serverConnector.connection;
+  HubConnection get _connection => _serverConnector.livescoreConnection;
 
   final Map<String, StreamController<FixtureDiscussionUpdateDto>>
       _discussionIdentifierToUpdatesChannel = {};
@@ -35,7 +36,8 @@ class DiscussionApiService implements IDiscussionApiService {
     this._subscriptionTracker,
   ) {
     _serverConnector.message$
-        .where((message) => message.item1 == enums.MessageType.DiscussionUpdate)
+        .where((message) =>
+            message.item1 == enums.MessageType.FixtureDiscussionUpdate)
         .listen((message) {
       _updateDiscussion(message.item2);
     });
@@ -57,19 +59,21 @@ class DiscussionApiService implements IDiscussionApiService {
       return ValidationError();
     } else if (errorMessage.contains('[DiscussionError]')) {
       return DiscussionError(errorMessage.split('[DiscussionError] ').last);
+    } else if (errorMessage.contains('[LivescoreError]')) {
+      return LivescoreError(errorMessage.split('[LivescoreError] ').last);
     }
 
     print(ex);
 
-    return ApiError();
+    return ServerError();
   }
 
   @override
-  Future<FixtureDiscussionsDto> getDiscussionsForFixture(
+  Future<Iterable<DiscussionDto>> getDiscussionsForFixture(
     int fixtureId,
     int teamId,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
     try {
       var result = await _connection.invoke(
@@ -82,7 +86,8 @@ class DiscussionApiService implements IDiscussionApiService {
         ],
       );
 
-      return FixtureDiscussionsDto.fromMap(result['data']);
+      return (result['data'] as List)
+          .map((discussionMap) => DiscussionDto.fromMap(discussionMap));
     } on Exception catch (ex) {
       throw _wrapHubException(ex);
     }
@@ -90,13 +95,12 @@ class DiscussionApiService implements IDiscussionApiService {
 
   void _updateDiscussion(List<dynamic> args) {
     var update = FixtureDiscussionUpdateDto.fromMap(args[0]);
-    var discussionFullIdentifier =
-        'fixture:${update.fixtureId}.team:${update.teamId}.discussion:${update.discussionIdentifier}';
+    var discussionIdentifier =
+        'f:${update.fixtureId}.t:${update.teamId}.d:${update.discussionId}';
     if (_discussionIdentifierToUpdatesChannel.containsKey(
-      discussionFullIdentifier,
+      discussionIdentifier,
     )) {
-      _discussionIdentifierToUpdatesChannel[discussionFullIdentifier]
-          .add(update);
+      _discussionIdentifierToUpdatesChannel[discussionIdentifier].add(update);
     }
   }
 
@@ -104,17 +108,17 @@ class DiscussionApiService implements IDiscussionApiService {
   Future<Stream<FixtureDiscussionUpdateDto>> subscribeToDiscussion(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
-    var discussionFullIdentifier =
-        'fixture:$fixtureId.team:$teamId.discussion:$discussionIdentifier';
+    var discussionIdentifier = 'f:$fixtureId.t:$teamId.d:$discussionId';
 
-    _subscriptionTracker.addSubscription(discussionFullIdentifier);
+    _subscriptionTracker.addSubscription(discussionIdentifier);
 
+    // ignore: close_sinks
     var updatesChannel = StreamController<FixtureDiscussionUpdateDto>();
-    _discussionIdentifierToUpdatesChannel[discussionFullIdentifier] =
+    _discussionIdentifierToUpdatesChannel[discussionIdentifier] =
         updatesChannel;
 
     try {
@@ -124,23 +128,20 @@ class DiscussionApiService implements IDiscussionApiService {
           SubscribeToDiscussionRequestDto(
             fixtureId: fixtureId,
             teamId: teamId,
-            discussionIdentifier: discussionIdentifier,
+            discussionId: discussionId,
           ),
         ],
       );
 
-      var discussion = FixtureDiscussionUpdateDto.fromMap(result['data']);
-
-      updatesChannel.add(discussion);
-      if (!discussion.shouldSubscribe) {
-        _subscriptionTracker.removeSubscription(discussionFullIdentifier);
-      }
+      var update = FixtureDiscussionUpdateDto.fromMap(result['data']);
+      updatesChannel.add(update);
 
       return updatesChannel.stream;
     } on Exception catch (ex) {
-      _subscriptionTracker.removeSubscription(discussionFullIdentifier);
-      updatesChannel.close();
-      _discussionIdentifierToUpdatesChannel.remove(discussionFullIdentifier);
+      _subscriptionTracker.removeSubscription(discussionIdentifier);
+      _discussionIdentifierToUpdatesChannel
+          .remove(discussionIdentifier)
+          .close();
 
       throw _wrapHubException(ex);
     }
@@ -150,10 +151,10 @@ class DiscussionApiService implements IDiscussionApiService {
   Future<Iterable<DiscussionEntryDto>> getMoreDiscussionEntries(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
     String lastReceivedEntryId,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
     try {
       var result = await _connection.invoke(
@@ -162,13 +163,13 @@ class DiscussionApiService implements IDiscussionApiService {
           GetMoreDiscussionEntriesRequestDto(
             fixtureId: fixtureId,
             teamId: teamId,
-            discussionIdentifier: discussionIdentifier,
+            discussionId: discussionId,
             lastReceivedEntryId: lastReceivedEntryId,
           ),
         ],
       );
 
-      return (result['data'] as List<dynamic>)
+      return (result['data'] as List)
           .map((entryMap) => DiscussionEntryDto.fromMap(entryMap));
     } on Exception catch (ex) {
       throw _wrapHubException(ex);
@@ -176,34 +177,37 @@ class DiscussionApiService implements IDiscussionApiService {
   }
 
   @override
-  void unsubscribeFromDiscussion(
+  Future unsubscribeFromDiscussion(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
-    var discussionFullIdentifier =
-        'fixture:$fixtureId.team:$teamId.discussion:$discussionIdentifier';
+    var discussionIdentifier = 'f:$fixtureId.t:$teamId.d:$discussionId';
 
-    _subscriptionTracker.removeSubscription(discussionFullIdentifier);
+    _subscriptionTracker.removeSubscription(discussionIdentifier);
 
     var updatesChannel = _discussionIdentifierToUpdatesChannel.remove(
-      discussionFullIdentifier,
+      discussionIdentifier,
     );
     if (updatesChannel != null) {
       updatesChannel.close();
 
-      await _connection.invoke(
-        'UnsubscribeFromDiscussion',
-        args: [
-          UnsubscribeFromDiscussionRequestDto(
-            fixtureId: fixtureId,
-            teamId: teamId,
-            discussionIdentifier: discussionIdentifier,
-          ),
-        ],
-      );
+      try {
+        await _connection.invoke(
+          'UnsubscribeFromDiscussion',
+          args: [
+            UnsubscribeFromDiscussionRequestDto(
+              fixtureId: fixtureId,
+              teamId: teamId,
+              discussionId: discussionId,
+            ),
+          ],
+        );
+      } on Exception catch (ex) {
+        throw _wrapHubException(ex);
+      }
     }
   }
 
@@ -211,10 +215,10 @@ class DiscussionApiService implements IDiscussionApiService {
   Future postDiscussionEntry(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
     String body,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
     try {
       await _connection.invoke(
@@ -223,7 +227,7 @@ class DiscussionApiService implements IDiscussionApiService {
           PostDiscussionEntryRequestDto(
             fixtureId: fixtureId,
             teamId: teamId,
-            discussionIdentifier: discussionIdentifier,
+            discussionId: discussionId,
             body: body,
           ),
         ],

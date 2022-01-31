@@ -46,27 +46,27 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF398AE5),
         title: Text(
-          'The12thPlayer',
+          'The 12th Player',
           style: GoogleFonts.teko(
             textStyle: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: 30.0,
             ),
           ),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           children: [
-            SizedBox(height: 24),
+            SizedBox(height: 24.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -84,14 +84,14 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                     color: const Color(0xFF6CA8F1),
                     border: Border.all(
                       color: Colors.white,
-                      width: 4,
+                      width: 4.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 6.0,
-                        offset: const Offset(0, 2),
+                        offset: const Offset(0.0, 2.0),
                       ),
                     ],
                   ),
@@ -111,15 +111,15 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 16.0),
             AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 16.0 / 9.0,
               child: Container(
                 decoration: BoxDecoration(
                   border: _thumbnailBytes == null
                       ? Border.all(
                           color: Colors.white,
-                          width: 4,
+                          width: 4.0,
                         )
                       : null,
                   borderRadius: BorderRadius.circular(10.0),
@@ -142,7 +142,7 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                           _feedBloc.dispatchAction(action);
 
                           var state = await action.state;
-                          if (state is ProcessVideoUrlReady) {
+                          if (state is VideoUrlProcessingSucceeded) {
                             setState(() {
                               _isYoutubeVideo = state.videoData.isYoutubeVideo;
                               _thumbnailBytes = state.videoData.thumbnailBytes;
@@ -153,7 +153,7 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                         child: Icon(
                           Icons.videocam,
                           color: Colors.white,
-                          size: 120,
+                          size: 120.0,
                         ),
                       )
                     : Stack(
@@ -176,14 +176,14 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                             child: Icon(
                               Icons.play_arrow,
                               color: Colors.white54,
-                              size: 80,
+                              size: 80.0,
                             ),
                           ),
                         ],
                       ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 16.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -200,14 +200,14 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                     color: const Color(0xFF6CA8F1),
                     border: Border.all(
                       color: Colors.white,
-                      width: 4,
+                      width: 4.0,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 6.0,
-                        offset: const Offset(0, 2),
+                        offset: const Offset(0.0, 2.0),
                       ),
                     ],
                   ),
@@ -216,11 +216,12 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
                     onChanged: (value) => _summary = value,
                     minLines: 3,
                     maxLines: 3,
-                    maxLength: 110,
+                    maxLength: 110, // @@TODO: Config.
                     style: GoogleFonts.openSans(color: Colors.white),
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.fromLTRB(16, 14, 4, 0),
+                      contentPadding:
+                          const EdgeInsets.fromLTRB(16.0, 14.0, 4.0, 0.0),
                     ),
                   ),
                 ),
@@ -246,7 +247,7 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
           _feedBloc.dispatchAction(action);
 
           var state = await action.state;
-          if (state is PostArticleReady) {
+          if (state is ArticlePostingSucceeded) {
             Navigator.popUntil(context, (route) => route.isFirst);
           }
         },

@@ -16,6 +16,7 @@ class DiscussionEntryVm {
   ];
 
   final String id;
+  final int userId;
   final String username;
   final String body;
   Color _color;
@@ -25,11 +26,12 @@ class DiscussionEntryVm {
 
   DiscussionEntryVm.fromDto(
     DiscussionEntryDto entry,
-    Map<String, Color> usernameToColor,
+    Map<int, Color> userIdToColor,
   )   : id = entry.id,
+        userId = entry.userId,
         username = entry.username,
         body = entry.body {
-    if (!usernameToColor.containsKey(username)) {
+    if (!userIdToColor.containsKey(userId)) {
       double sum = 0;
       var codeUnits = username.codeUnits;
       for (int i = 0; i < codeUnits.length; ++i) {
@@ -41,9 +43,9 @@ class DiscussionEntryVm {
       int index = (_colors.length * sum).floor();
 
       _color = _colors[index];
-      usernameToColor[username] = _color;
+      userIdToColor[userId] = _color;
     } else {
-      _color = usernameToColor[username];
+      _color = userIdToColor[userId];
     }
   }
 }

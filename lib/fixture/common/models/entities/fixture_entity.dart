@@ -39,10 +39,12 @@ class FixtureEntity {
 
   Iterable<PlayerEntity> get allPlayers {
     var players = <PlayerEntity>[];
-    players.addAll(lineups[0].startingXI ?? []);
-    players.addAll(lineups[0].subs ?? []);
-    players.addAll(lineups[1].startingXI ?? []);
-    players.addAll(lineups[1].subs ?? []);
+    if (lineups != null) {
+      players.addAll(lineups[0].startingXI);
+      players.addAll(lineups[0].subs);
+      players.addAll(lineups[1].startingXI);
+      players.addAll(lineups[1].subs);
+    }
 
     return players;
   }
@@ -111,6 +113,9 @@ class FixtureEntity {
     if (score != null) {
       map[FixtureTable.score] = jsonEncode(score);
     }
+    if (refereeName != null) {
+      map[FixtureTable.refereeName] = refereeName;
+    }
     if (colors != null) {
       map[FixtureTable.colors] = jsonEncode(colors);
     }
@@ -151,22 +156,22 @@ class FixtureEntity {
         refereeName = map.getOrNull(FixtureTable.refereeName),
         colors = map.notContainsOrNull(FixtureTable.colors)
             ? null
-            : (jsonDecode(map[FixtureTable.colors]) as List<dynamic>)
+            : (jsonDecode(map[FixtureTable.colors]) as List)
                 .map((colorMap) => TeamColorEntity.fromMap(colorMap))
                 .toList(),
         lineups = map.notContainsOrNull(FixtureTable.lineups)
             ? null
-            : (jsonDecode(map[FixtureTable.lineups]) as List<dynamic>)
+            : (jsonDecode(map[FixtureTable.lineups]) as List)
                 .map((lineupMap) => TeamLineupEntity.fromMap(lineupMap))
                 .toList(),
         events = map.notContainsOrNull(FixtureTable.events)
             ? null
-            : (jsonDecode(map[FixtureTable.events]) as List<dynamic>)
+            : (jsonDecode(map[FixtureTable.events]) as List)
                 .map((eventsMap) => TeamMatchEventsEntity.fromMap(eventsMap))
                 .toList(),
         stats = map.notContainsOrNull(FixtureTable.stats)
             ? null
-            : (jsonDecode(map[FixtureTable.stats]) as List<dynamic>)
+            : (jsonDecode(map[FixtureTable.stats]) as List)
                 .map((statsMap) => TeamStatsEntity.fromMap(statsMap))
                 .toList(),
         isFullyLoaded = !map.containsKey(FixtureTable.isFullyLoaded)
@@ -195,10 +200,8 @@ class FixtureEntity {
         stats = null,
         isFullyLoaded = false;
 
-  FixtureEntity.fromFullDto(
-    int teamId,
-    FixtureFullDto fixture,
-  )   : id = fixture.id,
+  FixtureEntity.fromFullDto(int teamId, FixtureFullDto fixture)
+      : id = fixture.id,
         teamId = teamId,
         leagueName = fixture.season.leagueName,
         leagueLogoUrl = fixture.season.leagueLogoUrl,
@@ -244,7 +247,7 @@ class FixtureEntity {
         score = update.score == null ? null : ScoreEntity.fromDto(update.score),
         venueName = null,
         venueImageUrl = null,
-        refereeName = null,
+        refereeName = update.refereeName,
         colors = update.colors
             ?.map((color) => TeamColorEntity.fromDto(color))
             ?.toList(),

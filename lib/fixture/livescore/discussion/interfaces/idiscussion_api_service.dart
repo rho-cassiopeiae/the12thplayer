@@ -1,9 +1,9 @@
-import '../models/dto/fixture_discussions_dto.dart';
+import '../models/dto/discussion_dto.dart';
 import '../models/dto/discussion_entry_dto.dart';
 import '../models/dto/fixture_discussion_update_dto.dart';
 
 abstract class IDiscussionApiService {
-  Future<FixtureDiscussionsDto> getDiscussionsForFixture(
+  Future<Iterable<DiscussionDto>> getDiscussionsForFixture(
     int fixtureId,
     int teamId,
   );
@@ -11,26 +11,26 @@ abstract class IDiscussionApiService {
   Future<Stream<FixtureDiscussionUpdateDto>> subscribeToDiscussion(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
   );
 
   Future<Iterable<DiscussionEntryDto>> getMoreDiscussionEntries(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
     String lastReceivedEntryId,
   );
 
-  void unsubscribeFromDiscussion(
+  Future unsubscribeFromDiscussion(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
   );
 
   Future postDiscussionEntry(
     int fixtureId,
     int teamId,
-    String discussionIdentifier,
+    String discussionId,
     String body,
   );
 }

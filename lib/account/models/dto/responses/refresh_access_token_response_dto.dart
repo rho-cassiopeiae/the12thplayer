@@ -1,6 +1,8 @@
-import 'confirm_email_response_dto.dart';
+class RefreshAccessTokenResponseDto {
+  final String accessToken;
+  final String refreshToken;
 
-class RefreshAccessTokenResponseDto extends ConfirmEmailResponseDto {
   RefreshAccessTokenResponseDto.fromJson(Map<String, dynamic> map)
-      : super.fromJson(map);
+      : accessToken = map['accessToken'],
+        refreshToken = map['refreshToken'];
 }

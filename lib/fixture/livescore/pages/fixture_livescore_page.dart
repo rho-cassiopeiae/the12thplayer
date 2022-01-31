@@ -2,16 +2,15 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../performance_rating/bloc/performance_rating_bloc.dart';
+import '../../../general/bloc/image_bloc.dart';
+import '../player_rating/bloc/player_rating_bloc.dart';
 import '../discussion/bloc/discussion_bloc.dart';
 import '../video_reaction/bloc/video_reaction_bloc.dart';
 import '../video_reaction/enums/video_reaction_filter.dart';
 import '../widgets/video_reactions.dart';
-import '../../../general/bloc/image_bloc.dart';
 import '../widgets/discussions.dart';
-import '../widgets/live_commentary_feeds.dart';
 import '../widgets/match_stats.dart';
-import '../widgets/performance_ratings.dart';
+import '../widgets/player_ratings.dart';
 import '../../../team/models/vm/team_vm.dart';
 import '../widgets/lineups.dart';
 import '../widgets/match_events.dart';
@@ -21,7 +20,6 @@ import '../../../account/bloc/account_actions.dart';
 import '../../../account/bloc/account_bloc.dart';
 import '../../../account/bloc/account_states.dart';
 import '../../../account/pages/auth_page.dart';
-import '../../../account/pages/email_confirmation_page.dart';
 import '../../common/models/vm/fixture_summary_vm.dart';
 import '../bloc/fixture_livescore_actions.dart';
 import '../bloc/fixture_livescore_bloc.dart';
@@ -30,23 +28,15 @@ import '../enums/fixture_livescore_submenu.dart';
 import '../enums/lineup_submenu.dart';
 import '../enums/subscription_state.dart';
 import '../icons/football.dart';
-import '../live_commentary_feed/bloc/live_commentary_feed_bloc.dart';
-import '../live_commentary_feed/enums/live_commentary_filter.dart';
 import '../models/vm/fixture_full_vm.dart';
-import '../widgets/sweet_sheet.dart';
+import '../../../general/widgets/sweet_sheet.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 import '../../../account/enums/account_type.dart';
 
 class FixtureLivescorePage extends StatefulWidget
     with
-        DependencyResolver7<
-            FixtureLivescoreBloc,
-            DiscussionBloc,
-            LiveCommentaryFeedBloc,
-            AccountBloc,
-            ImageBloc,
-            PerformanceRatingBloc,
-            VideoReactionBloc> {
+        DependencyResolver6<FixtureLivescoreBloc, DiscussionBloc, AccountBloc,
+            PlayerRatingBloc, VideoReactionBloc, ImageBloc> {
   static const String routeName = '/fixture/livescore';
 
   final FixtureSummaryVm fixture;
@@ -64,25 +54,27 @@ class FixtureLivescorePage extends StatefulWidget
         resolve4(),
         resolve5(),
         resolve6(),
-        resolve7(),
       );
 }
 
 class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   final FixtureLivescoreBloc _fixtureLivescoreBloc;
   final DiscussionBloc _discussionBloc;
-  final LiveCommentaryFeedBloc _liveCommentaryFeedBloc;
   final AccountBloc _accountBloc;
-  final ImageBloc _imageBloc;
-  final PerformanceRatingBloc _performanceRatingBloc;
+  final PlayerRatingBloc _playerRatingBloc;
   final VideoReactionBloc _videoReactionBloc;
+  final ImageBloc _imageBloc;
+
+  Discussions _discussions;
+  PlayerRatings _playerRatings;
+  VideoReactions _videoReactions;
 
   final SweetSheet _sweetSheet = SweetSheet();
 
-  final double _scaleWidth = 60;
-  final double _scaleHeight = 60;
-  final double _fabPosition = 16;
-  final double _fabSize = 56;
+  final double _scaleWidth = 60.0;
+  final double _scaleHeight = 60.0;
+  final double _fabPosition = 16.0;
+  final double _fabSize = 56.0;
 
   double _xScale;
   double _yScale;
@@ -90,7 +82,6 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   bool _opened;
   FixtureLivescoreSubmenu _selectedSubmenu;
   LineupSubmenu _selectedLineupSubmenu;
-  LiveCommentaryFilter _selectedLiveCommentaryFilter;
   VideoReactionFilter _selectedVideoReactionFilter;
 
   ScrollController _benchPlayersScrollController;
@@ -100,11 +91,10 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   _FixtureLivescorePageState(
     this._fixtureLivescoreBloc,
     this._discussionBloc,
-    this._liveCommentaryFeedBloc,
     this._accountBloc,
-    this._imageBloc,
-    this._performanceRatingBloc,
+    this._playerRatingBloc,
     this._videoReactionBloc,
+    this._imageBloc,
   );
 
   @override
@@ -114,7 +104,6 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     _opened = false;
     _selectedSubmenu = FixtureLivescoreSubmenu.Lineups;
     _selectedLineupSubmenu = LineupSubmenu.HomeTeam;
-    _selectedLiveCommentaryFilter = LiveCommentaryFilter.Top;
     _selectedVideoReactionFilter = VideoReactionFilter.Top;
 
     _benchPlayersScrollController = ScrollController();
@@ -124,7 +113,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
 
     action.state.then((state) {
       if (state is FixtureReady &&
-          !state.fixture.isCompleted &&
+          state.shouldSubscribe &&
           _subscriptionState == SubscriptionState.NotSubscribed) {
         _subscriptionState = SubscriptionState.Subscribed;
         _fixtureLivescoreBloc.dispatchAction(
@@ -141,8 +130,8 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
-    _xScale = (_scaleWidth + _fabPosition * 2) * 100 / width;
-    _yScale = (_scaleHeight + _fabPosition * 2) * 100 / height;
+    _xScale = (_scaleWidth + _fabPosition * 2.0) * 100.0 / width;
+    _yScale = (_scaleHeight + _fabPosition * 2.0) * 100.0 / height;
   }
 
   @override
@@ -157,17 +146,13 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     _subscriptionState = SubscriptionState.Disposed;
 
     _discussionBloc.dispose();
-    _liveCommentaryFeedBloc.dispose();
 
     _benchPlayersScrollController.dispose();
 
     super.dispose();
   }
 
-  Future<bool> _showAuthDialogIfNecessary(
-    String notLoggedInDesc,
-    String unconfirmedDesc,
-  ) async {
+  Future<bool> _showAuthDialogIfNecessary() async {
     var action = LoadAccount();
     _accountBloc.dispatchAction(action);
 
@@ -177,15 +162,15 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     }
 
     var account = (state as AccountReady).account;
-    if (account.type == AccountType.GuestAccount) {
-      var goToAuthPage = await _sweetSheet.show<bool>(
+    if (account.type == AccountType.Guest) {
+      bool goToAuthPage = await _sweetSheet.show<bool>(
         context: context,
-        title: Text('Not logged-in'),
-        description: Text(notLoggedInDesc),
+        title: Text('Not authenticated'),
+        description: Text('Authenticate to continue'),
         color: SweetSheetColor.WARNING,
         positive: SweetSheetAction(
           onPressed: () => Navigator.of(context).pop(true),
-          title: 'SIGN-UP/IN',
+          title: 'SIGN-UP/IN/CONFIRM',
           icon: Icons.login,
         ),
         negative: SweetSheetAction(
@@ -197,31 +182,6 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
       if (goToAuthPage ?? false) {
         Navigator.of(context).pushNamed(
           AuthPage.routeName,
-          arguments: true,
-        );
-      }
-
-      return false;
-    } else if (account.type == AccountType.UnconfirmedAccount) {
-      var goToConfirmationPage = await _sweetSheet.show<bool>(
-        context: context,
-        title: Text('Unconfirmed account'),
-        description: Text(unconfirmedDesc),
-        color: SweetSheetColor.WARNING,
-        positive: SweetSheetAction(
-          onPressed: () => Navigator.of(context).pop(true),
-          title: 'CONFIRM',
-          icon: Icons.open_in_new_rounded,
-        ),
-        negative: SweetSheetAction(
-          onPressed: () => Navigator.of(context).pop(false),
-          title: 'CANCEL',
-        ),
-      );
-
-      if (goToConfirmationPage ?? false) {
-        Navigator.of(context).pushNamed(
-          EmailConfirmationPage.routeName,
           arguments: true,
         );
       }
@@ -240,7 +200,21 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     } else {
       setState(() {
         _opened = !_opened;
-        _selectedSubmenu = submenu;
+        if (_selectedSubmenu != submenu) {
+          _selectedSubmenu = submenu;
+          // ignore: missing_enum_constant_in_switch
+          switch (_selectedSubmenu) {
+            case FixtureLivescoreSubmenu.Discussions:
+              _discussions = null;
+              break;
+            case FixtureLivescoreSubmenu.PlayerRatings:
+              _playerRatings = null;
+              break;
+            case FixtureLivescoreSubmenu.VideoReactions:
+              _videoReactions = null;
+              break;
+          }
+        }
       });
     }
   }
@@ -251,60 +225,50 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
 
     return Scaffold(
       body: Stack(
-        children: <Widget>[
+        children: [
           Container(
             color: const Color(0xff1d3461),
             child: Stack(
-              children: <Widget>[
+              children: [
                 Positioned(
                   bottom: _fabSize + _fabPosition * 2,
                   right: _fabPosition,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: _scaleWidth),
                     child: Column(
-                      children: <Widget>[
+                      children: [
                         SubmenuIconTile(
                           iconData: Football.football_court_top_view,
-                          iconSize: 36,
+                          iconSize: 36.0,
                           toggle: () =>
                               _toggleOpen(FixtureLivescoreSubmenu.Lineups),
                           selected: _selectedSubmenu ==
                               FixtureLivescoreSubmenu.Lineups,
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 20.0),
                         SubmenuIconTile(
                           iconData: Football.timer_clock,
-                          iconSize: 32,
+                          iconSize: 32.0,
                           toggle: () =>
                               _toggleOpen(FixtureLivescoreSubmenu.Events),
                           selected: _selectedSubmenu ==
                               FixtureLivescoreSubmenu.Events,
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 20.0),
                         SubmenuIconTile(
                           iconData: Football.football_stats_graphic,
-                          iconSize: 32,
+                          iconSize: 32.0,
                           toggle: () =>
                               _toggleOpen(FixtureLivescoreSubmenu.Stats),
                           selected:
                               _selectedSubmenu == FixtureLivescoreSubmenu.Stats,
-                        ),
-                        SizedBox(height: 20),
-                        SubmenuIconTile(
-                          iconData: Football.noun_commentator_3742876,
-                          iconSize: 40,
-                          toggle: () => _toggleOpen(
-                            FixtureLivescoreSubmenu.LiveCommentaryFeeds,
-                          ),
-                          selected: _selectedSubmenu ==
-                              FixtureLivescoreSubmenu.LiveCommentaryFeeds,
                         ),
                       ],
                     ),
                   ),
                 ),
                 Positioned(
-                  right: _scaleWidth + _fabPosition * 2,
+                  right: _scaleWidth + _fabPosition * 2.0,
                   bottom: _fabPosition,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: _scaleHeight),
@@ -312,26 +276,26 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                       children: [
                         SubmenuIconTile(
                           iconData: Icons.forum,
-                          iconSize: 32,
+                          iconSize: 32.0,
                           toggle: () =>
                               _toggleOpen(FixtureLivescoreSubmenu.Discussions),
                           selected: _selectedSubmenu ==
                               FixtureLivescoreSubmenu.Discussions,
                         ),
-                        SizedBox(width: 20),
+                        SizedBox(width: 20.0),
                         SubmenuIconTile(
                           iconData: Football.sports_badge_recognition,
-                          iconSize: 32,
+                          iconSize: 32.0,
                           toggle: () => _toggleOpen(
-                            FixtureLivescoreSubmenu.PerformanceRatings,
+                            FixtureLivescoreSubmenu.PlayerRatings,
                           ),
                           selected: _selectedSubmenu ==
-                              FixtureLivescoreSubmenu.PerformanceRatings,
+                              FixtureLivescoreSubmenu.PlayerRatings,
                         ),
-                        SizedBox(width: 20),
+                        SizedBox(width: 20.0),
                         SubmenuIconTile(
                           iconData: Icons.videocam,
-                          iconSize: 32,
+                          iconSize: 32.0,
                           toggle: () => _toggleOpen(
                             FixtureLivescoreSubmenu.VideoReactions,
                           ),
@@ -354,26 +318,24 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                 Container(
                   decoration: BoxDecoration(
                     color: theme.primaryColor,
-                    boxShadow: <BoxShadow>[
+                    boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
-                        blurRadius: 30,
-                        offset: Offset(4, 4),
+                        blurRadius: 30.0,
+                        offset: Offset(4.0, 4.0),
                       ),
                     ],
                     borderRadius: BorderRadius.all(
-                      Radius.circular(15),
+                      Radius.circular(15.0),
                     ),
                   ),
-                  child: StreamBuilder<FixtureLivescoreState>(
+                  child: StreamBuilder<LoadFixtureState>(
                     initialData: FixtureLoading(),
-                    stream: _fixtureLivescoreBloc.state$,
+                    stream: _fixtureLivescoreBloc.fixtureLivescoreState$,
                     builder: (context, snapshot) {
                       var state = snapshot.data;
                       if (state is FixtureLoading) {
                         return Center(child: CircularProgressIndicator());
-                      } else if (state is FixtureError) {
-                        return Center(child: Text(state.message));
                       }
 
                       var fixture = (state as FixtureReady).fixture;
@@ -401,9 +363,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.menu,
-        ),
+        child: Icon(Icons.menu),
         onPressed: _toggleOpen,
       ),
     );
@@ -416,14 +376,14 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
         style: GoogleFonts.teko(
           textStyle: TextStyle(
             color: Colors.white,
-            fontSize: 30,
+            fontSize: 30.0,
           ),
         ),
       ),
       brightness: Brightness.dark,
       centerTitle: true,
       pinned: true,
-      elevation: 0,
+      elevation: 0.0,
       leading: IconButton(
         padding: const EdgeInsets.only(bottom: 4.0),
         icon: Icon(Icons.arrow_back_ios_rounded),
@@ -439,20 +399,20 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
       child: Column(
         children: [
           Container(
-            width: 75,
-            height: 75,
+            width: 75.0,
+            height: 75.0,
             child: Image.network(
               team.logoUrl,
               fit: BoxFit.scaleDown,
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 16.0),
           AutoSizeText(
             team.name,
             style: GoogleFonts.exo2(
               textStyle: TextStyle(
                 color: Colors.white,
-                fontSize: 24,
+                fontSize: 24.0,
               ),
             ),
             textAlign: TextAlign.center,
@@ -468,19 +428,19 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
     var statusStyle = GoogleFonts.teko(
       textStyle: TextStyle(
         color: Colors.white,
-        fontSize: 22,
+        fontSize: 22.0,
       ),
     );
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 24),
+        padding: const EdgeInsets.only(bottom: 24.0),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+                horizontal: 12.0,
+                vertical: 8.0,
               ),
               color: theme.primaryColorDark.withOpacity(0.5),
               child: Text(
@@ -488,20 +448,20 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                 style: GoogleFonts.lexendMega(
                   textStyle: TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 12.0,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 24.0),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTeamLogoAndName(fixture.homeTeam),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
                     child: Column(
                       children: [
                         if (fixture.isLiveInPlay)
@@ -509,21 +469,13 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                             fixture.minuteString,
                             style: statusStyle,
                           ),
-                        if (fixture.isLivePenShootout)
-                          Text(
-                            'PEN LIVE',
-                            style: statusStyle,
-                          ),
                         if (fixture.isUpcoming ||
                             fixture.isPaused ||
-                            fixture.isLiveOnBreak)
+                            fixture.isLiveOnBreak ||
+                            fixture.isLivePenShootout ||
+                            fixture.isCompleted)
                           Text(
                             fixture.status,
-                            style: statusStyle,
-                          ),
-                        if (fixture.isCompleted)
-                          Text(
-                            fixture.completedStatus,
                             style: statusStyle,
                           ),
                         Text(
@@ -531,7 +483,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
                           style: GoogleFonts.lexendMega(
                             textStyle: TextStyle(
                               color: Colors.white,
-                              fontSize: 30,
+                              fontSize: 30.0,
                             ),
                           ),
                         ),
@@ -564,9 +516,7 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
         ).build(
           context: context,
           onChangeLineupSubmenu: (submenu) => setState(
-            () {
-              _selectedLineupSubmenu = submenu;
-            },
+            () => _selectedLineupSubmenu = submenu,
           ),
         );
       case FixtureLivescoreSubmenu.Events:
@@ -580,42 +530,38 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
           theme: theme,
         ).build();
       case FixtureLivescoreSubmenu.Discussions:
-        return Discussions(
-          fixture: fixture,
+        _discussions ??= Discussions(
+          fixtureId: fixture.id,
           theme: theme,
           discussionBloc: _discussionBloc,
-        ).build(context: context);
-      case FixtureLivescoreSubmenu.LiveCommentaryFeeds:
-        return LiveCommentaryFeeds(
-          fixture: fixture,
-          theme: theme,
-          selectedLiveCommentaryFilter: _selectedLiveCommentaryFilter,
-          liveCommentaryFeedBloc: _liveCommentaryFeedBloc,
-          imageBloc: _imageBloc,
-        ).build(
-          context: context,
-          onChangeLiveCommentaryFilter: (filter) {
-            _selectedLiveCommentaryFilter = filter;
-          },
-          onProtectedActionInvoked: _showAuthDialogIfNecessary,
         );
-      case FixtureLivescoreSubmenu.PerformanceRatings:
-        return PerformanceRatings(
-          fixture: fixture,
+
+        return _discussions.build(context: context);
+      case FixtureLivescoreSubmenu.PlayerRatings:
+        _playerRatings ??= PlayerRatings(
+          fixtureId: fixture.id,
           theme: theme,
-          performanceRatingBloc: _performanceRatingBloc,
-        ).build(context: context);
+          playerRatingBloc: _playerRatingBloc,
+        );
+
+        return _playerRatings.build(
+          context: context,
+          onProtectedActionInvoked: _showAuthDialogIfNecessary,
+          onProtectedActionCannotProceed: () => setState(() {}),
+        );
       case FixtureLivescoreSubmenu.VideoReactions:
-        return VideoReactions(
-          fixture: fixture,
-          theme: theme,
+        _videoReactions ??= VideoReactions(
+          fixtureId: fixture.id,
           selectedVideoReactionFilter: _selectedVideoReactionFilter,
           videoReactionBloc: _videoReactionBloc,
-        ).build(
+          imageBloc: _imageBloc,
+        );
+
+        return _videoReactions.build(
           context: context,
-          onChangeVideoReactionFilter: (filter) {
-            _selectedVideoReactionFilter = filter;
-          },
+          theme: theme,
+          onChangeVideoReactionFilter: (filter) =>
+              _selectedVideoReactionFilter = filter,
           onProtectedActionInvoked: _showAuthDialogIfNecessary,
         );
     }

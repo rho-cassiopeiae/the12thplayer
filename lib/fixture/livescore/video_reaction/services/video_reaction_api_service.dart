@@ -3,15 +3,15 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:signalr_core/signalr_core.dart';
 
-import '../models/dto/voted_for_video_reaction_dto.dart';
-import '../models/dto/posted_video_reaction_dto.dart';
+import '../../errors/livescore_error.dart';
+import '../models/dto/video_reaction_rating_dto.dart';
 import '../enums/video_reaction_filter.dart';
-import '../enums/video_reaction_vote_action.dart';
 import '../errors/video_reaction_error.dart';
 import '../interfaces/ivideo_reaction_api_service.dart';
 import '../models/dto/fixture_video_reactions_dto.dart';
 import '../models/dto/requests/get_video_reactions_for_fixture_request_dto.dart';
 import '../models/dto/requests/vote_for_video_reaction_request_dto.dart';
+import '../../../../general/errors/file_error.dart';
 import '../../../../general/errors/api_error.dart';
 import '../../../../general/errors/authentication_token_expired_error.dart';
 import '../../../../general/errors/connection_error.dart';
@@ -24,8 +24,8 @@ import '../../../../general/services/server_connector.dart';
 class VideoReactionApiService implements IVideoReactionApiService {
   final ServerConnector _serverConnector;
 
-  HubConnection get _connection => _serverConnector.connection;
-  Dio get _dio => _serverConnector.dio;
+  HubConnection get _connection => _serverConnector.livescoreConnection;
+  Dio get _dio => _serverConnector.dioLivescore;
 
   VideoReactionApiService(this._serverConnector);
 
@@ -47,50 +47,60 @@ class VideoReactionApiService implements IVideoReactionApiService {
       return VideoReactionError(
         errorMessage.split('[VideoReactionError] ').last,
       );
+    } else if (errorMessage.contains('[LivescoreError]')) {
+      return LivescoreError(errorMessage.split('[LivescoreError] ').last);
     }
 
     print(ex);
 
-    return ApiError();
+    return ServerError();
   }
 
-  dynamic _wrapError(DioError error) {
+  dynamic _wrapError(DioError dioError) {
     // ignore: missing_enum_constant_in_switch
-    switch (error.type) {
+    switch (dioError.type) {
       case DioErrorType.connectTimeout:
       case DioErrorType.sendTimeout:
       case DioErrorType.receiveTimeout:
         return ConnectionError();
       case DioErrorType.response:
-        var statusCode = error.response.statusCode;
+        var statusCode = dioError.response.statusCode;
         if (statusCode >= 500) {
           return ServerError();
         }
 
         switch (statusCode) {
           case 400:
-            var failure = error.response.data['failure'];
-            if (failure['type'] == 'Validation') {
+            var error = dioError.response.data['error'];
+            if (error['type'] == 'Validation') {
               return ValidationError();
-            } else if (failure['type'] == 'VideoReaction') {
+            } else if (error['type'] == 'File') {
+              return FileError(
+                error['errors'].values.first.first,
+              );
+            } else if (error['type'] == 'VideoReaction') {
               return VideoReactionError(
-                failure['errors'].values.first.first,
+                error['errors'].values.first.first,
+              );
+            } else if (error['type'] == 'Livescore') {
+              return LivescoreError(
+                error['errors'].values.first.first,
               );
             }
             break; // @@NOTE: Should never actually reach here.
           case 401:
-            var failureMessage =
-                error.response.data['failure']['errors'].values.first.first;
-            if (failureMessage.contains('token expired at')) {
+            var errorMessage =
+                dioError.response.data['error']['errors'].values.first.first;
+            if (errorMessage.contains('token expired at')) {
               return AuthenticationTokenExpiredError();
             }
-            return InvalidAuthenticationTokenError(failureMessage);
+            return InvalidAuthenticationTokenError(errorMessage);
           case 403:
             return ForbiddenError();
         }
     }
 
-    print(error);
+    print(dioError);
 
     return ApiError();
   }
@@ -100,9 +110,9 @@ class VideoReactionApiService implements IVideoReactionApiService {
     int fixtureId,
     int teamId,
     VideoReactionFilter filter,
-    int start,
+    int page,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
     try {
       var result = await _connection.invoke(
@@ -112,7 +122,7 @@ class VideoReactionApiService implements IVideoReactionApiService {
             fixtureId: fixtureId,
             teamId: teamId,
             filter: filter,
-            start: start,
+            page: page,
           ),
         ],
       );
@@ -124,13 +134,13 @@ class VideoReactionApiService implements IVideoReactionApiService {
   }
 
   @override
-  Future<VotedForVideoReactionDto> voteForVideoReaction(
+  Future<VideoReactionRatingDto> voteForVideoReaction(
     int fixtureId,
     int teamId,
     int authorId,
-    VideoReactionVoteAction voteAction,
+    int userVote,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
     try {
       var result = await _connection.invoke(
@@ -140,19 +150,19 @@ class VideoReactionApiService implements IVideoReactionApiService {
             fixtureId: fixtureId,
             teamId: teamId,
             authorId: authorId,
-            voteAction: voteAction,
+            userVote: userVote,
           ),
         ],
       );
 
-      return VotedForVideoReactionDto.fromMap(result['data']);
+      return VideoReactionRatingDto.fromMap(result['data']);
     } on Exception catch (ex) {
       throw _wrapHubException(ex);
     }
   }
 
   @override
-  Future<PostedVideoReactionDto> postVideoReaction(
+  Future<String> postVideoReaction(
     int fixtureId,
     int teamId,
     String title,
@@ -168,14 +178,14 @@ class VideoReactionApiService implements IVideoReactionApiService {
 
     try {
       var response = await _dio.post(
-        '/api/fixtures/$fixtureId/teams/$teamId/video-reactions',
+        '/livescore/teams/$teamId/fixtures/$fixtureId/video-reactions',
         options: Options(
           headers: {'Authorization': 'Bearer ${_serverConnector.accessToken}'},
         ),
         data: formData,
       );
 
-      return PostedVideoReactionDto.fromMap(response.data['data']);
+      return response.data['data'];
     } on DioError catch (error) {
       throw _wrapError(error);
     }

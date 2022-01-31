@@ -23,19 +23,19 @@ class MatchEvents {
     return [
       SliverToBoxAdapter(
         child: Container(
-          height: 50,
+          height: 50.0,
           decoration: BoxDecoration(
             color: _color,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
             ),
             boxShadow: [
               BoxShadow(
                 color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
-                offset: Offset(0, 2),
+                offset: Offset(0.0, 2.0),
               ),
             ],
           ),
@@ -45,7 +45,7 @@ class MatchEvents {
             style: GoogleFonts.exo2(
               textStyle: TextStyle(
                 color: theme.primaryColorDark,
-                fontSize: 20,
+                fontSize: 20.0,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -68,8 +68,8 @@ class MatchEvents {
             var awayNonSubEventCount = awayEvents.length - awaySubEventCount;
 
             var height = max(
-                  homeNonSubEventCount * 38 + homeSubEventCount * 68,
-                  awayNonSubEventCount * 38 + awaySubEventCount * 68,
+                  homeNonSubEventCount * 38.0 + homeSubEventCount * 68.0,
+                  awayNonSubEventCount * 38.0 + awaySubEventCount * 68.0,
                 ) +
                 16.0;
 
@@ -83,7 +83,7 @@ class MatchEvents {
                     color: _color,
                     blurRadius: 0.0,
                     spreadRadius: 0.0,
-                    offset: Offset(0, 2),
+                    offset: Offset(0.0, 2.0),
                   ),
                 ],
               ),
@@ -96,7 +96,7 @@ class MatchEvents {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: homeEvents
@@ -109,7 +109,7 @@ class MatchEvents {
                     alignment: Alignment.center,
                     children: [
                       Container(
-                        width: 9,
+                        width: 9.0,
                         height: height,
                         decoration: BoxDecoration(
                           color: Colors.black87,
@@ -137,7 +137,7 @@ class MatchEvents {
                       ),
                       CircleAvatar(
                         backgroundColor: Colors.black87,
-                        radius: 18,
+                        radius: 18.0,
                         child: FittedBox(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -148,7 +148,7 @@ class MatchEvents {
                               style: GoogleFonts.lexendMega(
                                 textStyle: TextStyle(
                                   color: _color,
-                                  fontSize: 14,
+                                  fontSize: 14.0,
                                 ),
                               ),
                             ),
@@ -159,7 +159,7 @@ class MatchEvents {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: awayEvents
@@ -189,12 +189,12 @@ class MatchEvents {
   Widget _buildEvent(String eventType, String playerName, bool homeEvent) {
     var widgets = [
       Container(
-        width: 30,
-        height: 30,
+        width: 30.0,
+        height: 30.0,
         alignment: Alignment.center,
         child: _buildEventIcon(eventType, homeEvent),
       ),
-      SizedBox(width: 4),
+      SizedBox(width: 4.0),
       Expanded(
         child: Text(
           playerName,
@@ -220,23 +220,23 @@ class MatchEvents {
 
   Widget _buildEventCard(MatchEventVm event, bool homeEvent) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      elevation: 5.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(16)),
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
       ),
       color: _getEventCardColor(event.type),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: !event.isSub
-            ? _buildEvent(event.type, event.playerName, homeEvent)
+            ? _buildEvent(event.type, event.playerDisplayName, homeEvent)
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildEvent('sub-on', event.playerName, homeEvent),
+                  _buildEvent('sub-on', event.playerDisplayName, homeEvent),
                   _buildEvent(
                     'sub-off',
-                    event.relatedPlayerName ?? '',
+                    event.relatedPlayerDisplayName ?? '',
                     homeEvent,
                   ),
                 ],

@@ -25,10 +25,7 @@ class AccountRepository implements IAccountRepository {
         AccountEntity account;
         if (rows.isEmpty) {
           account = AccountEntity.guest();
-          await txn.insert(
-            AccountTable.tableName,
-            account.toMap(),
-          );
+          await txn.insert(AccountTable.tableName, account.toMap());
         } else {
           account = AccountEntity.fromMap(rows.first);
         }

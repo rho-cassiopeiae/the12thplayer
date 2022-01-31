@@ -1,40 +1,40 @@
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 
+import '../enums/article_filter.dart';
+import '../../general/bloc/mixins.dart';
 import '../enums/article_type.dart';
 import 'feed_states.dart';
 
 abstract class FeedAction {}
 
-abstract class FeedActionFutureState<TState extends FeedState>
-    extends FeedAction {
-  final Completer<TState> _stateReady = Completer<TState>();
-  Future<TState> get state => _stateReady.future;
+abstract class FeedActionAwaitable<T extends FeedState> extends FeedAction
+    with AwaitableState<T> {}
 
-  void complete(TState state) => _stateReady.complete(state);
+class LoadArticles extends FeedActionAwaitable<LoadArticlesState> {
+  final ArticleFilter filter;
+  final int page;
+
+  LoadArticles({
+    @required this.filter,
+    @required this.page,
+  });
 }
 
-class SubscribeToFeed extends FeedAction {}
+class LoadArticle extends FeedActionAwaitable<LoadArticleState> {
+  final int articleId;
 
-class UnsubscribeFromFeed extends FeedAction {}
-
-class LoadMoreArticles extends FeedActionFutureState<LoadMoreArticlesReady> {}
-
-class LoadArticle extends FeedActionFutureState<ArticleState> {
-  final DateTime postedAt;
-
-  LoadArticle({@required this.postedAt});
+  LoadArticle({@required this.articleId});
 }
 
-class ProcessVideoUrl extends FeedActionFutureState<ProcessVideoUrlState> {
+class ProcessVideoUrl extends FeedActionAwaitable<ProcessVideoUrlState> {
   final String url;
 
   ProcessVideoUrl({@required this.url});
 }
 
-class PostVideoArticle extends FeedActionFutureState<PostArticleState> {
+class PostVideoArticle extends FeedActionAwaitable<PostArticleState> {
   final ArticleType type;
   final String title;
   final Uint8List thumbnailBytes;
@@ -50,8 +50,7 @@ class PostVideoArticle extends FeedActionFutureState<PostArticleState> {
   });
 }
 
-class SaveArticlePreview
-    extends FeedActionFutureState<SaveArticlePreviewState> {
+class SaveArticlePreview extends FeedActionAwaitable<SaveArticlePreviewState> {
   final String title;
   final String previewImageUrl;
   final String summary;
@@ -63,21 +62,30 @@ class SaveArticlePreview
   });
 }
 
-class LoadArticleContent extends FeedActionFutureState<ArticleContentReady> {}
+class LoadArticleContent extends FeedActionAwaitable<LoadArticleContentState> {}
 
-class SaveArticleContent
-    extends FeedActionFutureState<SaveArticleContentReady> {
+class SaveArticleContent extends FeedActionAwaitable<SaveArticleContentState> {
   final List<dynamic> content;
 
   SaveArticleContent({@required this.content});
 }
 
-class PostArticle extends FeedActionFutureState<PostArticleState> {
+class PostArticle extends FeedActionAwaitable<PostArticleState> {
   final ArticleType type;
   final List<dynamic> content;
 
   PostArticle({
     @required this.type,
     @required this.content,
+  });
+}
+
+class VoteForArticle extends FeedAction {
+  final int articleId;
+  final int userVote;
+
+  VoteForArticle({
+    @required this.articleId,
+    @required this.userVote,
   });
 }

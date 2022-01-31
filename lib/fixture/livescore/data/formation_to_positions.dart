@@ -299,16 +299,16 @@ var formationToPositions = {
     '11': {'top': 290, 'right': 50}
   },
   '5-4-1': {
-    '1': {'top': 25},
-    '2': {'top': 160, 'left': 5},
-    '3': {'top': 105, 'left': 65},
-    '4': {'top': 90},
-    '5': {'top': 105, 'right': 65},
-    '6': {'top': 160, 'right': 5},
-    '7': {'top': 250, 'left': 10},
-    '8': {'top': 200, 'left': 95},
-    '9': {'top': 200, 'right': 95},
-    '10': {'top': 250, 'right': 10},
-    '11': {'top': 340}
+    '1': {'top': 25, 'radius': 22},
+    '2': {'top': 160, 'left': 5, 'radius': 26},
+    '3': {'top': 105, 'left': 65, 'radius': 24},
+    '4': {'top': 90, 'radius': 23},
+    '5': {'top': 105, 'right': 65, 'radius': 24},
+    '6': {'top': 160, 'right': 5, 'radius': 26},
+    '7': {'top': 250, 'left': 10, 'radius': 28},
+    '8': {'top': 200, 'left': 95, 'radius': 27},
+    '9': {'top': 200, 'right': 95, 'radius': 27},
+    '10': {'top': 250, 'right': 10, 'radius': 28},
+    '11': {'top': 340, 'radius': 30}
   }
 };

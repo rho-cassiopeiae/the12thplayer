@@ -14,7 +14,7 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayer> {
-  BetterPlayerController _controller; // @@NOTE: Controller gets auto-disposed.
+  BetterPlayerController _controller; // @@NOTE: Controller is auto-disposed.
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
     _controller = BetterPlayerController(
       BetterPlayerConfiguration(
-        aspectRatio: 16 / 9,
+        aspectRatio: 16.0 / 9.0,
         autoPlay: true,
       ),
       betterPlayerDataSource: BetterPlayerDataSource(
@@ -41,7 +41,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 16 / 9,
+      aspectRatio: 16.0 / 9.0,
       child: BetterPlayer(controller: _controller),
     );
   }

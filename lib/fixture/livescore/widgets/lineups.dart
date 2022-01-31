@@ -50,7 +50,7 @@ class Lineups {
 
   Color _computeFontColor(Color color) {
     var luminance =
-        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+        (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255.0;
 
     return luminance > 0.5 ? Colors.black : Colors.white;
   }
@@ -64,44 +64,44 @@ class Lineups {
             color: _color,
             blurRadius: 0.0,
             spreadRadius: 0.0,
-            offset: Offset(0, 2),
+            offset: Offset(0.0, 2.0),
           ),
         ],
       ),
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
+        horizontal: 16.0,
+        vertical: 8.0,
       ),
       child: Card(
         color: _color,
-        elevation: 5,
+        elevation: 5.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(12),
+            Radius.circular(12.0),
           ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+            horizontal: 16.0,
+            vertical: 8.0,
           ),
           child: Row(
             children: [
               CircleAvatar(
-                radius: 34,
+                radius: 34.0,
                 backgroundColor: _teamColor,
                 child: Text(
-                  player.number?.toString() ?? '',
+                  player.number.toString(),
                   style: TextStyle(color: _fontColor),
                 ),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 12.0),
               Text(
-                player.name,
+                player.displayName,
                 style: GoogleFonts.exo2(
                   textStyle: TextStyle(
                     color: Colors.black87,
-                    fontSize: 26,
+                    fontSize: 26.0,
                   ),
                 ),
               ),
@@ -119,15 +119,15 @@ class Lineups {
 
     return [
       SliverFixedExtentList(
-        itemExtent: 100,
+        itemExtent: 100.0,
         delegate: SliverChildListDelegate(
           startingXI.map((player) => _buildPlayerCard(player)).toList(),
         ),
       ),
-      if (subs != null && subs.isNotEmpty)
+      if (subs.isNotEmpty) ...[
         SliverToBoxAdapter(
           child: Container(
-            height: 50,
+            height: 50.0,
             decoration: BoxDecoration(
               color: _color,
               boxShadow: [
@@ -135,7 +135,7 @@ class Lineups {
                   color: _color,
                   blurRadius: 0.0,
                   spreadRadius: 0.0,
-                  offset: Offset(0, 2),
+                  offset: Offset(0.0, 2.0),
                 ),
               ],
             ),
@@ -145,20 +145,20 @@ class Lineups {
               style: GoogleFonts.exo2(
                 textStyle: TextStyle(
                   color: theme.primaryColorDark,
-                  fontSize: 20,
+                  fontSize: 20.0,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
           ),
         ),
-      if (subs != null && subs.isNotEmpty)
         SliverFixedExtentList(
-          itemExtent: 100,
+          itemExtent: 100.0,
           delegate: SliverChildListDelegate(
             subs.map((player) => _buildPlayerCard(player)).toList(),
           ),
         ),
+      ],
       SliverFillRemaining(
         hasScrollBody: false,
         child: Container(
@@ -174,8 +174,8 @@ class Lineups {
   }) {
     var width = MediaQuery.of(context).size.width;
     var height = width * 1.467;
-    var scaleHeight = height / 603;
-    var scaleWidth = width / 411;
+    var scaleHeight = height / 603.0;
+    var scaleWidth = width / 411.0;
 
     // var manager = lineup.manager; @@TODO: Display manager somewhere.
     var startingXI = _lineup.startingXI;
@@ -184,19 +184,19 @@ class Lineups {
     return [
       SliverToBoxAdapter(
         child: Container(
-          height: 50,
+          height: 50.0,
           decoration: BoxDecoration(
             color: _color,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
             ),
             boxShadow: [
               BoxShadow(
                 color: _color,
                 blurRadius: 0.0,
                 spreadRadius: 0.0,
-                offset: Offset(0, 2),
+                offset: Offset(0.0, 2.0),
               ),
             ],
           ),
@@ -215,7 +215,7 @@ class Lineups {
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                        Radius.circular(10.0),
                       ),
                     ),
                   ),
@@ -232,7 +232,7 @@ class Lineups {
                 style: GoogleFonts.exo2(
                   textStyle: TextStyle(
                     color: theme.primaryColorDark,
-                    fontSize: 20,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -248,7 +248,7 @@ class Lineups {
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                        Radius.circular(10.0),
                       ),
                     ),
                   ),
@@ -264,9 +264,7 @@ class Lineups {
           ),
         ),
       ),
-      if (startingXI != null &&
-          startingXI.length == 11 &&
-          _lineup.canDrawFormation)
+      if (_lineup.canDrawFormation)
         SliverFillRemaining(
           hasScrollBody: false,
           child: Stack(
@@ -289,8 +287,8 @@ class Lineups {
                   right: player.formationPosition.right == null
                       ? null
                       : scaleWidth * player.formationPosition.right,
-                  width: 100,
-                  height: player.formationPosition.radius * 2 + 18,
+                  width: 100.0,
+                  height: player.formationPosition.radius * 2.0 + 18.0,
                   child: PlayerDummy(
                     player: player,
                     color: _teamColor,
@@ -299,12 +297,12 @@ class Lineups {
                   ),
                 ),
               ),
-              if (subs != null && subs.isNotEmpty)
+              if (subs.isNotEmpty)
                 Positioned(
-                  top: scaleHeight * 490,
-                  height: 76,
-                  left: 10,
-                  right: 10,
+                  top: scaleHeight * 490.0,
+                  height: 76.0,
+                  left: 10.0,
+                  right: 10.0,
                   child: Container(
                     child: FadingEdgeScrollView.fromScrollView(
                       gradientFractionOnStart: 0.4,
@@ -315,10 +313,10 @@ class Lineups {
                         children: subs
                             .map(
                               (player) => Container(
-                                width: 100,
+                                width: 100.0,
                                 child: BenchPlayerDummy(
                                   player: player,
-                                  radius: 32,
+                                  radius: 32.0,
                                 ),
                               ),
                             )
@@ -330,11 +328,9 @@ class Lineups {
             ],
           ),
         ),
-      if (startingXI != null &&
-          startingXI.length == 11 &&
-          !_lineup.canDrawFormation)
+      if (!_lineup.canDrawFormation && startingXI.length == 11)
         ..._buildBackupFormationPresentation(),
-      if (startingXI == null || startingXI.length != 11)
+      if (startingXI.length != 11)
         SliverFillRemaining(
           hasScrollBody: false,
           child: Container(

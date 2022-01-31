@@ -3,10 +3,7 @@ import 'package:dio/dio.dart';
 import '../../general/services/server_connector.dart';
 import '../errors/account_error.dart';
 import '../../general/errors/api_error.dart';
-import '../../general/errors/authentication_token_expired_error.dart';
 import '../../general/errors/connection_error.dart';
-import '../../general/errors/forbidden_error.dart';
-import '../../general/errors/invalid_authentication_token_error.dart';
 import '../../general/errors/server_error.dart';
 import '../../general/errors/validation_error.dart';
 import '../interfaces/iaccount_api_service.dart';
@@ -14,50 +11,39 @@ import '../models/dto/requests/confirm_email_request_dto.dart';
 import '../models/dto/requests/refresh_access_token_request_dto.dart';
 import '../models/dto/requests/sign_in_request_dto.dart';
 import '../models/dto/requests/sign_up_request_dto.dart';
-import '../models/dto/responses/confirm_email_response_dto.dart';
 import '../models/dto/responses/refresh_access_token_response_dto.dart';
 import '../models/dto/responses/sign_in_response_dto.dart';
 
 class AccountApiService implements IAccountApiService {
   final ServerConnector _serverConnector;
 
+  Dio get _dio => _serverConnector.dioIdentity;
+
   AccountApiService(this._serverConnector);
 
-  dynamic _wrapError(DioError error) {
+  dynamic _wrapError(DioError dioError) {
     // ignore: missing_enum_constant_in_switch
-    switch (error.type) {
+    switch (dioError.type) {
       case DioErrorType.connectTimeout:
       case DioErrorType.sendTimeout:
       case DioErrorType.receiveTimeout:
         return ConnectionError();
       case DioErrorType.response:
-        var statusCode = error.response.statusCode;
+        var statusCode = dioError.response.statusCode;
         if (statusCode >= 500) {
           return ServerError();
-        }
-
-        switch (statusCode) {
-          case 400:
-            var failure = error.response.data['failure'];
-            if (failure['type'] == 'Validation') {
-              return ValidationError();
-            } else if (failure['type'] == 'Account') {
-              return AccountError(failure['errors'].values.first.first);
-            }
-            break; // @@NOTE: Should never actually reach here.
-          case 401:
-            var failureMessage =
-                error.response.data['failure']['errors'].values.first.first;
-            if (failureMessage.contains('token expired at')) {
-              return AuthenticationTokenExpiredError();
-            }
-            return InvalidAuthenticationTokenError(failureMessage);
-          case 403:
-            return ForbiddenError();
+        } else if (statusCode == 400) {
+          var error = dioError.response.data['error'];
+          if (error['type'] == 'Validation') {
+            return ValidationError();
+          } else if (error['type'] == 'Account') {
+            return AccountError(error['errors'].values.first.first);
+          }
+          // @@NOTE: Should never actually reach here.
         }
     }
 
-    print(error);
+    print(dioError);
 
     return ApiError();
   }
@@ -65,8 +51,8 @@ class AccountApiService implements IAccountApiService {
   @override
   Future signUp(String email, String username, String password) async {
     try {
-      await _serverConnector.dioIdentity.post(
-        '/api/account/sign-up',
+      await _dio.post(
+        '/identity/account/sign-up',
         data: SignUpRequestDto(
           email: email,
           username: username,
@@ -79,31 +65,31 @@ class AccountApiService implements IAccountApiService {
   }
 
   @override
-  Future<ConfirmEmailResponseDto> confirmEmail(
-    String email,
-    String confirmationCode,
-  ) async {
+  Future confirmEmail(String email, String confirmationCode) async {
     try {
-      var response = await _serverConnector.dioIdentity.post(
-        '/api/account/confirm-email',
+      await _dio.post(
+        '/identity/account/confirm-email',
         data: ConfirmEmailRequestDto(
           email: email,
           confirmationCode: confirmationCode,
         ).toJson(),
       );
-
-      return ConfirmEmailResponseDto.fromJson(response.data['data']);
     } on DioError catch (error) {
       throw _wrapError(error);
     }
   }
 
   @override
-  Future<SignInResponseDto> signIn(String email, String password) async {
+  Future<SignInResponseDto> signIn(
+    String deviceId,
+    String email,
+    String password,
+  ) async {
     try {
-      var response = await _serverConnector.dioIdentity.post(
-        '/api/account/sign-in',
+      var response = await _dio.post(
+        '/identity/account/sign-in',
         data: SignInRequestDto(
+          deviceId: deviceId,
           email: email,
           password: password,
         ).toJson(),
@@ -116,13 +102,18 @@ class AccountApiService implements IAccountApiService {
   }
 
   @override
-  Future<RefreshAccessTokenResponseDto> refreshAccessToken() async {
+  Future<RefreshAccessTokenResponseDto> refreshAccessToken(
+    String deviceId,
+    String accessToken,
+    String refreshToken,
+  ) async {
     try {
-      var response = await _serverConnector.dioIdentity.post(
-        '/api/account/refresh-access-token',
+      var response = await _dio.post(
+        '/identity/account/refresh-access-token',
         data: RefreshAccessTokenRequestDto(
-          accessToken: _serverConnector.accessToken,
-          refreshToken: _serverConnector.refreshToken,
+          deviceId: deviceId,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
         ).toJson(),
       );
 
@@ -132,41 +123,24 @@ class AccountApiService implements IAccountApiService {
     }
   }
 
-  @override
-  Future createProfile(String accessToken, String email) async {
-    try {
-      await _serverConnector.dio.put(
-        '/api/profile',
-        options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
-        ),
-        data: <String, dynamic>{
-          'email': email,
-        },
-      );
-    } on DioError catch (error) {
-      throw _wrapError(error);
-    }
-  }
+  // @override
+  // Future updateProfileImage(List<int> imageBytes, String filename) async {
+  //   var formData = FormData.fromMap(
+  //     {
+  //       'image': MultipartFile.fromBytes(imageBytes, filename: filename),
+  //     },
+  //   );
 
-  @override
-  Future updateProfileImage(List<int> imageBytes, String filename) async {
-    var formData = FormData.fromMap(
-      {
-        'image': MultipartFile.fromBytes(imageBytes, filename: filename),
-      },
-    );
-
-    try {
-      await _serverConnector.dio.post(
-        '/api/profile/update-profile-image',
-        options: Options(
-          headers: {'Authorization': 'Bearer ${_serverConnector.accessToken}'},
-        ),
-        data: formData,
-      );
-    } on DioError catch (error) {
-      throw _wrapError(error);
-    }
-  }
+  //   try {
+  //     await _serverConnector.dioProfile.post(
+  //       '/api/profile/update-profile-image',
+  //       options: Options(
+  //         headers: {'Authorization': 'Bearer ${_serverConnector.accessToken}'},
+  //       ),
+  //       data: formData,
+  //     );
+  //   } on DioError catch (error) {
+  //     throw _wrapError(error);
+  //   }
+  // }
 }

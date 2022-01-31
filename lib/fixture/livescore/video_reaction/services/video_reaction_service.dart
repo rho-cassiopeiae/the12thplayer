@@ -10,7 +10,6 @@ import '../../../../general/errors/connection_error.dart';
 import '../../../../general/errors/server_error.dart';
 import '../../../../account/services/account_service.dart';
 import '../enums/video_reaction_filter.dart';
-import '../enums/video_reaction_vote_action.dart';
 import '../interfaces/ivideo_reaction_api_service.dart';
 import '../models/vm/fixture_video_reactions_vm.dart';
 import '../../../../general/errors/authentication_token_expired_error.dart';
@@ -25,10 +24,9 @@ class VideoReactionService {
   final AccountService _accountService;
   final NotificationService _notificationService;
 
-  Policy _wsApiPolicy;
-  Policy _apiPolicy;
+  Policy _policy;
 
-  int _notificationId = 1;
+  int _notificationId = 0;
 
   VideoReactionService(
     this._storage,
@@ -37,17 +35,7 @@ class VideoReactionService {
     this._accountService,
     this._notificationService,
   ) {
-    _wsApiPolicy = PolicyBuilder().on<AuthenticationTokenExpiredError>(
-      strategies: [
-        When(
-          any,
-          repeat: 1,
-          afterDoing: _accountService.refreshAccessToken,
-        ),
-      ],
-    ).build();
-
-    _apiPolicy = PolicyBuilder().on<ConnectionError>(
+    _policy = PolicyBuilder().on<ConnectionError>(
       strategies: [
         When(
           any,
@@ -76,99 +64,66 @@ class VideoReactionService {
     ).build();
   }
 
-  Future<Either<Error, FixtureVideoReactionsVm>> loadVideoReactions(
+  Future<FixtureVideoReactionsVm> loadVideoReactions(
     int fixtureId,
     VideoReactionFilter filter,
-    int start,
+    int page,
   ) async {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var fixtureVideoReactionsDto =
-          await _videoReactionApiService.getVideoReactionsForFixture(
-        fixtureId,
-        currentTeam.id,
-        filter,
-        start,
+      var fixtureVideoReactions = await _policy.execute(
+        () => _videoReactionApiService.getVideoReactionsForFixture(
+          fixtureId,
+          currentTeam.id,
+          filter,
+          page,
+        ),
       );
 
-      return Right(
-        FixtureVideoReactionsVm.fromDto(fixtureVideoReactionsDto),
+      _storage.addVideoReactions(
+        FixtureVideoReactionsVm.fromDto(fixtureVideoReactions),
       );
-    } catch (error, stackTrace) {
-      print('========== $error ==========');
-      print(stackTrace);
-
-      return Left(Error(error.toString()));
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
     }
+
+    return _storage.getVideoReactions();
   }
 
-  Stream<Either<Error, FixtureVideoReactionsVm>> voteForVideoReaction(
+  Future<FixtureVideoReactionsVm> voteForVideoReaction(
     int fixtureId,
     int authorId,
-    VideoReactionVoteAction voteAction,
-    FixtureVideoReactionsVm fixtureVideoReactions,
-  ) async* {
+    int userVote,
+  ) async {
     try {
       var currentTeam = await _storage.loadCurrentTeam();
 
-      var reactions = fixtureVideoReactions.reactions;
-      var index = reactions.indexWhere(
-        (reaction) => reaction.authorId == authorId,
-      );
-      var reaction = reactions[index];
-
-      var oldVoteAction = reaction.voteAction;
-      VideoReactionVoteAction newVoteAction;
-      int incrScoreBy;
-      if (oldVoteAction == null) {
-        newVoteAction = voteAction;
-        incrScoreBy = voteAction.toInt();
-      } else if (voteAction == oldVoteAction) {
-        incrScoreBy = -voteAction.toInt();
-      } else {
-        newVoteAction = voteAction;
-        incrScoreBy = voteAction.toInt() * 2;
-      }
-
-      reactions[index] = reaction.copyWith(
-        rating: reaction.rating + incrScoreBy,
-        voteAction: newVoteAction,
-      );
-
-      reactions.sort((r1, r2) => r2.rating.compareTo(r1.rating));
-
-      yield Right(fixtureVideoReactions);
-
-      var result = await _wsApiPolicy.execute(
+      var videoReactionRating = await _policy.execute(
         () => _videoReactionApiService.voteForVideoReaction(
           fixtureId,
           currentTeam.id,
           authorId,
-          voteAction,
+          userVote,
         ),
       );
 
-      fixtureVideoReactions = fixtureVideoReactions.copy();
-      reactions = fixtureVideoReactions.reactions;
-      index = reactions.indexWhere((reaction) => reaction.authorId == authorId);
+      var fixtureVideoReactions = _storage.getVideoReactions().copy();
+      var videoReactions = fixtureVideoReactions.videoReactions;
+      var index = videoReactions.indexWhere((vr) => vr.authorId == authorId);
+      if (index >= 0) {
+        videoReactions[index] = videoReactions[index].copyWith(
+          rating: videoReactionRating.rating,
+          userVote: userVote,
+        );
 
-      reactions[index] = reactions[index].copyWith(
-        rating: result.updatedRating,
-        voteAction: VideoReactionVoteActionExtension.fromInt(
-          result.updatedVoteAction,
-        ),
-      );
-
-      reactions.sort((r1, r2) => r2.rating.compareTo(r1.rating));
-
-      yield Right(fixtureVideoReactions);
-    } catch (error, stackTrace) {
-      print('========== $error ==========');
-      print(stackTrace);
-
-      yield Left(Error(error.toString()));
+        _storage.setVideoReactions(fixtureVideoReactions);
+      }
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
     }
+
+    return _storage.getVideoReactions();
   }
 
   void postVideoReaction(
@@ -182,7 +137,7 @@ class VideoReactionService {
 
       _notificationService.showMessage('Video will be published shortly');
 
-      await _apiPolicy.execute(
+      await _policy.execute(
         () => _videoReactionApiService.postVideoReaction(
           fixtureId,
           currentTeam.id,
@@ -191,18 +146,14 @@ class VideoReactionService {
           fileName,
         ),
       );
-    } catch (error, stackTrace) {
-      print('========== $error ==========');
-      print(stackTrace);
-
+    } catch (error) {
       _notificationService.showMessage(error.toString());
-
       return;
     }
 
     AwesomeNotifications().createNotification(
       content: NotificationContent(
-        id: _notificationId++,
+        id: ++_notificationId,
         channelKey: 'video_reaction_channel',
         title: 'Your video is ready',
         body: 'It\'s successfully published and now available to everyone',
@@ -214,15 +165,13 @@ class VideoReactionService {
     String videoId,
   ) async {
     try {
-      var qualityToUrl = await _apiPolicy.execute(
+      var qualityToUrl = await _policy.execute(
         () => _vimeoApiService.getVideoQualityUrls(videoId),
       );
 
       return Right(qualityToUrl);
-    } catch (error, stackTrace) {
-      print('========== $error ==========');
-      print(stackTrace);
-
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
       return Left(Error(error.toString()));
     }
   }

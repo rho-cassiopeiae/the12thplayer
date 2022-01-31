@@ -8,12 +8,16 @@ class MatchEventsVm {
   List<MatchEventGroupVm> get groups => _groups;
 
   MatchEventsVm.fromEntity(FixtureEntity fixture) {
-    var teamEvents = fixture.events
-        .firstWhere((events) => events.teamId == fixture.teamId)
-        .events;
-    var opponentTeamEvents = fixture.events
-        .firstWhere((events) => events.teamId == fixture.opponentTeamId)
-        .events;
+    var teamEvents = fixture.events != null
+        ? fixture.events
+            .firstWhere((events) => events.teamId == fixture.teamId)
+            .events
+        : <MatchEventEntity>[];
+    var opponentTeamEvents = fixture.events != null
+        ? fixture.events
+            .firstWhere((events) => events.teamId == fixture.opponentTeamId)
+            .events
+        : <MatchEventEntity>[];
 
     var homeTeamEvents = fixture.homeStatus ? teamEvents : opponentTeamEvents;
     var awayTeamEvents = fixture.homeStatus ? opponentTeamEvents : teamEvents;
@@ -21,82 +25,79 @@ class MatchEventsVm {
     // @@TODO: Deal with penalty shootout events.
     var players = fixture.allPlayers;
     _groups = [];
-    if (homeTeamEvents != null) {
-      for (var event in homeTeamEvents) {
-        var addedTimeMinute =
-            event.addedTimeMinute != null ? '+${event.addedTimeMinute}' : '';
-        var minute = '${event.minute}$addedTimeMinute';
 
-        var group = _groups.firstWhere(
-          (eventGroup) => eventGroup.minute == minute,
+    for (var event in homeTeamEvents) {
+      var addedTimeMinute =
+          event.addedTimeMinute != null ? '+${event.addedTimeMinute}' : '';
+      var minute = '${event.minute}$addedTimeMinute';
+
+      var group = _groups.firstWhere(
+        (eventGroup) => eventGroup.minute == minute,
+        orElse: () => null,
+      );
+      if (group == null) {
+        group = MatchEventGroupVm(minute: minute);
+        _groups.add(group);
+      }
+
+      if (event.playerId != null) {
+        var player = players.firstWhere(
+          (player) => player.id == event.playerId,
           orElse: () => null,
         );
-        if (group == null) {
-          group = MatchEventGroupVm(minute: minute);
-          _groups.add(group);
-        }
+        if (player != null) {
+          var relatedPlayer = event.relatedPlayerId != null
+              ? players.firstWhere(
+                  (player) => player.id == event.relatedPlayerId,
+                  orElse: () => null,
+                )
+              : null;
 
-        if (event.playerId != null) {
-          var player = players.firstWhere(
-            (player) => player.id == event.playerId,
-            orElse: () => null,
+          group.homeTeamEvents.add(
+            MatchEventVm.fromEntity(
+              event,
+              player.getDisplayName(),
+              relatedPlayer?.getDisplayName(),
+            ),
           );
-          if (player != null) {
-            group.homeTeamEvents.add(
-              MatchEventVm.fromEntity(
-                event,
-                player.name,
-                event.relatedPlayerId != null
-                    ? players
-                        .firstWhere(
-                          (player) => player.id == event.relatedPlayerId,
-                          orElse: () => null,
-                        )
-                        ?.name
-                    : null,
-              ),
-            );
-          }
         }
       }
     }
 
-    if (awayTeamEvents != null) {
-      for (var event in awayTeamEvents) {
-        var addedTimeMinute =
-            event.addedTimeMinute != null ? '+${event.addedTimeMinute}' : '';
-        var minute = '${event.minute}$addedTimeMinute';
+    for (var event in awayTeamEvents) {
+      var addedTimeMinute =
+          event.addedTimeMinute != null ? '+${event.addedTimeMinute}' : '';
+      var minute = '${event.minute}$addedTimeMinute';
 
-        var group = _groups.firstWhere(
-          (eventGroup) => eventGroup.minute == minute,
+      var group = _groups.firstWhere(
+        (eventGroup) => eventGroup.minute == minute,
+        orElse: () => null,
+      );
+      if (group == null) {
+        group = MatchEventGroupVm(minute: minute);
+        _groups.add(group);
+      }
+
+      if (event.playerId != null) {
+        var player = players.firstWhere(
+          (player) => player.id == event.playerId,
           orElse: () => null,
         );
-        if (group == null) {
-          group = MatchEventGroupVm(minute: minute);
-          _groups.add(group);
-        }
+        if (player != null) {
+          var relatedPlayer = event.relatedPlayerId != null
+              ? players.firstWhere(
+                  (player) => player.id == event.relatedPlayerId,
+                  orElse: () => null,
+                )
+              : null;
 
-        if (event.playerId != null) {
-          var player = players.firstWhere(
-            (player) => player.id == event.playerId,
-            orElse: () => null,
+          group.awayTeamEvents.add(
+            MatchEventVm.fromEntity(
+              event,
+              player.getDisplayName(),
+              relatedPlayer?.getDisplayName(),
+            ),
           );
-          if (player != null) {
-            group.awayTeamEvents.add(
-              MatchEventVm.fromEntity(
-                event,
-                player.name,
-                event.relatedPlayerId != null
-                    ? players
-                        .firstWhere(
-                          (player) => player.id == event.relatedPlayerId,
-                          orElse: () => null,
-                        )
-                        ?.name
-                    : null,
-              ),
-            );
-          }
         }
       }
     }
@@ -129,16 +130,16 @@ class MatchEventGroupVm {
 
 class MatchEventVm {
   final String type;
-  final String playerName;
-  final String relatedPlayerName;
+  final String playerDisplayName;
+  final String relatedPlayerDisplayName;
 
   bool get isSub => type == 'substitution';
 
   MatchEventVm.fromEntity(
     MatchEventEntity event,
-    String playerName,
-    String relatedPlayerName,
+    String playerDisplayName,
+    String relatedPlayerDisplayName,
   )   : type = event.type,
-        playerName = playerName,
-        relatedPlayerName = relatedPlayerName;
+        playerDisplayName = playerDisplayName,
+        relatedPlayerDisplayName = relatedPlayerDisplayName;
 }

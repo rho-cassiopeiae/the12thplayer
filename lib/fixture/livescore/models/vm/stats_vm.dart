@@ -8,11 +8,11 @@ class StatsVm {
 
   StatsVm.fromEntity(FixtureEntity fixture) {
     var teamStats = fixture.stats
-        .firstWhere((stats) => stats.teamId == fixture.teamId)
-        .stats;
+        ?.firstWhere((stats) => stats.teamId == fixture.teamId)
+        ?.stats;
     var opponentTeamStats = fixture.stats
-        .firstWhere((stats) => stats.teamId == fixture.opponentTeamId)
-        .stats;
+        ?.firstWhere((stats) => stats.teamId == fixture.opponentTeamId)
+        ?.stats;
 
     var homeTeamStats = fixture.homeStatus ? teamStats : opponentTeamStats;
     var awayTeamStats = fixture.homeStatus ? opponentTeamStats : teamStats;

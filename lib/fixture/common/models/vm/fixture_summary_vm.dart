@@ -24,10 +24,8 @@ class FixtureSummaryVm {
   FixtureSummaryVm.fromEntity(TeamEntity team, FixtureEntity fixture)
       : id = fixture.id,
         teamId = team.id,
-        startTime = fixture.startTime == null
-            ? null
-            : DateTime.fromMillisecondsSinceEpoch(fixture.startTime),
-        status = fixture.status,
+        startTime = DateTime.fromMillisecondsSinceEpoch(fixture.startTime),
+        status = fixture.status.replaceAll('_', ' '),
         gameTime = GameTimeVm.fromEntity(fixture.gameTime),
         score = ScoreVm.fromEntity(fixture.score),
         league = LeagueVm(
@@ -72,7 +70,7 @@ class FixtureSummaryVm {
 
   bool get isLiveInPlay => status == 'LIVE' || status == 'ET';
 
-  bool get isLivePenShootout => status == 'PEN_LIVE';
+  bool get isLivePenShootout => status == 'PEN LIVE';
 
   bool get isLiveOnBreak => status == 'HT' || status == 'BREAK';
 
@@ -81,7 +79,5 @@ class FixtureSummaryVm {
   bool get isPaused => status == 'INT' || status == 'ABAN' || status == 'SUSP';
 
   bool get isCompleted =>
-      status == 'FT' || status == 'AET' || status == 'FT_PEN';
-
-  String get completedStatus => status == 'FT_PEN' ? 'FT PEN' : status;
+      status == 'FT' || status == 'AET' || status == 'FT PEN';
 }

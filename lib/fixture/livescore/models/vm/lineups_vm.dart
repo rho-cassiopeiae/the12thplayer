@@ -12,12 +12,12 @@ class LineupsVm {
 
   LineupsVm.fromEntity(FixtureEntity fixture) {
     var teamLineup = LineupVm.fromEntity(
-      fixture.lineups.firstWhere(
+      fixture.lineups?.firstWhere(
         (lineup) => lineup.teamId == fixture.teamId,
       ),
     );
     var opponentTeamLineup = LineupVm.fromEntity(
-      fixture.lineups.firstWhere(
+      fixture.lineups?.firstWhere(
         (lineup) => lineup.teamId == fixture.opponentTeamId,
       ),
     );
@@ -37,34 +37,39 @@ class LineupVm {
   bool get canDrawFormation => _canDrawFormation;
 
   LineupVm.fromEntity(TeamLineupEntity lineup)
-      : formation = lineup.formation,
-        manager = lineup.manager != null
+      : formation = lineup?.formation,
+        manager = lineup?.manager != null
             ? ManagerVm.fromEntity(lineup.manager)
             : null,
-        startingXI = lineup.startingXI
-            ?.map((player) => PlayerVm.fromEntity(lineup.formation, player))
-            ?.toList(),
-        subs = lineup.subs
-            ?.map((player) => PlayerVm.fromEntity(lineup.formation, player))
-            ?.toList() {
-    _canDrawFormation =
-        startingXI?.every((player) => player.formationPosition != null) ??
-            false;
+        startingXI = lineup != null
+            ? lineup.startingXI
+                .map((player) => PlayerVm.fromEntity(lineup.formation, player))
+                .toList()
+            : [],
+        subs = lineup != null
+            ? lineup.subs
+                .map((player) => PlayerVm.fromEntity(lineup.formation, player))
+                .toList()
+            : [] {
+    _canDrawFormation = startingXI.length == 11 &&
+        startingXI.every((player) => player.formationPosition != null);
 
-    startingXI?.sort(
-      (p1, p2) => _positionToPriority[p1.position]
-          .compareTo(_positionToPriority[p2.position]),
+    startingXI.sort(
+      (p1, p2) => _positionToPriority[p1.position].compareTo(
+        _positionToPriority[p2.position],
+      ),
     );
 
-    subs?.sort(
-      (p1, p2) => _positionToPriority[p1.position]
-          .compareTo(_positionToPriority[p2.position]),
+    subs.sort(
+      (p1, p2) => _positionToPriority[p1.position].compareTo(
+        _positionToPriority[p2.position],
+      ),
     );
   }
 }
 
 class PlayerVm {
-  final String name;
+  final String displayName;
   final int number;
   final bool isCaptain;
   final String position;
@@ -73,7 +78,7 @@ class PlayerVm {
   final String imageUrl;
 
   PlayerVm.fromEntity(String formation, PlayerEntity player)
-      : name = player.name,
+      : displayName = player.getDisplayName(),
         number = player.number,
         isCaptain = player.isCaptain,
         position = player.position,

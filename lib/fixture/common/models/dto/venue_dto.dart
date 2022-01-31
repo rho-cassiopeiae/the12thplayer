@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 class VenueDto {
   final String name;
   final String imageUrl;
 
-  VenueDto.fromMap(Map<String, dynamic> map)
-      : name = map['name'],
-        imageUrl = map['imageUrl'];
+  VenueDto({
+    @required this.name,
+    @required this.imageUrl,
+  });
 }

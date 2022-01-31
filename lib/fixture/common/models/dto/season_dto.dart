@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 class SeasonDto {
   final String leagueName;
   final String leagueLogoUrl;
 
-  SeasonDto.fromMap(Map<String, dynamic> map)
-      : leagueName = map['leagueName'],
-        leagueLogoUrl = map['leagueLogoUrl'];
+  SeasonDto({
+    @required this.leagueName,
+    @required this.leagueLogoUrl,
+  });
 }

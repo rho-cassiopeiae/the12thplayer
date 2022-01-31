@@ -10,19 +10,17 @@ class TeamLineupDto {
         formation = map['formation'],
         manager =
             map['manager'] == null ? null : ManagerDto.fromMap(map['manager']),
-        startingXI = map['startingXI'] == null
-            ? null
-            : (map['startingXI'] as List<dynamic>)
-                .map((playerMap) => PlayerDto.fromMap(playerMap)),
-        subs = map['subs'] == null
-            ? null
-            : (map['subs'] as List<dynamic>)
-                .map((playerMap) => PlayerDto.fromMap(playerMap));
+        startingXI = (map['startingXI'] as List)
+            .map((playerMap) => PlayerDto.fromMap(playerMap)),
+        subs = (map['subs'] as List)
+            .map((playerMap) => PlayerDto.fromMap(playerMap));
 }
 
 class PlayerDto {
   final int id;
-  final String name;
+  final String firstName;
+  final String lastName;
+  final String displayName;
   final int number;
   final bool isCaptain;
   final String position;
@@ -31,7 +29,9 @@ class PlayerDto {
 
   PlayerDto.fromMap(Map<String, dynamic> map)
       : id = map['id'],
-        name = map['name'],
+        firstName = map['firstName'],
+        lastName = map['lastName'],
+        displayName = map['displayName'],
         number = map['number'],
         isCaptain = map['isCaptain'],
         position = map['position'],

@@ -8,9 +8,10 @@ import 'fixture_livescore_states.dart';
 class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
   final FixtureLivescoreService _fixtureLivescoreService;
 
-  StreamController<FixtureLivescoreState> _stateChannel =
-      StreamController<FixtureLivescoreState>.broadcast();
-  Stream<FixtureLivescoreState> get state$ => _stateChannel.stream;
+  StreamController<LoadFixtureState> _fixtureLivescoreStateChannel =
+      StreamController<LoadFixtureState>.broadcast();
+  Stream<LoadFixtureState> get fixtureLivescoreState$ =>
+      _fixtureLivescoreStateChannel.stream;
 
   FixtureLivescoreBloc(this._fixtureLivescoreService) {
     actionChannel.stream.listen((action) {
@@ -28,8 +29,8 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
 
   @override
   void dispose({FixtureLivescoreAction cleanupAction}) {
-    _stateChannel.close();
-    _stateChannel = null;
+    _fixtureLivescoreStateChannel.close();
+    _fixtureLivescoreStateChannel = null;
 
     if (cleanupAction != null) {
       dispatchAction(cleanupAction);
@@ -40,23 +41,22 @@ class FixtureLivescoreBloc extends Bloc<FixtureLivescoreAction> {
   }
 
   void _loadFixture(LoadFixture action) async {
-    var result = await _fixtureLivescoreService.loadFixture(
-      action.fixtureId,
-    );
-    var state = result.fold(
-      (error) => FixtureError(message: error.toString()),
-      (fixture) => FixtureReady(fixture: fixture),
+    var result = await _fixtureLivescoreService.loadFixture(action.fixtureId);
+
+    var state = FixtureReady(
+      fixture: result.item1,
+      shouldSubscribe: result.item2,
     );
 
     action.complete(state);
-    _stateChannel?.add(state);
+    _fixtureLivescoreStateChannel?.add(state);
   }
 
   void _subscribeToFixture(SubscribeToFixture action) async {
     await for (var fixture in _fixtureLivescoreService.subscribeToFixture(
       action.fixtureId,
     )) {
-      _stateChannel?.add(FixtureReady(fixture: fixture));
+      _fixtureLivescoreStateChannel?.add(FixtureReady(fixture: fixture));
     }
   }
 

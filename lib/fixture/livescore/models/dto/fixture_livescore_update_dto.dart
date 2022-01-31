@@ -1,3 +1,4 @@
+import '../../../../general/extensions/map_extension.dart';
 import '../../../common/models/dto/game_time_dto.dart';
 import '../../../common/models/dto/score_dto.dart';
 import '../../../common/models/dto/team_color_dto.dart';
@@ -12,6 +13,7 @@ class FixtureLivescoreUpdateDto {
   final String status;
   final GameTimeDto gameTime;
   final ScoreDto score;
+  final String refereeName;
   final Iterable<TeamColorDto> colors;
   final Iterable<TeamLineupDto> lineups;
   final Iterable<TeamMatchEventsDto> events;
@@ -20,26 +22,28 @@ class FixtureLivescoreUpdateDto {
   FixtureLivescoreUpdateDto.fromMap(Map<String, dynamic> map)
       : fixtureId = map['fixtureId'],
         teamId = map['teamId'],
-        startTime = map['startTime'],
+        startTime = map.getOrNull('startTime'),
         status = map['status'],
-        gameTime = map['gameTime'] == null
-            ? null
-            : GameTimeDto.fromMap(map['gameTime']),
-        score = map['score'] == null ? null : ScoreDto.fromMap(map['score']),
-        colors = map['colors'] == null
-            ? null
-            : (map['colors'] as List<dynamic>)
-                .map((colorMap) => TeamColorDto.fromMap(colorMap)),
-        lineups = map['lineups'] == null
-            ? null
-            : (map['lineups'] as List<dynamic>)
-                .map((lineupMap) => TeamLineupDto.fromMap(lineupMap)),
-        events = map['events'] == null
-            ? null
-            : (map['events'] as List<dynamic>)
-                .map((eventsMap) => TeamMatchEventsDto.fromMap(eventsMap)),
-        stats = map['stats'] == null
-            ? null
-            : (map['stats'] as List<dynamic>)
-                .map((statsMap) => TeamStatsDto.fromMap(statsMap));
+        gameTime = map.containsKey('gameTime')
+            ? GameTimeDto.fromMap(map['gameTime'])
+            : null,
+        score =
+            map.containsKey('score') ? ScoreDto.fromMap(map['score']) : null,
+        refereeName = map.getOrNull('refereeName'),
+        colors = map.containsKey('colors')
+            ? (map['colors'] as List)
+                .map((colorMap) => TeamColorDto.fromMap(colorMap))
+            : null,
+        lineups = map.containsKey('lineups')
+            ? (map['lineups'] as List)
+                .map((lineupMap) => TeamLineupDto.fromMap(lineupMap))
+            : null,
+        events = map.containsKey('events')
+            ? (map['events'] as List)
+                .map((eventsMap) => TeamMatchEventsDto.fromMap(eventsMap))
+            : null,
+        stats = map.containsKey('stats')
+            ? (map['stats'] as List)
+                .map((statsMap) => TeamStatsDto.fromMap(statsMap))
+            : null;
 }

@@ -7,7 +7,6 @@ import 'package:signalr_core/signalr_core.dart';
 
 import '../../../general/services/subscription_tracker.dart';
 import '../../../general/enums/message_type.dart' as enums;
-import '../errors/fixture_error.dart';
 import '../../livescore/models/dto/requests/unsubscribe_from_fixture_request_dto.dart';
 import '../../livescore/models/dto/fixture_full_dto.dart';
 import '../../livescore/models/dto/fixture_livescore_update_dto.dart';
@@ -24,8 +23,8 @@ class FixtureApiService implements IFixtureApiService {
   final ServerConnector _serverConnector;
   final SubscriptionTracker _subscriptionTracker;
 
-  Dio get _dio => _serverConnector.dio;
-  HubConnection get _connection => _serverConnector.connection;
+  Dio get _dio => _serverConnector.dioLivescore;
+  HubConnection get _connection => _serverConnector.livescoreConnection;
 
   final Map<String, StreamController<FixtureLivescoreUpdateDto>>
       _fixtureIdentifierToUpdatesChannel = {};
@@ -35,38 +34,34 @@ class FixtureApiService implements IFixtureApiService {
     this._subscriptionTracker,
   ) {
     _serverConnector.message$
-        .where((message) => message.item1 == enums.MessageType.LivescoreUpdate)
+        .where((message) =>
+            message.item1 == enums.MessageType.FixtureLivescoreUpdate)
         .listen((message) {
       _updateFixtureLivescore(message.item2);
     });
   }
 
-  dynamic _wrapError(DioError error) {
+  dynamic _wrapError(DioError dioError) {
     // ignore: missing_enum_constant_in_switch
-    switch (error.type) {
+    switch (dioError.type) {
       case DioErrorType.connectTimeout:
       case DioErrorType.sendTimeout:
       case DioErrorType.receiveTimeout:
         return ConnectionError();
       case DioErrorType.response:
-        var statusCode = error.response.statusCode;
+        var statusCode = dioError.response.statusCode;
         if (statusCode >= 500) {
           return ServerError();
-        }
-
-        switch (statusCode) {
-          case 400:
-            var failure = error.response.data['failure'];
-            if (failure['type'] == 'Validation') {
-              return ValidationError();
-            } else if (failure['type'] == 'Fixture') {
-              return FixtureError(failure['errors'].values.first.first);
-            }
-            break; // @@NOTE: Should never actually reach here.
+        } else if (statusCode == 400) {
+          var error = dioError.response.data['error'];
+          if (error['type'] == 'Validation') {
+            return ValidationError();
+          }
+          // @@NOTE: Should never actually reach here.
         }
     }
 
-    print(error);
+    print(dioError);
 
     return ApiError();
   }
@@ -79,7 +74,7 @@ class FixtureApiService implements IFixtureApiService {
 
     print(ex);
 
-    return ApiError();
+    return ServerError();
   }
 
   @override
@@ -90,15 +85,14 @@ class FixtureApiService implements IFixtureApiService {
   ) async {
     try {
       var response = await _dio.get(
-        '/api/fixtures',
+        '/livescore/teams/$teamId/fixtures',
         queryParameters: {
-          'teamId': teamId,
           'startTime': startTime,
           'endTime': endTime,
         },
       );
 
-      return (response.data['data'] as List<dynamic>).map(
+      return (response.data['data'] as List).map(
         (fixtureMap) => FixtureSummaryDto.fromMap(fixtureMap),
       );
     } on DioError catch (error) {
@@ -110,10 +104,7 @@ class FixtureApiService implements IFixtureApiService {
   Future<FixtureFullDto> getFixtureForTeam(int fixtureId, int teamId) async {
     try {
       var response = await _dio.get(
-        '/api/fixtures/$fixtureId',
-        queryParameters: {
-          'teamId': teamId,
-        },
+        '/livescore/teams/$teamId/fixtures/$fixtureId',
       );
 
       return FixtureFullDto.fromMap(response.data['data']);
@@ -127,7 +118,7 @@ class FixtureApiService implements IFixtureApiService {
       jsonDecode(utf8.decode(brotli.decode(base64Decode(args[0])))),
     );
 
-    var fixtureIdentifier = 'fixture:${update.fixtureId}.team:${update.teamId}';
+    var fixtureIdentifier = 'f:${update.fixtureId}.t:${update.teamId}';
     if (_fixtureIdentifierToUpdatesChannel.containsKey(fixtureIdentifier)) {
       _fixtureIdentifierToUpdatesChannel[fixtureIdentifier].add(update);
     }
@@ -138,9 +129,9 @@ class FixtureApiService implements IFixtureApiService {
     int fixtureId,
     int teamId,
   ) async {
-    await _serverConnector.ensureConnected();
+    await _serverConnector.ensureLivescoreConnected();
 
-    var fixtureIdentifier = 'fixture:$fixtureId.team:$teamId';
+    var fixtureIdentifier = 'f:$fixtureId.t:$teamId';
     _subscriptionTracker.addSubscription(fixtureIdentifier);
 
     try {
@@ -166,10 +157,10 @@ class FixtureApiService implements IFixtureApiService {
   }
 
   @override
-  void unsubscribeFromFixture(int fixtureId, int teamId) async {
-    await _serverConnector.ensureConnected();
+  Future unsubscribeFromFixture(int fixtureId, int teamId) async {
+    await _serverConnector.ensureLivescoreConnected();
 
-    var fixtureIdentifier = 'fixture:$fixtureId.team:$teamId';
+    var fixtureIdentifier = 'f:$fixtureId.t:$teamId';
     _subscriptionTracker.removeSubscription(fixtureIdentifier);
 
     var updatesChannel = _fixtureIdentifierToUpdatesChannel.remove(
@@ -178,15 +169,19 @@ class FixtureApiService implements IFixtureApiService {
     if (updatesChannel != null) {
       updatesChannel.close();
 
-      await _connection.invoke(
-        'UnsubscribeFromFixture',
-        args: [
-          UnsubscribeFromFixtureRequestDto(
-            fixtureId: fixtureId,
-            teamId: teamId,
-          ),
-        ],
-      );
+      try {
+        await _connection.invoke(
+          'UnsubscribeFromFixture',
+          args: [
+            UnsubscribeFromFixtureRequestDto(
+              fixtureId: fixtureId,
+              teamId: teamId,
+            ),
+          ],
+        );
+      } on Exception catch (ex) {
+        throw _wrapHubException(ex);
+      }
     }
   }
 }

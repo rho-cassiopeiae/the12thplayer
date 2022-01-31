@@ -21,17 +21,17 @@ class ArticleTypeSelectionPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF273469),
         title: Text(
-          'The12thPlayer',
+          'The 12th Player',
           style: GoogleFonts.teko(
             textStyle: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: 30.0,
             ),
           ),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).pop(),
@@ -42,30 +42,30 @@ class ArticleTypeSelectionPage extends StatelessWidget {
           children: [
             Spacer(flex: 2),
             Card(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              elevation: 8,
+              margin: const EdgeInsets.symmetric(horizontal: 24.0),
+              elevation: 8.0,
               child: Row(
                 children: [
-                  SizedBox(width: 16),
+                  SizedBox(width: 16.0),
                   Expanded(
                     child: DirectSelectList<ArticleType>(
                       values: ArticleType.values,
                       itemBuilder: (value) => DirectSelectItem<ArticleType>(
-                        itemHeight: 56,
+                        itemHeight: 56.0,
                         value: value,
                         itemBuilder: (_, value) => Text(
-                          value.getString(),
-                          style: GoogleFonts.exo2(fontSize: 20),
+                          value.name,
+                          style: GoogleFonts.exo2(fontSize: 20.0),
                         ),
                       ),
                       focusedItemDecoration: BoxDecoration(
                         border: BorderDirectional(
                           top: BorderSide(
-                            width: 1,
+                            width: 1.0,
                             color: Colors.black12,
                           ),
                           bottom: BorderSide(
-                            width: 1,
+                            width: 1.0,
                             color: Colors.black12,
                           ),
                         ),
@@ -93,7 +93,6 @@ class ArticleTypeSelectionPage extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          assert(_type != null);
           if (_type == ArticleType.Highlights || _type == ArticleType.Video) {
             Navigator.of(context).pushNamed(
               VideoArticleComposePage.routeName,

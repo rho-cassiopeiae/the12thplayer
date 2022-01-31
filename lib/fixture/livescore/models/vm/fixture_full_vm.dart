@@ -13,10 +13,8 @@ class FixtureFullVm extends FixtureSummaryVm {
   final MatchEventsVm events;
   final StatsVm stats;
 
-  FixtureFullVm.fromEntity(
-    TeamEntity team,
-    FixtureEntity fixture,
-  )   : refereeName = fixture.refereeName,
+  FixtureFullVm.fromEntity(TeamEntity team, FixtureEntity fixture)
+      : refereeName = fixture.refereeName,
         colors = ColorsVm.fromEntity(fixture),
         lineups = LineupsVm.fromEntity(fixture),
         events = MatchEventsVm.fromEntity(fixture),

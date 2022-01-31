@@ -32,7 +32,7 @@ class FixtureTable {
       $opponentTeamName TEXT NOT NULL,
       $opponentTeamLogoUrl TEXT NOT NULL,
       $homeStatus INTEGER NOT NULL,
-      $startTime INTEGER,
+      $startTime INTEGER NOT NULL,
       $status TEXT NOT NULL,
       $gameTime TEXT NOT NULL,
       $score TEXT NOT NULL,
