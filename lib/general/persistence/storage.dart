@@ -120,6 +120,8 @@ class Storage {
         userRating,
       );
 
+  void clearVideoReactions() => _cache.clearVideoReactions();
+
   void setVideoReactions(FixtureVideoReactionsVm fixtureVideoReactions) =>
       _cache.setVideoReactions(fixtureVideoReactions);
 

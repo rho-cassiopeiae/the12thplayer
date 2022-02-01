@@ -44,6 +44,13 @@ class Cache {
     videoReactions: [],
   );
 
+  void clearVideoReactions() =>
+      _fixtureVideoReactions = FixtureVideoReactionsVm(
+        page: 1,
+        totalPages: 1,
+        videoReactions: [],
+      );
+
   void setVideoReactions(FixtureVideoReactionsVm fixtureVideoReactions) =>
       _fixtureVideoReactions = fixtureVideoReactions;
 

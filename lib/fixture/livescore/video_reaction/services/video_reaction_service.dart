@@ -70,6 +70,10 @@ class VideoReactionService {
     int page,
   ) async {
     try {
+      if (page == 1) {
+        _storage.clearVideoReactions();
+      }
+
       var currentTeam = await _storage.loadCurrentTeam();
 
       var fixtureVideoReactions = await _policy.execute(

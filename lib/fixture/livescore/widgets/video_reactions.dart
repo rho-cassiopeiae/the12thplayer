@@ -136,8 +136,6 @@ class VideoReactions {
                                     VideoReactionPage.routeName,
                                     arguments: fixtureId,
                                   );
-
-                                  _loadVideoReactions(page: 1);
                                 }
                               },
                             ),
