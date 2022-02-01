@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import 'account_states.dart';
@@ -40,4 +42,11 @@ class SignIn extends AccountActionAwaitable<AuthenticateState> {
     @required this.email,
     @required this.password,
   });
+}
+
+class UpdateProfileImage
+    extends AccountActionAwaitable<ProfileImageUpdateCompleted> {
+  final File imageFile;
+
+  UpdateProfileImage({@required this.imageFile});
 }

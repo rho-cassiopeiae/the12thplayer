@@ -46,6 +46,7 @@ class _$Injector extends Injector {
         c<Storage>(),
         c<ServerConnector>(),
         c<IAccountApiService>(),
+        c<IImageService>(),
         c<NotificationService>()));
     container.registerSingleton((c) => AccountBloc(c<AccountService>()));
   }

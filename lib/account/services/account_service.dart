@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:either_option/either_option.dart';
 
+import '../../general/errors/authentication_token_expired_error.dart';
+import '../../general/interfaces/iimage_service.dart';
 import '../../general/services/notification_service.dart';
 import '../enums/account_type.dart';
 import '../interfaces/iaccount_api_service.dart';
@@ -18,6 +21,7 @@ class AccountService {
   final Storage _storage;
   final ServerConnector _serverConnector;
   final IAccountApiService _accountApiService;
+  final IImageService _imageService;
   final NotificationService _notificationService;
 
   Policy _policy;
@@ -26,6 +30,7 @@ class AccountService {
     this._storage,
     this._serverConnector,
     this._accountApiService,
+    this._imageService,
     this._notificationService,
   ) {
     _policy = PolicyBuilder().on<ConnectionError>(
@@ -44,6 +49,14 @@ class AccountService {
           withInterval: (attempt) => Duration(
             milliseconds: 200 * pow(2, attempt),
           ),
+        ),
+      ],
+    ).on<AuthenticationTokenExpiredError>(
+      strategies: [
+        When(
+          any,
+          repeat: 1,
+          afterDoing: refreshAccessToken,
         ),
       ],
     ).build();
@@ -161,27 +174,25 @@ class AccountService {
     );
   }
 
-  // Future<Option<Error>> updateProfileImage(File imageFile) async {
-  //   try {
-  //     var account = await _storage.loadAccount();
+  Future<bool> updateProfileImage(File imageFile) async {
+    try {
+      var account = await _storage.loadAccount();
 
-  //     var resizedImageBytes = await _imageService.resizeImage(imageFile);
+      var resizedImageBytes = await _imageService.resizeImage(imageFile);
 
-  //     await _policy.execute(
-  //       () => _accountApiService.updateProfileImage(
-  //         resizedImageBytes,
-  //         '${account.username}.png',
-  //       ),
-  //     );
+      await _policy.execute(
+        () => _accountApiService.updateProfileImage(
+          resizedImageBytes,
+          '${account.username}.png',
+        ),
+      );
 
-  //     await _imageService.invalidateCachedProfileImage(account.username);
+      await _imageService.invalidateCachedProfileImage(account.username);
 
-  //     return None();
-  //   } catch (error, stackTrace) {
-  //     print('===== $error =====');
-  //     print(stackTrace);
-
-  //     return Some(Error(error.toString()));
-  //   }
-  // }
+      return true;
+    } catch (error) {
+      _notificationService.showMessage(error.toString());
+      return false;
+    }
+  }
 }

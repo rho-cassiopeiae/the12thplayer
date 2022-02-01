@@ -21,3 +21,9 @@ abstract class AuthenticateState extends AccountState {}
 class AuthenticationSucceeded extends AuthenticateState {}
 
 class AuthenticationFailed extends AuthenticateState {}
+
+class ProfileImageUpdateCompleted extends AccountState {
+  final bool succeeded;
+
+  ProfileImageUpdateCompleted({@required this.succeeded});
+}

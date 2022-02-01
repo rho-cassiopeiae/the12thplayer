@@ -1,5 +1,10 @@
 import 'package:dio/dio.dart';
 
+import '../errors/profile_error.dart';
+import '../../general/errors/file_error.dart';
+import '../../general/errors/authentication_token_expired_error.dart';
+import '../../general/errors/forbidden_error.dart';
+import '../../general/errors/invalid_authentication_token_error.dart';
 import '../../general/services/server_connector.dart';
 import '../errors/account_error.dart';
 import '../../general/errors/api_error.dart';
@@ -32,14 +37,30 @@ class AccountApiService implements IAccountApiService {
         var statusCode = dioError.response.statusCode;
         if (statusCode >= 500) {
           return ServerError();
-        } else if (statusCode == 400) {
-          var error = dioError.response.data['error'];
-          if (error['type'] == 'Validation') {
-            return ValidationError();
-          } else if (error['type'] == 'Account') {
-            return AccountError(error['errors'].values.first.first);
-          }
-          // @@NOTE: Should never actually reach here.
+        }
+
+        switch (statusCode) {
+          case 400:
+            var error = dioError.response.data['error'];
+            if (error['type'] == 'Validation') {
+              return ValidationError();
+            } else if (error['type'] == 'File') {
+              return FileError(error['errors'].values.first.first);
+            } else if (error['type'] == 'Account') {
+              return AccountError(error['errors'].values.first.first);
+            } else if (error['type'] == 'Profile') {
+              return ProfileError(error['errors'].values.first.first);
+            }
+            break; // @@NOTE: Should never actually reach here.
+          case 401:
+            var errorMessage =
+                dioError.response.data['error']['errors'].values.first.first;
+            if (errorMessage.contains('token expired at')) {
+              return AuthenticationTokenExpiredError();
+            }
+            return InvalidAuthenticationTokenError(errorMessage);
+          case 403:
+            return ForbiddenError();
         }
     }
 
@@ -123,24 +144,24 @@ class AccountApiService implements IAccountApiService {
     }
   }
 
-  // @override
-  // Future updateProfileImage(List<int> imageBytes, String filename) async {
-  //   var formData = FormData.fromMap(
-  //     {
-  //       'image': MultipartFile.fromBytes(imageBytes, filename: filename),
-  //     },
-  //   );
+  @override
+  Future updateProfileImage(List<int> imageBytes, String filename) async {
+    var formData = FormData.fromMap(
+      {
+        'image': MultipartFile.fromBytes(imageBytes, filename: filename),
+      },
+    );
 
-  //   try {
-  //     await _serverConnector.dioProfile.post(
-  //       '/api/profile/update-profile-image',
-  //       options: Options(
-  //         headers: {'Authorization': 'Bearer ${_serverConnector.accessToken}'},
-  //       ),
-  //       data: formData,
-  //     );
-  //   } on DioError catch (error) {
-  //     throw _wrapError(error);
-  //   }
-  // }
+    try {
+      await _serverConnector.dioProfile.post(
+        '/profile/update-profile-image',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${_serverConnector.accessToken}'},
+        ),
+        data: formData,
+      );
+    } on DioError catch (error) {
+      throw _wrapError(error);
+    }
+  }
 }

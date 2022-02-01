@@ -16,6 +16,8 @@ class AccountBloc extends Bloc<AccountAction> {
         _confirmEmail(action);
       } else if (action is SignIn) {
         _signIn(action);
+      } else if (action is UpdateProfileImage) {
+        _updateProfileImage(action);
       }
     });
   }
@@ -78,5 +80,10 @@ class AccountBloc extends Bloc<AccountAction> {
     );
 
     action.complete(state);
+  }
+
+  void _updateProfileImage(UpdateProfileImage action) async {
+    bool succeeded = await _accountService.updateProfileImage(action.imageFile);
+    action.complete(ProfileImageUpdateCompleted(succeeded: succeeded));
   }
 }

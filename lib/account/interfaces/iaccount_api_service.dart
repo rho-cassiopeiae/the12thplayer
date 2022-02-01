@@ -17,4 +17,6 @@ abstract class IAccountApiService {
     String accessToken,
     String refreshToken,
   );
+
+  Future updateProfileImage(List<int> imageBytes, String filename);
 }

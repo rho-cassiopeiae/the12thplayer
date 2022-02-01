@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => Dialog(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Text('Gallery'),
                 onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 12.0),
               ElevatedButton(
                 child: Text('Camera'),
                 onPressed: () => Navigator.of(context).pop(ImageSource.camera),
@@ -110,18 +110,13 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
 
-    // var action = UpdateProfileImage(imageFile: croppedFile);
-    // _accountBloc.dispatchAction(action);
+    var action = UpdateProfileImage(imageFile: croppedFile);
+    _accountBloc.dispatchAction(action);
 
-    // var state = await action.state;
-    // if (state is UpdateProfileImageFailed) {
-    //   var snackBar = SnackBar(
-    //     content: Text(state.message),
-    //   );
-    //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // } else {
-    //   setState(() {});
-    // }
+    var state = await action.state;
+    if (state.succeeded) {
+      setState(() {});
+    }
   }
 
   @override
@@ -132,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: AppDrawer(),
-      body: FutureBuilder<AccountState>(
+      body: FutureBuilder<LoadAccountState>(
         initialData: AccountLoading(),
         future: action.state,
         builder: (context, snapshot) {
@@ -148,11 +143,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
           return Stack(
             fit: StackFit.expand,
-            children: <Widget>[
+            children: [
               FractionallySizedBox(
                 alignment: Alignment.topCenter,
                 heightFactor: 0.7,
-                child: FutureBuilder<ImageState>(
+                child: FutureBuilder<GetProfileImageState>(
                   initialData: ProfileImageLoading(),
                   future: action.state,
                   builder: (context, snapshot) {
@@ -177,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Positioned(
-                top: 20,
+                top: 20.0,
                 child: IconButton(
                   icon: Icon(Icons.menu),
                   onPressed: _scaffoldKey.currentState.openDrawer,
@@ -191,8 +186,8 @@ class _ProfilePageState extends State<ProfilePage> {
               SlidingUpPanel(
                 controller: _panelController,
                 borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(32),
-                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32.0),
+                  topLeft: Radius.circular(32.0),
                 ),
                 minHeight: _height * 0.35,
                 maxHeight: _height * 0.85,
@@ -219,13 +214,13 @@ class _ProfilePageState extends State<ProfilePage> {
       controller: controller,
       physics: ClampingScrollPhysics(),
       child: Column(
-        children: <Widget>[
+        children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
             height: _height * 0.35,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              children: [
                 _buildTitleSection(account),
                 _buildInfoSection(),
                 _buildActionSection(),
@@ -239,20 +234,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Column _buildTitleSection(AccountVm account) {
     return Column(
-      children: <Widget>[
+      children: [
         Text(
           account.username,
           style: GoogleFonts.openSans(
             fontWeight: FontWeight.w700,
-            fontSize: 30,
+            fontSize: 30.0,
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 8.0),
         Text(
           account.email,
           style: GoogleFonts.openSans(
             fontStyle: FontStyle.italic,
-            fontSize: 16,
+            fontSize: 16.0,
           ),
         ),
       ],
@@ -262,17 +257,17 @@ class _ProfilePageState extends State<ProfilePage> {
   Row _buildInfoSection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        _buildInfoCell(title: 'Club', value: 'Chelsea'),
+      children: [
+        _buildInfoCell(title: 'Club', value: 'Rangers'),
         Container(
-          width: 1,
-          height: 40,
+          width: 1.0,
+          height: 40.0,
           color: Colors.grey,
         ),
         _buildInfoCell(title: 'Joined', value: '2035-03-24'),
         Container(
-          width: 1,
-          height: 40,
+          width: 1.0,
+          height: 40.0,
           color: Colors.grey,
         ),
         _buildInfoCell(title: 'Location', value: 'Moon base'),
@@ -282,20 +277,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Column _buildInfoCell({String title, String value}) {
     return Column(
-      children: <Widget>[
+      children: [
         Text(
           title,
           style: GoogleFonts.openSans(
             fontWeight: FontWeight.w300,
-            fontSize: 14,
+            fontSize: 14.0,
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 8.0),
         Text(
           value,
           style: GoogleFonts.openSans(
             fontWeight: FontWeight.w700,
-            fontSize: 14,
+            fontSize: 14.0,
           ),
         ),
       ],
@@ -305,7 +300,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Row _buildActionSection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
+      children: [
         Visibility(
           visible: !_isOpen,
           child: Expanded(
@@ -313,7 +308,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text(
                 'EDIT PROFILE',
                 style: GoogleFonts.openSans(
-                  fontSize: 12,
+                  fontSize: 12.0,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -324,7 +319,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
               ),
@@ -333,19 +328,19 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         Visibility(
           visible: !_isOpen,
-          child: SizedBox(width: 16),
+          child: SizedBox(width: 16.0),
         ),
         Expanded(
           child: Container(
             alignment: Alignment.center,
             child: SizedBox(
-              width: _isOpen ? (_width - 80) / 1.6 : double.infinity,
+              width: _isOpen ? (_width - 80.0) / 1.6 : double.infinity,
               child: TextButton(
                 child: Text(
                   'LOG OUT',
                   style: GoogleFonts.openSans(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 12.0,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -354,7 +349,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundColor: MaterialStateProperty.all(Colors.blue),
                   shape: MaterialStateProperty.all(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
                 ),

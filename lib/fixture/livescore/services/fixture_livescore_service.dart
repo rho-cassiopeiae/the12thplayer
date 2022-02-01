@@ -67,7 +67,8 @@ class FixtureLivescoreService {
 
         await _storage.updateFixture(fixtureEntity);
 
-        shouldSubscribe = !fixtureEntity.isFullyLoaded || true;
+        shouldSubscribe = !fixtureEntity.isFullyLoaded ||
+            true; // @@NOTE: Always true for playing around.
       } catch (error) {
         _notificationService.showMessage(error.toString());
       }
