@@ -32,7 +32,7 @@ You can chat about a game in a discussion room, watch post-match fan video react
 
 </details>
 
-For the server side of the application go to [this](https://github.com/rho-cassiopeiae/the12thplayer-backend "this") repository.
+For the server side of the application go to [this](https://github.com/rho-cassiopeiae/the12thplayer.backend "this") repository.
 
 ## Table of contents
 
