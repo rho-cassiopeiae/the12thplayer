@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -122,7 +123,7 @@ class _FeedPageState extends State<FeedPage> {
             ),
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 0.0,
         actions: [

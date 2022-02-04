@@ -158,7 +158,7 @@ class VideoReactionService {
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: ++_notificationId,
-        channelKey: 'video_reaction_channel',
+        channelKey: 'notification_channel',
         title: 'Your video is ready',
         body: 'It\'s successfully published and now available to everyone',
       ),

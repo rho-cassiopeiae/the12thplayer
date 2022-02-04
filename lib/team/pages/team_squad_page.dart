@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/players_view.dart';
@@ -34,7 +35,7 @@ class TeamSquadPage extends StatelessWidgetWith<TeamBloc> {
             ),
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 5.0,
       ),

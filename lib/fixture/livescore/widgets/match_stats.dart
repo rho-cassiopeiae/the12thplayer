@@ -26,14 +26,14 @@ class MatchStats {
     if (homeColor == null) {
       homeColor = fixture.homeTeam.id == fixture.teamId
           ? theme.primaryColorDark
-          : theme.accentColor;
+          : theme.colorScheme.secondary;
     }
 
     var awayColor = fixture.colors.awayTeam;
     if (awayColor == null) {
       awayColor = fixture.awayTeam.id == fixture.teamId
           ? theme.primaryColorDark
-          : theme.accentColor;
+          : theme.colorScheme.secondary;
     }
 
     var borderColorHome = _computeBorderColor(homeColor);

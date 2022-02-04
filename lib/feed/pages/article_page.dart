@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:google_fonts/google_fonts.dart';
 
@@ -108,7 +109,7 @@ class _ArticlePageState extends State<ArticlePage> {
             ),
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 0.0,
         leading: IconButton(

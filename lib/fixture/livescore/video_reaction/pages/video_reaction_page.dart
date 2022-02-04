@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -56,7 +57,7 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
             ),
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 0.0,
       ),

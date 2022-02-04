@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -164,7 +165,7 @@ class _MatchPredictionsPageState extends State<MatchPredictionsPage> {
             fontSize: 30.0,
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 0.0,
         actions: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:snapping_sheet/snapping_sheet.dart';
 
@@ -95,7 +96,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
             ),
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 0.0,
       ),

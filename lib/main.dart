@@ -30,7 +30,6 @@ import 'fixture/livescore/pages/fixture_livescore_page.dart';
 import 'general/pages/welcome_page.dart';
 import 'fixture/calendar/pages/fixture_calendar_page.dart';
 import 'account/pages/auth_page.dart';
-import 'general/extensions/color_extension.dart';
 import 'general/utils/injector.dart';
 
 void main() async {
@@ -46,10 +45,9 @@ void main() async {
     null,
     [
       NotificationChannel(
-        channelKey: 'video_reaction_channel',
-        channelName: 'Video reactions',
-        channelDescription:
-            'Notifying users when their video reactions get successfully uploaded and processed',
+        channelKey: 'notification_channel',
+        channelName: 'Notification channel',
+        channelDescription: 'Notifying users about in-app events',
         defaultColor: const Color.fromRGBO(39, 87, 203, 1.0),
         ledColor: Colors.white,
       )
@@ -78,10 +76,15 @@ class Application extends StatelessWidgetWith<NotificationBloc> {
       scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: generateMaterialColor(
-          const Color.fromRGBO(39, 87, 203, 1.0),
+        // primarySwatch: generateMaterialColor(
+        //   const Color.fromRGBO(39, 87, 203, 1.0),
+        // ),
+        // accentColor: Colors.grey[300],
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color.fromRGBO(39, 87, 203, 1.0),
+          brightness: Brightness.dark,
+          secondary: Colors.grey[300],
         ),
-        accentColor: Colors.grey[300],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: WelcomePage(),

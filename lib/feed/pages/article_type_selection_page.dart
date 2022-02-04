@@ -2,6 +2,7 @@ import 'package:direct_select_flutter/direct_select_container.dart';
 import 'package:flutter/material.dart';
 import 'package:direct_select_flutter/direct_select_item.dart';
 import 'package:direct_select_flutter/direct_select_list.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'article_preview_compose_page.dart';
@@ -29,7 +30,7 @@ class ArticleTypeSelectionPage extends StatelessWidget {
             ),
           ),
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         centerTitle: true,
         elevation: 0.0,
         leading: IconButton(

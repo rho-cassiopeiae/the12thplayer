@@ -30,14 +30,14 @@ class Lineups {
       if (_teamColor == null) {
         _teamColor = fixture.homeTeam.id == fixture.teamId
             ? theme.primaryColorDark
-            : theme.accentColor;
+            : theme.colorScheme.secondary;
       }
     } else {
       _teamColor = fixture.colors.awayTeam;
       if (_teamColor == null) {
         _teamColor = fixture.awayTeam.id == fixture.teamId
             ? theme.primaryColorDark
-            : theme.accentColor;
+            : theme.colorScheme.secondary;
       }
     }
 
