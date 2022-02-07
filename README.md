@@ -172,18 +172,28 @@ Kiwi will take care of creating instances of `CalendarService` and `CalendarBloc
 
 You can also use kiwi_generator package together with kiwi to avoid manually writing dependency chains (`Injector` class), which can be quite cumbersome.
 
-This is all well and good but still not entirely user-friendly. Resolving services from kiwi container like this makes dependencies implicit, meaning, the only way to figure out a widget's dependencies is to comb through its methods. It's much better when dependencies are explicitly declared in a class's constructor or at least a method. Given that we don't actually own `StatelessWidget` and `State` classes (they are framework classes), there is a limit to what we can do. After some experimentation I ended up with the following:
+This is all well and good but still not entirely user-friendly. Resolving services from kiwi container like this makes dependencies implicit, meaning, the only way to figure out a widget's dependencies is to comb through its methods. It's much better when dependencies are explicitly declared as a class' generic type parameters, in the constructor, or at least as method parameters. Given that we don't actually own `StatelessWidget` and `State` classes (they are framework classes), there is a limit to what we can do. After some experimentation I ended up with the following:
 
 ```dart
-mixin DependencyResolver<TDependency> {
-  TDependency resolve() => KiwiContainer().resolve<TDependency>();
-}
+TDependency _resolveDependency<TDependency>() => KiwiContainer().resolve<TDependency>();
 
-abstract class StatelessWidgetWith<TDependency> extends StatelessWidget with DependencyResolver<TDependency> {
+abstract class StatelessWidgetWith<TDependency> extends StatelessWidget {
+  const StatelessWidgetWith({Key key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) => buildWith(context, resolve());
+  Widget build(BuildContext context) {
+    return buildWith(
+      context,
+      _resolveDependency<TDependency>(),
+    );
+  }
 
   Widget buildWith(BuildContext context, TDependency service);
+}
+
+abstract class StateWith<TWidget extends StatefulWidget, TDependency> extends State<TWidget> {
+  TDependency _service;
+  TDependency get service => _service ??= _resolveDependency<TDependency>();
 }
 ```
 
@@ -202,26 +212,22 @@ class SomeStatelessWidget extends StatelessWidgetWith<CalendarBloc> {
 And for a stateful widget:
 
 ```dart
-class SomeStatefulWidget extends StatefulWidget with DependencyResolver<CalendarBloc> {
+class SomeStatefulWidget extends StatefulWidget {
   @override
-  _SomeStatefulWidgetState createState() => _SomeStatefulWidgetState(resolve());
+  _SomeStatefulWidgetState createState() => _SomeStatefulWidgetState();
 }
 
-class _SomeStatefulWidgetState extends State<SomeStatefulWidget> {
-  final CalendarBloc _calendarBloc;
-
-  _SomeStatefulWidgetState(this._calendarBloc);
+class _SomeStatefulWidgetState extends StateWith<SomeStatefulWidget, CalendarBloc> {
+  CalendarBloc get _calendarBloc => service; // or can use 'service' property directly
 
   // Use CalendarBloc in initState, build, etc.
 }
 
 ```
 
-For a stateless widget we inject a dependency into `buildWith` method, because this method is the only place it can be used. But for a stateful one we inject it into the state's constructor, because it can be used not only by `build` but also by `initState`, `dispose`, etc.
+Declaring and resolving dependencies like this makes them explicit and also hides the fact that we use kiwi at all (which would allow for an easy migration to an alternative package, if necessary). No longer our code is littered with `KiwiContainer().resolve<T>()` calls, instead, it gets called from a single place inside `resolveDependency`.
 
-Declaring and resolving dependencies like this makes them explicit and also hides the fact that we use kiwi at all. No longer our code is littered with `KiwiContainer().resolve<T>()` calls, instead, it gets called from a single place inside `DependencyResolver`.
-
-And, of course, you can create extension classes for widgets with 2 dependencies — `DependencyResolver2<TDependency1, TDependency2>` and `StatelessWidgetWith2<TDependency1, TDependency2>` — and with 3, 4, and however many you need.
+And, of course, you can create extension classes for widgets with 2 dependencies — `StateWith2<TWidget, TDependency1, TDependency2>` and `StatelessWidgetWith2<TDependency1, TDependency2>` — and with 3, 4, and however many you need.
 
 Note that with this approach, if a transient service uses a resource that needs to be disposed of (socket, for example), it should only be injected into stateful widgets, because stateless ones don't have `dispose` hooks.
 
