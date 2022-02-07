@@ -7,15 +7,13 @@ import '../../account/bloc/account_states.dart';
 import '../../fixture/calendar/pages/fixture_calendar_page.dart';
 import '../extensions/kiwi_extension.dart';
 
-class WelcomePage extends StatefulWidget with DependencyResolver<AccountBloc> {
+class WelcomePage extends StatefulWidget {
   @override
-  _WelcomePageState createState() => _WelcomePageState(resolve());
+  _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
-  final AccountBloc _accountBloc;
-
-  _WelcomePageState(this._accountBloc);
+class _WelcomePageState extends StateWith<WelcomePage, AccountBloc> {
+  AccountBloc get _accountBloc => service;
 
   @override
   void initState() {

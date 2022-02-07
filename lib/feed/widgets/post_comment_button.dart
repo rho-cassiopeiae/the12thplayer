@@ -6,8 +6,7 @@ import '../bloc/comment_actions.dart';
 import '../bloc/comment_bloc.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class PostCommentButton extends StatefulWidget
-    with DependencyResolver<CommentBloc> {
+class PostCommentButton extends StatefulWidget {
   final String commentBlocInstanceIdentifier;
   final int articleId;
   final String commentPath;
@@ -24,16 +23,18 @@ class PostCommentButton extends StatefulWidget
   });
 
   @override
-  _PostCommentButtonState createState() =>
-      _PostCommentButtonState(resolve(commentBlocInstanceIdentifier));
+  _PostCommentButtonState createState() => _PostCommentButtonState();
 }
 
-class _PostCommentButtonState extends State<PostCommentButton> {
-  final CommentBloc _commentBloc;
+class _PostCommentButtonState
+    extends StateWith<PostCommentButton, CommentBloc> {
+  CommentBloc get _commentBloc => service;
+
+  @override
+  String get dependencyInstanceIdentifier =>
+      widget.commentBlocInstanceIdentifier;
 
   String _body;
-
-  _PostCommentButtonState(this._commentBloc);
 
   @override
   Widget build(BuildContext context) {

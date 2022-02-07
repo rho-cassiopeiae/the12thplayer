@@ -6,8 +6,7 @@ import '../video_reaction/bloc/video_reaction_bloc.dart';
 import '../video_reaction/models/vm/video_reaction_vm.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 
-class VideoReactionRating extends StatefulWidget
-    with DependencyResolver<VideoReactionBloc> {
+class VideoReactionRating extends StatefulWidget {
   final int fixtureId;
   final VideoReactionVm videoReaction;
   final Future<bool> Function() onProtectedActionInvoked;
@@ -20,17 +19,15 @@ class VideoReactionRating extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _VideoReactionRatingState createState() =>
-      _VideoReactionRatingState(resolve());
+  _VideoReactionRatingState createState() => _VideoReactionRatingState();
 }
 
-class _VideoReactionRatingState extends State<VideoReactionRating> {
-  final VideoReactionBloc _videoReactionBloc;
+class _VideoReactionRatingState
+    extends StateWith<VideoReactionRating, VideoReactionBloc> {
+  VideoReactionBloc get _videoReactionBloc => service;
 
   int _rating;
   int _userVote;
-
-  _VideoReactionRatingState(this._videoReactionBloc);
 
   @override
   void initState() {

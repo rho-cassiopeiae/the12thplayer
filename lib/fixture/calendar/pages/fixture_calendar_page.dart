@@ -13,22 +13,19 @@ import '../../common/models/vm/fixture_summary_vm.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 import '../../../general/widgets/app_drawer.dart';
 
-class FixtureCalendarPage extends StatefulWidget
-    with DependencyResolver<FixtureCalendarBloc> {
+class FixtureCalendarPage extends StatefulWidget {
   static const String routeName = '/fixture/calendar';
 
   @override
-  _FixtureCalendarPageState createState() =>
-      _FixtureCalendarPageState(resolve());
+  _FixtureCalendarPageState createState() => _FixtureCalendarPageState();
 }
 
-class _FixtureCalendarPageState extends State<FixtureCalendarPage> {
-  final FixtureCalendarBloc _fixtureCalendarBloc;
+class _FixtureCalendarPageState
+    extends StateWith<FixtureCalendarPage, FixtureCalendarBloc> {
+  FixtureCalendarBloc get _fixtureCalendarBloc => service;
 
   int _currentPage = 1000000000;
   PageController _pageController;
-
-  _FixtureCalendarPageState(this._fixtureCalendarBloc);
 
   @override
   void initState() {

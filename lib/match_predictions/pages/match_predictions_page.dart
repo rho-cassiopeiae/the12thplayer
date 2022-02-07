@@ -18,27 +18,21 @@ import '../../general/widgets/app_drawer.dart';
 import '../../general/widgets/sweet_sheet.dart';
 import '../bloc/match_predictions_bloc.dart';
 
-class MatchPredictionsPage extends StatefulWidget
-    with DependencyResolver2<MatchPredictionsBloc, AccountBloc> {
+class MatchPredictionsPage extends StatefulWidget {
   static const routeName = '/match-predictions';
 
   const MatchPredictionsPage({Key key}) : super(key: key);
 
   @override
-  _MatchPredictionsPageState createState() =>
-      _MatchPredictionsPageState(resolve1(), resolve2());
+  _MatchPredictionsPageState createState() => _MatchPredictionsPageState();
 }
 
-class _MatchPredictionsPageState extends State<MatchPredictionsPage> {
-  final MatchPredictionsBloc _matchPredictionsBloc;
-  final AccountBloc _accountBloc;
+class _MatchPredictionsPageState extends StateWith2<MatchPredictionsPage,
+    MatchPredictionsBloc, AccountBloc> {
+  MatchPredictionsBloc get _matchPredictionsBloc => service1;
+  AccountBloc get _accountBloc => service2;
 
   final SweetSheet _sweetSheet = SweetSheet();
-
-  _MatchPredictionsPageState(
-    this._matchPredictionsBloc,
-    this._accountBloc,
-  );
 
   @override
   void initState() {

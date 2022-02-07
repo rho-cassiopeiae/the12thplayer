@@ -12,8 +12,7 @@ import '../bloc/feed_states.dart';
 import '../enums/article_type.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class VideoArticleComposePage extends StatefulWidget
-    with DependencyResolver<FeedBloc> {
+class VideoArticleComposePage extends StatefulWidget {
   static const routeName = '/feed/video-article-compose';
 
   final ArticleType type;
@@ -25,11 +24,12 @@ class VideoArticleComposePage extends StatefulWidget
 
   @override
   _VideoArticleComposePageState createState() =>
-      _VideoArticleComposePageState(resolve());
+      _VideoArticleComposePageState();
 }
 
-class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
-  final FeedBloc _feedBloc;
+class _VideoArticleComposePageState
+    extends StateWith<VideoArticleComposePage, FeedBloc> {
+  FeedBloc get _feedBloc => service;
 
   String _title;
   String _summary;
@@ -37,8 +37,6 @@ class _VideoArticleComposePageState extends State<VideoArticleComposePage> {
   bool _isYoutubeVideo;
   Uint8List _thumbnailBytes;
   String _videoUrl;
-
-  _VideoArticleComposePageState(this._feedBloc);
 
   @override
   Widget build(BuildContext context) {

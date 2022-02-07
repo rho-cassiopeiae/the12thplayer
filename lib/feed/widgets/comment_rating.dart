@@ -7,8 +7,7 @@ import '../bloc/comment_bloc.dart';
 import '../models/vm/comment_vm.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class CommentRating extends StatefulWidget
-    with DependencyResolver<CommentBloc> {
+class CommentRating extends StatefulWidget {
   final String commentBlocInstanceIdentifier;
   final String commentPath;
   final int articleId;
@@ -23,17 +22,18 @@ class CommentRating extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _CommentRatingState createState() =>
-      _CommentRatingState(resolve(commentBlocInstanceIdentifier));
+  _CommentRatingState createState() => _CommentRatingState();
 }
 
-class _CommentRatingState extends State<CommentRating> {
-  final CommentBloc _commentBloc;
+class _CommentRatingState extends StateWith<CommentRating, CommentBloc> {
+  CommentBloc get _commentBloc => service;
+
+  @override
+  String get dependencyInstanceIdentifier =>
+      widget.commentBlocInstanceIdentifier;
 
   int _rating;
   int _userVote;
-
-  _CommentRatingState(this._commentBloc);
 
   @override
   void initState() {

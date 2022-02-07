@@ -10,8 +10,7 @@ import '../models/vm/comment_vm.dart';
 import '../bloc/comment_bloc.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class CommentRepliesPage extends StatefulWidget
-    with DependencyResolver<CommentBloc> {
+class CommentRepliesPage extends StatefulWidget {
   static const routeName = '/feed/article/comments/replies';
 
   final String commentBlocInstanceIdentifier;
@@ -28,16 +27,18 @@ class CommentRepliesPage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _CommentRepliesPageState createState() =>
-      _CommentRepliesPageState(resolve(commentBlocInstanceIdentifier));
+  _CommentRepliesPageState createState() => _CommentRepliesPageState();
 }
 
-class _CommentRepliesPageState extends State<CommentRepliesPage> {
-  final CommentBloc _commentBloc;
+class _CommentRepliesPageState
+    extends StateWith<CommentRepliesPage, CommentBloc> {
+  CommentBloc get _commentBloc => service;
+
+  @override
+  String get dependencyInstanceIdentifier =>
+      widget.commentBlocInstanceIdentifier;
 
   CommentFilter _filter;
-
-  _CommentRepliesPageState(this._commentBloc);
 
   @override
   void initState() {

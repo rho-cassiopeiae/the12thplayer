@@ -10,8 +10,7 @@ import '../enums/article_type.dart';
 import '../../general/extensions/kiwi_extension.dart';
 import 'article_compose_page.dart';
 
-class ArticlePreviewComposePage extends StatefulWidget
-    with DependencyResolver<FeedBloc> {
+class ArticlePreviewComposePage extends StatefulWidget {
   static const routeName = '/feed/article-preview-compose';
 
   final ArticleType type;
@@ -23,17 +22,16 @@ class ArticlePreviewComposePage extends StatefulWidget
 
   @override
   _ArticlePreviewComposePageState createState() =>
-      _ArticlePreviewComposePageState(resolve());
+      _ArticlePreviewComposePageState();
 }
 
-class _ArticlePreviewComposePageState extends State<ArticlePreviewComposePage> {
-  final FeedBloc _feedBloc;
+class _ArticlePreviewComposePageState
+    extends StateWith<ArticlePreviewComposePage, FeedBloc> {
+  FeedBloc get _feedBloc => service;
 
   String _title;
   String _previewImageUrl;
   String _summary;
-
-  _ArticlePreviewComposePageState(this._feedBloc);
 
   @override
   Widget build(BuildContext context) {

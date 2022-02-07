@@ -14,17 +14,17 @@ import '../../general/bloc/image_states.dart';
 import '../../general/extensions/kiwi_extension.dart';
 import '../../general/widgets/app_drawer.dart';
 
-class ProfilePage extends StatefulWidget
-    with DependencyResolver2<AccountBloc, ImageBloc> {
+class ProfilePage extends StatefulWidget {
   static const routeName = '/account/profile';
 
   @override
-  _ProfilePageState createState() => _ProfilePageState(resolve1(), resolve2());
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final AccountBloc _accountBloc;
-  final ImageBloc _imageBloc;
+class _ProfilePageState
+    extends StateWith2<ProfilePage, AccountBloc, ImageBloc> {
+  AccountBloc get _accountBloc => service1;
+  ImageBloc get _imageBloc => service2;
 
   ImagePicker _imagePicker;
   ImagePicker get imagePicker {
@@ -40,8 +40,6 @@ class _ProfilePageState extends State<ProfilePage> {
   PanelController _panelController;
   double _width;
   double _height;
-
-  _ProfilePageState(this._accountBloc, this._imageBloc);
 
   @override
   void initState() {

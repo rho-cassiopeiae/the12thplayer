@@ -9,8 +9,7 @@ import '../bloc/feed_actions.dart';
 import '../bloc/feed_bloc.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class ArticleComposePage extends StatefulWidget
-    with DependencyResolver<FeedBloc> {
+class ArticleComposePage extends StatefulWidget {
   static const routeName = '/feed/article-compose';
 
   final ArticleType type;
@@ -21,18 +20,16 @@ class ArticleComposePage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _ArticleComposePageState createState() => _ArticleComposePageState(resolve());
+  _ArticleComposePageState createState() => _ArticleComposePageState();
 }
 
-class _ArticleComposePageState extends State<ArticleComposePage> {
-  final FeedBloc _feedBloc;
+class _ArticleComposePageState extends StateWith<ArticleComposePage, FeedBloc> {
+  FeedBloc get _feedBloc => service;
 
   bool _disposed;
   QuillController _controller;
   FocusNode _focusNode;
   ScrollController _scrollController;
-
-  _ArticleComposePageState(this._feedBloc);
 
   @override
   void initState() {

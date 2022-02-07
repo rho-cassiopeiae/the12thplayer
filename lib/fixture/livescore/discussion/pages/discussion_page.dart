@@ -12,8 +12,7 @@ import '../../../../general/bloc/image_bloc.dart';
 import '../../../../general/bloc/image_states.dart';
 import '../../../../general/extensions/kiwi_extension.dart';
 
-class DiscussionPage extends StatefulWidget
-    with DependencyResolver2<DiscussionBloc, ImageBloc> {
+class DiscussionPage extends StatefulWidget {
   static const routeName = '/fixture/livescore/discussion';
 
   final int fixtureId;
@@ -26,13 +25,13 @@ class DiscussionPage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _DiscussionPageState createState() =>
-      _DiscussionPageState(resolve1(), resolve2());
+  _DiscussionPageState createState() => _DiscussionPageState();
 }
 
-class _DiscussionPageState extends State<DiscussionPage> {
-  final DiscussionBloc _discussionBloc;
-  final ImageBloc _imageBloc;
+class _DiscussionPageState
+    extends StateWith2<DiscussionPage, DiscussionBloc, ImageBloc> {
+  DiscussionBloc get _discussionBloc => service1;
+  ImageBloc get _imageBloc => service2;
 
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _bodyController = TextEditingController();
@@ -41,11 +40,6 @@ class _DiscussionPageState extends State<DiscussionPage> {
   bool _firstBuild = true;
 
   String _body;
-
-  _DiscussionPageState(
-    this._discussionBloc,
-    this._imageBloc,
-  );
 
   @override
   void initState() {

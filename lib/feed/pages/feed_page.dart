@@ -18,29 +18,23 @@ import '../bloc/feed_bloc.dart';
 import '../bloc/feed_states.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class FeedPage extends StatefulWidget
-    with DependencyResolver2<FeedBloc, AccountBloc> {
+class FeedPage extends StatefulWidget {
   static const routeName = '/feed';
 
   const FeedPage({Key key}) : super(key: key);
 
   @override
-  _FeedPageState createState() => _FeedPageState(resolve1(), resolve2());
+  _FeedPageState createState() => _FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage> {
-  final FeedBloc _feedBloc;
-  final AccountBloc _accountBloc;
+class _FeedPageState extends StateWith2<FeedPage, FeedBloc, AccountBloc> {
+  FeedBloc get _feedBloc => service1;
+  AccountBloc get _accountBloc => service2;
 
   final SweetSheet _sweetSheet = SweetSheet();
 
   ArticleFilter _filter;
   RefreshController _refreshController;
-
-  _FeedPageState(
-    this._feedBloc,
-    this._accountBloc,
-  );
 
   @override
   void initState() {

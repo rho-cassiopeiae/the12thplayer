@@ -7,7 +7,7 @@ import '../bloc/feed_bloc.dart';
 import '../models/vm/article_vm.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class ArticleRating extends StatefulWidget with DependencyResolver<FeedBloc> {
+class ArticleRating extends StatefulWidget {
   final ArticleVm article;
 
   const ArticleRating({
@@ -16,16 +16,14 @@ class ArticleRating extends StatefulWidget with DependencyResolver<FeedBloc> {
   }) : super(key: key);
 
   @override
-  _ArticleRatingState createState() => _ArticleRatingState(resolve());
+  _ArticleRatingState createState() => _ArticleRatingState();
 }
 
-class _ArticleRatingState extends State<ArticleRating> {
-  final FeedBloc _feedBloc;
+class _ArticleRatingState extends StateWith<ArticleRating, FeedBloc> {
+  FeedBloc get _feedBloc => service;
 
   int _rating;
   int _userVote;
-
-  _ArticleRatingState(this._feedBloc);
 
   @override
   void initState() {

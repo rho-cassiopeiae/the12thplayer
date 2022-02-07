@@ -96,30 +96,6 @@ abstract class Injector {
   @Register.factory(FixtureLivescoreBloc)
   void configureFixtureLivescore();
 
-  // @Register.singleton(
-  //   ILiveCommentaryFeedApiService,
-  //   from: LiveCommentaryFeedApiService,
-  // )
-  // @Register.singleton(
-  //   ILiveCommentaryFeedRepository,
-  //   from: LiveCommentaryFeedRepository,
-  // )
-  // @Register.singleton(LiveCommentaryFeedService)
-  // @Register.factory(LiveCommentaryFeedBloc)
-  // void configureLiveCommentaryFeed();
-
-  // @Register.singleton(
-  //   ILiveCommentaryRecordingApiService,
-  //   from: LiveCommentaryRecordingApiService,
-  // )
-  // @Register.singleton(
-  //   ILiveCommentaryRecordingRepository,
-  //   from: LiveCommentaryRecordingRepository,
-  // )
-  // @Register.singleton(LiveCommentaryRecordingService)
-  // @Register.factory(LiveCommentaryRecordingBloc)
-  // void configureLiveCommentaryRecording();
-
   @Register.singleton(IDiscussionApiService, from: DiscussionApiService)
   @Register.singleton(DiscussionService)
   @Register.factory(DiscussionBloc)

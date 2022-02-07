@@ -14,12 +14,8 @@ import '../../general/extensions/kiwi_extension.dart';
 import '../bloc/comment_actions.dart';
 import '../bloc/comment_bloc.dart';
 
-class ArticleCommentsPage extends StatefulWidget
-    with DependencyResolver2<FeedBloc, CommentBloc> {
+class ArticleCommentsPage extends StatefulWidget {
   static const routeName = '/feed/article/comments';
-
-  final String commentBlocInstanceIdentifier =
-      '<CommentBloc>:${Ulid().toString()}';
 
   final ArticleVm article;
 
@@ -29,22 +25,20 @@ class ArticleCommentsPage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _ArticleCommentsPageState createState() => _ArticleCommentsPageState(
-        resolve1(),
-        resolve2(commentBlocInstanceIdentifier),
-      );
+  _ArticleCommentsPageState createState() => _ArticleCommentsPageState();
 }
 
-class _ArticleCommentsPageState extends State<ArticleCommentsPage> {
-  final FeedBloc _feedBloc;
-  final CommentBloc _commentBloc;
+class _ArticleCommentsPageState
+    extends StateWith2<ArticleCommentsPage, FeedBloc, CommentBloc> {
+  FeedBloc get _feedBloc => service1;
+  CommentBloc get _commentBloc => service2;
+
+  final String _commentBlocInstanceIdentifier =
+      '<CommentBloc>:${Ulid().toString()}';
+  @override
+  String get dependencyInstanceIdentifier2 => _commentBlocInstanceIdentifier;
 
   CommentFilter _filter;
-
-  _ArticleCommentsPageState(
-    this._feedBloc,
-    this._commentBloc,
-  );
 
   @override
   void initState() {
@@ -60,7 +54,7 @@ class _ArticleCommentsPageState extends State<ArticleCommentsPage> {
   @override
   void dispose() {
     _commentBloc.dispose();
-    widget.disposeOfDependencyInstance(widget.commentBlocInstanceIdentifier);
+    disposeOfDependencyInstance(_commentBlocInstanceIdentifier);
 
     super.dispose();
   }
@@ -118,7 +112,7 @@ class _ArticleCommentsPageState extends State<ArticleCommentsPage> {
                   child: ArticlePreview(
                     article: article,
                     commentBlocInstanceIdentifier:
-                        widget.commentBlocInstanceIdentifier,
+                        _commentBlocInstanceIdentifier,
                   ),
                 ),
               );
@@ -157,7 +151,7 @@ class _ArticleCommentsPageState extends State<ArticleCommentsPage> {
                     var comment = comments[index];
                     return Comment(
                       commentBlocInstanceIdentifier:
-                          widget.commentBlocInstanceIdentifier,
+                          _commentBlocInstanceIdentifier,
                       articleId: widget.article.id,
                       commentPath: comment.id,
                       comment: comment,

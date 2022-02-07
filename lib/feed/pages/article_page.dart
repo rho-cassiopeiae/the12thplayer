@@ -8,7 +8,7 @@ import '../bloc/feed_bloc.dart';
 import '../bloc/feed_states.dart';
 import '../../general/extensions/kiwi_extension.dart';
 
-class ArticlePage extends StatefulWidget with DependencyResolver<FeedBloc> {
+class ArticlePage extends StatefulWidget {
   static const routeName = '/feed/article';
 
   final int articleId;
@@ -19,18 +19,16 @@ class ArticlePage extends StatefulWidget with DependencyResolver<FeedBloc> {
   }) : super(key: key);
 
   @override
-  _ArticlePageState createState() => _ArticlePageState(resolve());
+  _ArticlePageState createState() => _ArticlePageState();
 }
 
-class _ArticlePageState extends State<ArticlePage> {
-  final FeedBloc _feedBloc;
+class _ArticlePageState extends StateWith<ArticlePage, FeedBloc> {
+  FeedBloc get _feedBloc => service;
 
   bool _disposed;
   QuillController _controller;
   FocusNode _focusNode;
   ScrollController _scrollController;
-
-  _ArticlePageState(this._feedBloc);
 
   @override
   void initState() {

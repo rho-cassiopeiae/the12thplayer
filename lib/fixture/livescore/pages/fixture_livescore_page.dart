@@ -34,10 +34,7 @@ import '../../../general/widgets/sweet_sheet.dart';
 import '../../../general/extensions/kiwi_extension.dart';
 import '../../../account/enums/account_type.dart';
 
-class FixtureLivescorePage extends StatefulWidget
-    with
-        DependencyResolver6<FixtureLivescoreBloc, DiscussionBloc, AccountBloc,
-            PlayerRatingBloc, VideoReactionBloc, ImageBloc> {
+class FixtureLivescorePage extends StatefulWidget {
   static const String routeName = '/fixture/livescore';
 
   final FixtureSummaryVm fixture;
@@ -48,23 +45,23 @@ class FixtureLivescorePage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _FixtureLivescorePageState createState() => _FixtureLivescorePageState(
-        resolve1(),
-        resolve2(),
-        resolve3(),
-        resolve4(),
-        resolve5(),
-        resolve6(),
-      );
+  _FixtureLivescorePageState createState() => _FixtureLivescorePageState();
 }
 
-class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
-  final FixtureLivescoreBloc _fixtureLivescoreBloc;
-  final DiscussionBloc _discussionBloc;
-  final AccountBloc _accountBloc;
-  final PlayerRatingBloc _playerRatingBloc;
-  final VideoReactionBloc _videoReactionBloc;
-  final ImageBloc _imageBloc;
+class _FixtureLivescorePageState extends StateWith6<
+    FixtureLivescorePage,
+    FixtureLivescoreBloc,
+    DiscussionBloc,
+    AccountBloc,
+    PlayerRatingBloc,
+    VideoReactionBloc,
+    ImageBloc> {
+  FixtureLivescoreBloc get _fixtureLivescoreBloc => service1;
+  DiscussionBloc get _discussionBloc => service2;
+  AccountBloc get _accountBloc => service3;
+  PlayerRatingBloc get _playerRatingBloc => service4;
+  VideoReactionBloc get _videoReactionBloc => service5;
+  ImageBloc get _imageBloc => service6;
 
   Discussions _discussions;
   PlayerRatings _playerRatings;
@@ -88,15 +85,6 @@ class _FixtureLivescorePageState extends State<FixtureLivescorePage> {
   ScrollController _benchPlayersScrollController;
 
   SubscriptionState _subscriptionState = SubscriptionState.NotSubscribed;
-
-  _FixtureLivescorePageState(
-    this._fixtureLivescoreBloc,
-    this._discussionBloc,
-    this._accountBloc,
-    this._playerRatingBloc,
-    this._videoReactionBloc,
-    this._imageBloc,
-  );
 
   @override
   void initState() {

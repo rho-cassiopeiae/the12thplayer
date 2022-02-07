@@ -7,8 +7,7 @@ import '../bloc/match_predictions_actions.dart';
 import '../bloc/match_predictions_bloc.dart';
 import '../models/vm/fixture_vm.dart';
 
-class PredictionField extends StatefulWidget
-    with DependencyResolver<MatchPredictionsBloc> {
+class PredictionField extends StatefulWidget {
   final FixtureVm fixture;
 
   const PredictionField({
@@ -17,16 +16,15 @@ class PredictionField extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _PredictionFieldState createState() => _PredictionFieldState(resolve());
+  _PredictionFieldState createState() => _PredictionFieldState();
 }
 
-class _PredictionFieldState extends State<PredictionField> {
-  final MatchPredictionsBloc _matchPredictionsBloc;
+class _PredictionFieldState
+    extends StateWith<PredictionField, MatchPredictionsBloc> {
+  MatchPredictionsBloc get _matchPredictionsBloc => service;
 
   TextEditingController _controller;
   FocusNode _focusNode;
-
-  _PredictionFieldState(this._matchPredictionsBloc);
 
   @override
   void initState() {

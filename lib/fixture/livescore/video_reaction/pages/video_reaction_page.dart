@@ -10,8 +10,7 @@ import '../bloc/video_reaction_actions.dart';
 import '../bloc/video_reaction_bloc.dart';
 import '../../../../general/extensions/kiwi_extension.dart';
 
-class VideoReactionPage extends StatefulWidget
-    with DependencyResolver<VideoReactionBloc> {
+class VideoReactionPage extends StatefulWidget {
   static const routeName = '/fixture/livescore/video-reaction';
 
   final int fixtureId;
@@ -22,11 +21,12 @@ class VideoReactionPage extends StatefulWidget
   }) : super(key: key);
 
   @override
-  _VideoReactionPageState createState() => _VideoReactionPageState(resolve());
+  _VideoReactionPageState createState() => _VideoReactionPageState();
 }
 
-class _VideoReactionPageState extends State<VideoReactionPage> {
-  final VideoReactionBloc _videoReactionBloc;
+class _VideoReactionPageState
+    extends StateWith<VideoReactionPage, VideoReactionBloc> {
+  VideoReactionBloc get _videoReactionBloc => service;
 
   ImagePicker _imagePicker;
   ImagePicker get imagePicker {
@@ -39,8 +39,6 @@ class _VideoReactionPageState extends State<VideoReactionPage> {
   String _title;
   Uint8List _videoBytes;
   String _fileName;
-
-  _VideoReactionPageState(this._videoReactionBloc);
 
   @override
   Widget build(BuildContext context) {

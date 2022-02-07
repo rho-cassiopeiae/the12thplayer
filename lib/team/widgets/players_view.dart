@@ -13,7 +13,7 @@ import '../models/vm/fixture_player_rating_vm.dart';
 import '../models/vm/manager_vm.dart';
 import '../models/vm/player_vm.dart';
 
-class PlayersView extends StatefulWidget with DependencyResolver<TeamBloc> {
+class PlayersView extends StatefulWidget {
   final double height;
   final double viewFraction;
   final ManagerVm manager;
@@ -32,18 +32,16 @@ class PlayersView extends StatefulWidget with DependencyResolver<TeamBloc> {
         super(key: key);
 
   @override
-  _PlayersViewState createState() => _PlayersViewState(resolve());
+  _PlayersViewState createState() => _PlayersViewState();
 }
 
-class _PlayersViewState extends State<PlayersView> {
-  final TeamBloc _teamBloc;
+class _PlayersViewState extends StateWith<PlayersView, TeamBloc> {
+  TeamBloc get _teamBloc => service;
 
   PageController _pageController;
 
   double _viewportFraction;
   double _pageOffset = 0.0;
-
-  _PlayersViewState(this._teamBloc);
 
   @override
   void initState() {
